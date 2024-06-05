@@ -8,7 +8,7 @@ with GFX.Painter;
 with GFX.PPM;
 
 procedure Test1 is
-   C : constant GFX.RGBA := GFX.To_RGBA (0, 255, 0, 0);
+   C : constant GFX.RGBA := GFX.To_RGBA (0, 255, 0, 255);
 
 begin
    GFX.PPM.Set_Size (130, 130);
