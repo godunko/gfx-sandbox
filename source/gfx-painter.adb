@@ -123,6 +123,19 @@ package body GFX.Painter is
          return RGBA (A0B.Types.Shift_Right (RB, 8) or GA);
       end "*";
 
+      -----------
+      -- Blend --
+      -----------
+
+      function Blend (V : RGBA; C : RGBA) return RGBA is
+         use type A0B.Types.Unsigned_32;
+
+      begin
+         return
+           C + V * A0B.Types.Integer_32
+             (A0B.Types.Shift_Right (not A0B.Types.Unsigned_32 (C), 24));
+      end Blend;
+
       ----------------
       -- Draw_Pixel --
       ----------------
@@ -130,12 +143,17 @@ package body GFX.Painter is
       procedure Draw_Pixel
         (X : A0B.Types.Integer_32;
          Y : A0B.Types.Integer_32;
-         A : A0B.Types.Integer_32) is
+         A : A0B.Types.Integer_32)
+      is
+         XU : constant A0B.Types.Unsigned_32 := A0B.Types.Unsigned_32 (X);
+         YU : constant A0B.Types.Unsigned_32 := A0B.Types.Unsigned_32 (Y);
+         C  : constant RGBA := Color * A;
+
       begin
          PPM.Set_Pixel
-           (A0B.Types.Unsigned_32 (X),
-            A0B.Types.Unsigned_32 (Y),
-            Color * A);
+           (XU,
+            YU,
+            Blend (PPM.Get_Pixel (XU, YU), C));
       end Draw_Pixel;
 
       --  Digital Differential Analyzer (DDA) algorithm is used to draw
