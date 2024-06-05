@@ -4,6 +4,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+pragma Ada_2022;
+
 with Ada.Strings.Fixed;
 with Ada.Text_IO;
 
@@ -11,7 +13,7 @@ package body GFX.PPM is
 
    type Raster is
      array (A0B.Types.Unsigned_32 range <>, A0B.Types.Unsigned_32 range <>)
-       of A0B.Types.Unsigned_32;
+       of GFX.RGBA;
 
    type Raster_Access is access all Raster;
 
@@ -80,7 +82,7 @@ package body GFX.PPM is
    procedure Set_Pixel
      (X     : A0B.Types.Unsigned_32;
       Y     : A0B.Types.Unsigned_32;
-      Color : A0B.Types.Unsigned_32) is
+      Color : GFX.RGBA) is
    begin
       Buffer (X, Y) := Color;
    end Set_Pixel;
@@ -96,6 +98,7 @@ package body GFX.PPM is
 
    begin
       Buffer := new Raster (0 .. Width - 1, 0 .. Height - 1);
+      Buffer.all := [others => [others => 16#00555555#]];
    end Set_Size;
 
 end GFX.PPM;
