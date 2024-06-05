@@ -101,17 +101,6 @@ package body GFX.Painter is
          Y : A0B.Types.Integer_32;
          A : A0B.Types.Integer_32);
 
-      procedure Adjust
-        (X1 : in out A0B.Types.Integer_32;
-         X2 : in out A0B.Types.Integer_32;
-         Y  : in out Fixed_16_16;
-         dY : Fixed_16_16) is
-      begin
-         X1 := @ - 32;
-         Y  := @ - dY / 2;
-         X2 := @ + 32;
-      end Adjust;
-
       ---------
       -- "*" --
       ---------
@@ -139,6 +128,21 @@ package body GFX.Painter is
          return RGBA (A0B.Types.Shift_Right (RB, 8) or GA);
       end "*";
 
+      ------------
+      -- Adjust --
+      ------------
+
+      procedure Adjust
+        (X1 : in out A0B.Types.Integer_32;
+         X2 : in out A0B.Types.Integer_32;
+         Y  : in out Fixed_16_16;
+         dY : Fixed_16_16) is
+      begin
+         X1 := @ - 32;
+         Y  := @ - dY / 2;
+         X2 := @ + 32;
+      end Adjust;
+
       ----------------
       -- Draw_Pixel --
       ----------------
@@ -161,21 +165,22 @@ package body GFX.Painter is
 
       --  Digital Differential Analyzer (DDA) algorithm is used to draw
       --  line. Fixed point 16.16 format is used to improve floating point
-      --  interpolation rounding errors on screens with reasonable resolution.
+      --  interpolation rounding errors on screens with less than 32k pixels
+      --  per line/column.
       --
       --  8 most significant bits of the fractional part is used as intensity
       --  value for the antialiasing.
       --
       --  Real numbers are mapped onto 6x6 subpixels first.
 
+      --  Xi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X1 * 64.0);
+      --  Yi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y1 * 64.0);
+      --  Xi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X2 * 64.0);
+      --  Yi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y2 * 64.0);
       Xi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X1 * 64.0);
       Yi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y1 * 64.0);
       Xi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X2 * 64.0);
       Yi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y2 * 64.0);
-      --  Xi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X1 * 64.0) + 32;
-      --  Yi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y1 * 64.0) + 32;
-      --  Xi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X2 * 64.0) + 32;
-      --  Yi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y2 * 64.0) + 32;
       DX  : constant A0B.Types.Integer_32 := Xi2 - Xi1;
       DY  : constant A0B.Types.Integer_32 := Yi2 - Yi1;
 
@@ -195,18 +200,29 @@ package body GFX.Painter is
             Xinc := To_Fixed_16_16_Div (DX, DY);
 
             Put (Xinc);
-            New_Line;
 
             if Yi1 > Yi2 then
                raise Program_Error;
             end if;
 
-            X := Shift_Left (Xi1 - 32, 10);
-            X :=
-              @ - Shift_Right_Arithmetic
-                    (((Yi1 and 2#11_1111#) - 32) * Xinc, 6);
+            X := Shift_Left (Xi1, 10);
+            --  X :=
+            --    @ - Shift_Right_Arithmetic
+            --          (((Yi1 and 2#11_1111#)) * Xinc, 6);
 
-            Adjust (Yi1, Yi2, X, Xinc);
+            --  X := Shift_Left (Xi1 - 32, 10);
+            --  X :=
+            --    @ - Shift_Right_Arithmetic
+            --          (((Yi1 and 2#11_1111#) - 32) * Xinc, 6);
+
+            --  Adjust (Yi1, Yi2, X, Xinc);
+            Yi1 := (@ + 32) - 31;
+            X   := @ - Xinc / 2;
+            Yi2 := (@ + 32) + 32;
+            Put (X);
+            Put (Yi1);
+            Put (Yi2);
+            New_Line;
 
             Y  := Shift_Right_Arithmetic (Yi1, 6);
             YS := Shift_Right_Arithmetic (Yi2, 6);
