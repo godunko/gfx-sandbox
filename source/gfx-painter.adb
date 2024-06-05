@@ -6,7 +6,6 @@
 
 pragma Ada_2022;
 
-with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Unchecked_Conversion;
 
 with GFX.PPM;
@@ -38,10 +37,6 @@ package body GFX.Painter is
    function "xor"
      (Left  : A0B.Types.Integer_32;
       Right : A0B.Types.Unsigned_32) return A0B.Types.Integer_32;
-
-   package Integer_32_IO is
-     new Ada.Text_IO.Integer_IO (A0B.Types.Integer_32);
-   use Integer_32_IO;
 
    -----------
    -- "and" --
@@ -128,21 +123,6 @@ package body GFX.Painter is
          return RGBA (A0B.Types.Shift_Right (RB, 8) or GA);
       end "*";
 
-      ------------
-      -- Adjust --
-      ------------
-
-      procedure Adjust
-        (X1 : in out A0B.Types.Integer_32;
-         X2 : in out A0B.Types.Integer_32;
-         Y  : in out Fixed_16_16;
-         dY : Fixed_16_16) is
-      begin
-         X1 := @ - 32;
-         Y  := @ - dY / 2;
-         X2 := @ + 32;
-      end Adjust;
-
       ----------------
       -- Draw_Pixel --
       ----------------
@@ -152,11 +132,6 @@ package body GFX.Painter is
          Y : A0B.Types.Integer_32;
          A : A0B.Types.Integer_32) is
       begin
-         Put (X);
-         Put (Y);
-         Put (A);
-         New_Line;
-
          PPM.Set_Pixel
            (A0B.Types.Unsigned_32 (X),
             A0B.Types.Unsigned_32 (Y),
@@ -172,16 +147,16 @@ package body GFX.Painter is
       --  value for the antialiasing.
       --
       --  Real numbers are mapped onto 64x64 subpixels first, zero fractional
-      --  part of the number is a center of the subpixel matrix.
+      --  part of the number is a center of the subpixel matrix. It is not
+      --  obvious, due to manual optimization of the code, but it is an
+      --  important property.
 
-      --  Xi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X1 * 64.0);
-      --  Yi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y1 * 64.0);
-      --  Xi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X2 * 64.0);
-      --  Yi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y2 * 64.0);
-      Xi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X1 * 64.0);
-      Yi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y1 * 64.0);
+      Xi1 : constant A0B.Types.Integer_32 := A0B.Types.Integer_32 (X1 * 64.0);
+      Yi1 : constant A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y1 * 64.0);
       Xi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X2 * 64.0);
       Yi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y2 * 64.0);
+      --  Map float point coordinates to subpixels.
+
       DX  : constant A0B.Types.Integer_32 := Xi2 - Xi1;
       DY  : constant A0B.Types.Integer_32 := Yi2 - Yi1;
 
@@ -196,52 +171,27 @@ package body GFX.Painter is
             YS   : A0B.Types.Integer_32;
             X    : Fixed_16_16;
             Xinc : Fixed_16_16;
-            XZ   : A0B.Types.Integer_32;
 
          begin
             Xinc := To_Fixed_16_16_Div (DX, DY);
-
-            Put (Xinc);
 
             if Yi1 > Yi2 then
                raise Program_Error;
             end if;
 
             X := Shift_Left (Xi1, 10);
-            Put (X);
-            Put (Yi1 and 16#3F#);
-            XZ := Shift_Right_Arithmetic (((Yi1 and 16#3F#)) * Xinc, 6);
-            Put (XZ);
-            X := @ + XZ;
-            --  X := Shift_Left (Xi1, 10);
-            --  X :=
-            --    @ - Shift_Right_Arithmetic
-            --          (((Yi1 and 2#11_1111#)) * Xinc, 6);
-
-            --  X := Shift_Left (Xi1 - 32, 10);
-            --  X :=
-            --    @ - Shift_Right_Arithmetic
-            --          (((Yi1 and 2#11_1111#) - 32) * Xinc, 6);
-
-            --  Adjust (Yi1, Yi2, X, Xinc);
-
-            --  Yi1 := (@ + 32) - 31;
-            --  X   := @ - Xinc / 2;
-            --  Yi2 := (@ + 32) + 32;
+            X := @ + Shift_Right_Arithmetic (((Yi1 and 16#3F#)) * Xinc, 6);
+            --  Minor correction of the X by position of the Y inside subpixel
+            --  matrix.
 
             X   := @ - Xinc / 2;
-            --  Yi1 := @
             Yi2 := @ + 63;
-
-            Put (X);
-            Put (Yi1);
-            Put (Yi2);
+            --  Adjustment of the position of the line's ends to occupy
+            --  half of the pixel more in each direction. Adjustment of
+            --  the starting point is done too, but optimized out.
 
             Y  := Shift_Right_Arithmetic (Yi1, 6);
             YS := Shift_Right_Arithmetic (Yi2, 6);
-            Put (Y);
-            Put (YS);
-            New_Line;
 
             if Y = YS then
                AS := Yi2 - Yi1;
@@ -255,14 +205,10 @@ package body GFX.Painter is
             --  Draw the first pixel of the line
 
             A := Shift_Right_Arithmetic (X, 8) and 16#FF#;
-            Put (X);
-            Put (Y);
             Draw_Pixel
               (Shift_Right_Arithmetic (X, 16),
                Y,
                Shift_Right_Arithmetic ((A xor 16#FF#) * AS, 6));
-            Put (X);
-            Put (Y);
             Draw_Pixel
               (Shift_Right_Arithmetic (X, 16) + 1,
                Y,
@@ -273,12 +219,7 @@ package body GFX.Painter is
 
             while Y < YS loop
                A := Shift_Right_Arithmetic (X, 8) and 16#FF#;
-
-               Put (X);
-               Put (Y);
                Draw_Pixel (Shift_Right_Arithmetic (X, 16), Y, A xor 16#FF#);
-               Put (X);
-               Put (Y);
                Draw_Pixel (Shift_Right_Arithmetic (X, 16) + 1, Y, A);
 
                X := @ + Xinc;
@@ -288,15 +229,10 @@ package body GFX.Painter is
             --  Draw the last pixel of the line
 
             A := Shift_Right_Arithmetic (X, 8) and 16#FF#;
-
-            Put (X);
-            Put (Y);
             Draw_Pixel
               (Shift_Right_Arithmetic (X, 16),
                Y,
                Shift_Right_Arithmetic ((A xor 16#FF#) * AE, 6));
-            Put (X);
-            Put (Y);
             Draw_Pixel
               (Shift_Right_Arithmetic (X, 16) + 1,
                Y,
@@ -321,13 +257,11 @@ package body GFX.Painter is
                raise Program_Error;
             end if;
 
-            Y := Shift_Left (Yi1 - 32, 10);
-            Y :=
-              @
-                - Shift_Right_Arithmetic
-                    (((Xi1 and 2#11_1111#) - 32) * Yinc, 6);
+            Y := Shift_Left (Yi1, 10);
+            Y := @ - Shift_Right_Arithmetic (((Xi1 and 16#3F#)) * Yinc, 6);
 
-            Adjust (Xi1, Xi2, Y, Yinc);
+            Y   := @ - Yinc / 2;
+            Xi2 := @ + 63;
 
             X  := Shift_Right_Arithmetic (Xi1, 6);
             XS := Shift_Right_Arithmetic (Xi2, 6);
