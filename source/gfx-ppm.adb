@@ -109,7 +109,7 @@ package body GFX.PPM is
 
    begin
       Buffer := new Raster (0 .. Width - 1, 0 .. Height - 1);
-      Buffer.all := [others => [others => 16#00555555#]];
+      Buffer.all := [others => [others => 16#00000000#]];
    end Set_Size;
 
 end GFX.PPM;
