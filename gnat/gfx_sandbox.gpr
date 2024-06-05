@@ -9,7 +9,7 @@ with "../config/gfx_sandbox_config.gpr";
 
 project GFX_Sandbox is
 
-   for Source_Dirs use ("../source");
+   for Source_Dirs use ("../source", "../source/ppm");
    for Object_Dir use "../.objs/" & A0B_Common.Object_Dir_Suffix;
    for Exec_Dir use "../bin";
 
