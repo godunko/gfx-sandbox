@@ -171,7 +171,8 @@ package body GFX.Painter is
       --  8 most significant bits of the fractional part is used as intensity
       --  value for the antialiasing.
       --
-      --  Real numbers are mapped onto 6x6 subpixels first.
+      --  Real numbers are mapped onto 64x64 subpixels first, zero fractional
+      --  part of the number is a center of the subpixel matrix.
 
       --  Xi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X1 * 64.0);
       --  Yi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y1 * 64.0);
@@ -195,6 +196,7 @@ package body GFX.Painter is
             YS   : A0B.Types.Integer_32;
             X    : Fixed_16_16;
             Xinc : Fixed_16_16;
+            XZ   : A0B.Types.Integer_32;
 
          begin
             Xinc := To_Fixed_16_16_Div (DX, DY);
@@ -206,6 +208,12 @@ package body GFX.Painter is
             end if;
 
             X := Shift_Left (Xi1, 10);
+            Put (X);
+            Put (Yi1 and 16#3F#);
+            XZ := Shift_Right_Arithmetic (((Yi1 and 16#3F#)) * Xinc, 6);
+            Put (XZ);
+            X := @ + XZ;
+            --  X := Shift_Left (Xi1, 10);
             --  X :=
             --    @ - Shift_Right_Arithmetic
             --          (((Yi1 and 2#11_1111#)) * Xinc, 6);
@@ -222,10 +230,12 @@ package body GFX.Painter is
             Put (X);
             Put (Yi1);
             Put (Yi2);
-            New_Line;
 
             Y  := Shift_Right_Arithmetic (Yi1, 6);
             YS := Shift_Right_Arithmetic (Yi2, 6);
+            Put (Y);
+            Put (YS);
+            New_Line;
 
             if Y = YS then
                AS := Yi2 - Yi1;
