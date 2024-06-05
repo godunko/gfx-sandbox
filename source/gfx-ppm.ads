@@ -18,6 +18,10 @@ package GFX.PPM is
       Y     : A0B.Types.Unsigned_32;
       Color : GFX.RGBA);
 
+   function Get_Pixel
+     (X : A0B.Types.Unsigned_32;
+      Y : A0B.Types.Unsigned_32) return GFX.RGBA;
+
    procedure Save (File_Name : String);
 
 end GFX.PPM;

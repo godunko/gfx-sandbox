@@ -26,6 +26,17 @@ package body GFX.PPM is
       A : A0B.Types.Unsigned_8;
    end record with Size => 32;
 
+   ---------------
+   -- Get_Pixel --
+   ---------------
+
+   function Get_Pixel
+     (X : A0B.Types.Unsigned_32;
+      Y : A0B.Types.Unsigned_32) return GFX.RGBA is
+   begin
+      return Buffer (X, Y);
+   end Get_Pixel;
+
    ----------
    -- Save --
    ----------
