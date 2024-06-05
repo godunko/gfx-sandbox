@@ -224,9 +224,15 @@ package body GFX.Painter is
             --          (((Yi1 and 2#11_1111#) - 32) * Xinc, 6);
 
             --  Adjust (Yi1, Yi2, X, Xinc);
-            Yi1 := (@ + 32) - 31;
+
+            --  Yi1 := (@ + 32) - 31;
+            --  X   := @ - Xinc / 2;
+            --  Yi2 := (@ + 32) + 32;
+
             X   := @ - Xinc / 2;
-            Yi2 := (@ + 32) + 32;
+            --  Yi1 := @
+            Yi2 := @ + 63;
+
             Put (X);
             Put (Yi1);
             Put (Yi2);
@@ -249,7 +255,6 @@ package body GFX.Painter is
             --  Draw the first pixel of the line
 
             A := Shift_Right_Arithmetic (X, 8) and 16#FF#;
-
             Put (X);
             Put (Y);
             Draw_Pixel
