@@ -276,7 +276,7 @@ package body GFX.Painter is
             end if;
 
             Y := Shift_Left (Yi1, 10);
-            Y := @ - Shift_Right_Arithmetic (((Xi1 and 16#3F#)) * Yinc, 6);
+            Y := @ + Shift_Right_Arithmetic (((Xi1 and 16#3F#)) * Yinc, 6);
 
             Y   := @ - Yinc / 2;
             Xi2 := @ + 63;
