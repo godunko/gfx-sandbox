@@ -1,10 +1,12 @@
 
 all: build
-	./bin/gfx-driver
+	rm -f out.ppm
+	./examples/native/bin/demo.elf
 	viewnior out.ppm
 
 gimp: build
-	./bin/gfx-driver
+	rm -f out.ppm
+	./examples/native/bin/demo.elf
 	gimp out.ppm
 
 check: build-testsuite
@@ -15,7 +17,7 @@ build-testsuite:
 	cd testsuite && alr build
 
 build:
-	alr build -- -cargs -O0
+	cd examples/native && alr build -- -cargs -O0
 
 clean:
 	rm -rf .objs bin config alire
