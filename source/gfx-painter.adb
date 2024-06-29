@@ -8,8 +8,6 @@ pragma Ada_2022;
 
 with Ada.Unchecked_Conversion;
 
-with GFX.PPM;
-
 package body GFX.Painter is
 
    subtype Fixed_16_16 is A0B.Types.Integer_32;
@@ -84,12 +82,15 @@ package body GFX.Painter is
 
    procedure Draw_Line
      (X1, Y1, X2, Y2 : GFX.Real;
-      Color          : RGBA)
+      Color          : RGBA8888)
    is
+      use A0B.Types;
       use type A0B.Types.Integer_32;
 
-      function "*" (Left : RGBA; Right : A0B.Types.Integer_32) return RGBA
+      function "*" (Left : RGBA8888; Right : A0B.Types.Integer_32) return RGBA8888
         with Pre => Right in 0 .. 255;
+
+      function Blend (V : RGBA8888; C : RGBA8888) return RGBA8888;
 
       procedure Draw_Pixel
         (X : A0B.Types.Integer_32;
@@ -100,7 +101,7 @@ package body GFX.Painter is
       -- "*" --
       ---------
 
-      function "*" (Left : RGBA; Right : A0B.Types.Integer_32) return RGBA is
+      function "*" (Left : RGBA8888; Right : A0B.Types.Integer_32) return RGBA8888 is
          use type A0B.Types.Unsigned_32;
 
          RB : A0B.Types.Unsigned_32 := A0B.Types.Unsigned_32 (Left);
@@ -109,25 +110,25 @@ package body GFX.Painter is
 
       begin
          RB := @  and 16#00FF_00FF#;
-         RB := @ * A0B.Types.Unsigned_32 (Right);
-         RB := @ + (A0B.Types.Shift_Right (@, 8) and 16#00FF_00FF#);
+         RB := @ * Unsigned_32 (Right);
+         RB := @ + (Shift_Right (@, 8) and 16#00FF_00FF#);
          RB := @ + 16#0080_0080#;
          RB := @ and 16#FF00_FF00#;
 
          GA := @  and 16#00FF_00FF#;
-         GA := @ * A0B.Types.Unsigned_32 (Right);
-         GA := @ + (A0B.Types.Shift_Right (@, 8) and 16#00FF_00FF#);
+         GA := @ * Unsigned_32 (Right);
+         GA := @ + (Shift_Right (@, 8) and 16#00FF_00FF#);
          GA := @ + 16#0080_0080#;
          GA := @ and 16#FF00_FF00#;
 
-         return RGBA (A0B.Types.Shift_Right (RB, 8) or GA);
+         return RGBA8888 (A0B.Types.Shift_Right (RB, 8) or GA);
       end "*";
 
       -----------
       -- Blend --
       -----------
 
-      function Blend (V : RGBA; C : RGBA) return RGBA is
+      function Blend (V : RGBA8888; C : RGBA8888) return RGBA8888 is
          use type A0B.Types.Unsigned_32;
 
       begin
@@ -147,13 +148,10 @@ package body GFX.Painter is
       is
          XU : constant A0B.Types.Unsigned_32 := A0B.Types.Unsigned_32 (X);
          YU : constant A0B.Types.Unsigned_32 := A0B.Types.Unsigned_32 (Y);
-         C  : constant RGBA := Color * A;
+         C  : constant RGBA8888 := Color * A;
 
       begin
-         PPM.Set_Pixel
-           (XU,
-            YU,
-            Blend (PPM.Get_Pixel (XU, YU), C));
+         Set_Pixel (XU, YU, Blend (Get_Pixel (XU, YU), C));
       end Draw_Pixel;
 
       --  Digital Differential Analyzer (DDA) algorithm is used to draw
@@ -367,7 +365,8 @@ package body GFX.Painter is
 
    begin
       return
-        To_Integer_32 (A0B.Types.Shift_Right_Arithmetic (To_Unsigned_32 (Item), Amount));
+        To_Integer_32
+          (A0B.Types.Shift_Right_Arithmetic (To_Unsigned_32 (Item), Amount));
    end Shift_Right_Arithmetic;
 
    ------------------------

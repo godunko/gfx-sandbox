@@ -4,13 +4,25 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+with A0B.Types;
+
+generic
+   with function Get_Pixel
+     (X : A0B.Types.Unsigned_32;
+      Y : A0B.Types.Unsigned_32) return GFX.RGBA8888;
+
+   with procedure Set_Pixel
+     (X     : A0B.Types.Unsigned_32;
+      Y     : A0B.Types.Unsigned_32;
+      Color : GFX.RGBA8888);
+
 package GFX.Painter
   --  with Pure
 is
 
    procedure Draw_Line
      (X1, Y1, X2, Y2 : GFX.Real;
-      Color          : RGBA);
+      Color          : RGBA8888);
 
 private
 

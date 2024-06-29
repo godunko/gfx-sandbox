@@ -16,11 +16,11 @@ package GFX.PPM is
    procedure Set_Pixel
      (X     : A0B.Types.Unsigned_32;
       Y     : A0B.Types.Unsigned_32;
-      Color : GFX.RGBA);
+      Color : GFX.RGBA8888);
 
    function Get_Pixel
      (X : A0B.Types.Unsigned_32;
-      Y : A0B.Types.Unsigned_32) return GFX.RGBA;
+      Y : A0B.Types.Unsigned_32) return GFX.RGBA8888;
 
    procedure Save (File_Name : String);
 

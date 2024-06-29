@@ -13,7 +13,7 @@ package body GFX.PPM is
 
    type Raster is
      array (A0B.Types.Unsigned_32 range <>, A0B.Types.Unsigned_32 range <>)
-       of GFX.RGBA;
+       of GFX.RGBA8888;
 
    type Raster_Access is access all Raster;
 
@@ -32,7 +32,7 @@ package body GFX.PPM is
 
    function Get_Pixel
      (X : A0B.Types.Unsigned_32;
-      Y : A0B.Types.Unsigned_32) return GFX.RGBA is
+      Y : A0B.Types.Unsigned_32) return GFX.RGBA8888 is
    begin
       return Buffer (X, Y);
    end Get_Pixel;
@@ -93,7 +93,7 @@ package body GFX.PPM is
    procedure Set_Pixel
      (X     : A0B.Types.Unsigned_32;
       Y     : A0B.Types.Unsigned_32;
-      Color : GFX.RGBA) is
+      Color : GFX.RGBA8888) is
    begin
       Buffer (X, Y) := Color;
    end Set_Pixel;

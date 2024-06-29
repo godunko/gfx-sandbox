@@ -8,7 +8,13 @@ with GFX.Painter;
 with GFX.PPM;
 
 procedure Demo.Driver is
-   Color : constant GFX.RGBA := GFX.To_RGBA (0, 255, 0, 255);
+
+   package Painter is
+     new GFX.Painter
+       (Get_Pixel => GFX.PPM.Get_Pixel,
+        Set_Pixel => GFX.PPM.Set_Pixel);
+
+   Color : constant GFX.RGBA8888 := GFX.To_RGBA (0, 255, 0, 255);
 
 begin
    GFX.PPM.Set_Size (800, 480);
@@ -19,18 +25,18 @@ begin
    --  GFX.PPM.Set_Pixel (1, 1, 16#00FF_FFFF#);
    --  GFX.PPM.Set_Pixel (2, 1, 16#0000_0000#);
 
-   GFX.Painter.Draw_Line (10.0, 50.0, 15.0, 50.0, Color);
-   GFX.Painter.Draw_Line (16.0, 70.0, 21.0, 70.0, Color);
+   Painter.Draw_Line (10.0, 50.0, 15.0, 50.0, Color);
+   Painter.Draw_Line (16.0, 70.0, 21.0, 70.0, Color);
 
-   GFX.Painter.Draw_Line (15.0, 50.0, 16.0, 70.0, Color);
-   GFX.Painter.Draw_Line (34.5, 50.0, 35.5, 70.0, Color);
-   GFX.Painter.Draw_Line (55.0, 49.5, 56.0, 69.5, Color);
-   GFX.Painter.Draw_Line (74.5, 49.5, 75.5, 69.5, Color);
+   Painter.Draw_Line (15.0, 50.0, 16.0, 70.0, Color);
+   Painter.Draw_Line (34.5, 50.0, 35.5, 70.0, Color);
+   Painter.Draw_Line (55.0, 49.5, 56.0, 69.5, Color);
+   Painter.Draw_Line (74.5, 49.5, 75.5, 69.5, Color);
 
-   GFX.Painter.Draw_Line (16.0, 80.0, 15.0, 100.0, Color);
-   GFX.Painter.Draw_Line (35.5, 80.0, 34.5, 100.0, Color);
-   GFX.Painter.Draw_Line (56.0, 79.5, 55.0, 99.5, Color);
-   GFX.Painter.Draw_Line (75.5, 79.5, 74.5, 99.5, Color);
+   Painter.Draw_Line (16.0, 80.0, 15.0, 100.0, Color);
+   Painter.Draw_Line (35.5, 80.0, 34.5, 100.0, Color);
+   Painter.Draw_Line (56.0, 79.5, 55.0, 99.5, Color);
+   Painter.Draw_Line (75.5, 79.5, 74.5, 99.5, Color);
 
    --  GFX.Painter.Draw_Line (100.0, 50.0, 300.0, 190.0, 16#00FFFFFF#);
 

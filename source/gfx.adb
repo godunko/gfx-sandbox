@@ -10,7 +10,7 @@ package body GFX is
    -- To_RGBA --
    -------------
 
-   function To_RGBA (R, G, B, A : A0B.Types.Unsigned_8) return RGBA is
+   function To_RGBA (R, G, B, A : A0B.Types.Unsigned_8) return RGBA8888 is
       use type A0B.Types.Unsigned_32;
 
       RC : constant A0B.Types.Unsigned_32 := A0B.Types.Unsigned_32 (R);
@@ -22,7 +22,7 @@ package body GFX is
         A0B.Types.Shift_Left (A0B.Types.Unsigned_32 (A), 8);
 
    begin
-      return RGBA (RC or GC or BC or AC);
+      return RGBA8888 (RC or GC or BC or AC);
    end To_RGBA;
 
 end GFX;

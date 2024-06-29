@@ -14,12 +14,12 @@ is
 
    type Real is new Interfaces.IEEE_Float_32;
 
-   type RGBA is private;
+   type RGBA8888 is private;
 
-   function To_RGBA (R, G, B, A : A0B.Types.Unsigned_8) return RGBA;
+   function To_RGBA (R, G, B, A : A0B.Types.Unsigned_8) return RGBA8888;
 
 private
 
-   type RGBA is new A0B.Types.Unsigned_32;
+   type RGBA8888 is new A0B.Types.Unsigned_32;
 
 end GFX;
