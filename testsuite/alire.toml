@@ -1,0 +1,22 @@
+name = "gfx_testsuite"
+description = "GFX Native Testsuite"
+version = "0.1.0-dev"
+
+authors = ["Vadim Godunko"]
+maintainers = ["Vadim Godunko <vgodunko@gmail.com>"]
+maintainers-logins = ["godunko"]
+licenses = "Apache-2.0 WITH LLVM-exception"
+tags = ["embedded"]
+
+project-files = ["../gnat/tests/gfx_tests.gpr"]
+
+[configuration]
+generate_c = false
+generate_ada = false
+
+[[depends-on]]
+gfx_sandbox = "*"
+gnat_native = "*"
+
+[[pins]]
+gfx_sandbox = { path='..' }

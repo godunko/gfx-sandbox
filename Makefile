@@ -7,9 +7,12 @@ gimp: build
 	./bin/gfx-driver
 	gimp out.ppm
 
-check: build
+check: build-testsuite
 	./testsuite/bin/test1
 	diff -u testsuite/test1.ppm out.ppm
+
+build-testsuite:
+	cd testsuite && alr build
 
 build:
 	alr build -- -cargs -O0
