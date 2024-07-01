@@ -14,20 +14,6 @@ package body GFX.ILI9488 is
 
    procedure PendSV_Handler is null
      with Export, Convention => C, External_Name => "PendSV_Handler";
-   --  type Raster is
-   --    array (A0B.Types.Unsigned_32 range <>, A0B.Types.Unsigned_32 range <>)
-   --      of GFX.RGBA8888;
-   --
-   --  type Raster_Access is access all Raster;
-   --
-   --  Buffer : Raster_Access;
-   --
-   --  type RGBA is record
-   --     R : A0B.Types.Unsigned_8;
-   --     G : A0B.Types.Unsigned_8;
-   --     B : A0B.Types.Unsigned_8;
-   --     A : A0B.Types.Unsigned_8;
-   --  end record with Size => 32;
 
    MISO  : A0B.STM32F407.GPIO.GPIO_Line renames A0B.STM32F407.GPIO.PA6;
    MOSI  : A0B.STM32F407.GPIO.GPIO_Line renames A0B.STM32F407.GPIO.PA7;
@@ -45,12 +31,14 @@ package body GFX.ILI9488 is
    PASET  : constant ILI9488_Command := 16#2B#;
    RAMWR  : constant ILI9488_Command := 16#2C#;
    RAMRD  : constant ILI9488_Command := 16#2E#;
-   --  MADCTL : constant ILI9488_Command := 16#36#;
+   MADCTL : constant ILI9488_Command := 16#36#;
    COLMOD : constant ILI9488_Command := 16#3A#;
 
    procedure Command (Command : ILI9488_Command);
 
    procedure Set_COLMOD;
+
+   procedure Set_MADCTL;
 
    procedure Set_CAPA
      (SX : A0B.Types.Unsigned_16;
@@ -101,7 +89,6 @@ package body GFX.ILI9488 is
       A0B.Delays.Delay_For (A0B.Time.Milliseconds (120));
 
       Command (SLPOUT);
-
       A0B.Delays.Delay_For (A0B.Time.Milliseconds (120));
 
       Command (DISON);
@@ -109,9 +96,12 @@ package body GFX.ILI9488 is
 
       LED.Set (True);
 
-      --  Set_COLMOD;
-      --  Set_CAPA (0, 479, 0, 319);
-      Set_CAPA (0, 319, 0, 479);
+      Set_COLMOD;
+      Set_MADCTL;
+      A0B.Delays.Delay_For (A0B.Time.Milliseconds (1));
+      --  It is unclear why this delay is necessary.
+
+      Set_CAPA (0, 479, 0, 319);
 
       Fill;
    end Enable;
@@ -257,51 +247,20 @@ package body GFX.ILI9488 is
       SPI.Transmit_Command (COLMOD);
       SPI.Transmit_Data (2#0110_0110#);
       SPI.Disable;
-
-      --  SPI1_Periph.CR1.SPE := True;
-      --  DC.Set (False);
-      --
-      --  SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (COLMOD);
-      --
-      --  while not SPI1_Periph.SR.RXNE loop
-      --     null;
-      --  end loop;
-      --
-      --  Aux := SPI1_Periph.DR.DR;
-      --
-      --  while not SPI1_Periph.SR.TXE loop
-      --     null;
-      --  end loop;
-      --
-      --  DC.Set (True);
-
-      --  for J in 0 .. 320*480 - 1 loop
-      --  SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (2#0110_0110#);
-      --
-      --  while not SPI1_Periph.SR.RXNE loop
-      --     null;
-      --  end loop;
-      --
-      --  Aux := SPI1_Periph.DR.DR;
-
-      --     while not SPI1_Periph.SR.TXE loop
-      --        null;
-      --     end loop;
-      --
-      --  end loop;
-
-      --  Shutdown
-
-      --  while not SPI1_Periph.SR.TXE loop
-      --     null;
-      --  end loop;
-      --
-      --  while SPI1_Periph.SR.BSY loop
-      --     null;
-      --  end loop;
-      --
-      --  SPI1_Periph.CR1.SPE := False;
    end Set_COLMOD;
+
+   ----------------
+   -- Set_MADCTL --
+   ----------------
+
+   procedure Set_MADCTL is
+   begin
+      SPI.Enable;
+      SPI.Transmit_Command (MADCTL);
+      SPI.Transmit_Data (2#0010_0000#);
+      --  D5: Row/Column Exchange
+      SPI.Disable;
+   end Set_MADCTL;
 
    ---------------
    -- Set_Pixel --
