@@ -46,7 +46,7 @@ package body GFX.ILI9488 is
    CASET  : constant ILI9488_Command := 16#2A#;
    PASET  : constant ILI9488_Command := 16#2B#;
    RAMWR  : constant ILI9488_Command := 16#2C#;
-   --  RAMRD  : constant ILI9488_Command := 16#2E#;
+   RAMRD  : constant ILI9488_Command := 16#2E#;
    --  MADCTL : constant ILI9488_Command := 16#36#;
    COLMOD : constant ILI9488_Command := 16#3A#;
 
@@ -63,6 +63,10 @@ package body GFX.ILI9488 is
    procedure Fill;
 
    procedure Transmit (Byte : A0B.Types.Unsigned_8);
+
+   procedure Receive (Byte : out A0B.Types.Unsigned_8);
+
+   procedure Transmit_Command (Command : ILI9488_Command);
 
    -------------
    -- Command --
@@ -162,7 +166,7 @@ package body GFX.ILI9488 is
             null;
          end loop;
 
-         SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (16#FF#);
+         SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (16#00#);
 
          while not SPI1_Periph.SR.RXNE loop
             null;
@@ -174,7 +178,7 @@ package body GFX.ILI9488 is
             null;
          end loop;
 
-         SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (16#FF#);
+         SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (16#00#);
 
          while not SPI1_Periph.SR.RXNE loop
             null;
@@ -206,10 +210,39 @@ package body GFX.ILI9488 is
 
    function Get_Pixel
      (X : A0B.Types.Unsigned_32;
-      Y : A0B.Types.Unsigned_32) return GFX.RGBA8888 is
+      Y : A0B.Types.Unsigned_32) return GFX.RGBA8888
+   is
+      R : A0B.Types.Unsigned_8;
+      G : A0B.Types.Unsigned_8;
+      B : A0B.Types.Unsigned_8;
+
    begin
-      return 0;
-   --     return Buffer (X, Y);
+      Set_CAPA
+        (A0B.Types.Unsigned_16 (X),
+         A0B.Types.Unsigned_16 (X),
+         A0B.Types.Unsigned_16 (Y),
+         A0B.Types.Unsigned_16 (Y));
+
+      --  Enable SPI
+
+      SPI1_Periph.CR1.SPE := True;
+
+      --  Read GRAM at pixel
+
+      Transmit_Command (RAMRD);
+      Receive (R);
+      Receive (G);
+      Receive (B);
+
+      --  Disable SPI
+
+      while SPI1_Periph.SR.BSY loop
+         null;
+      end loop;
+
+      SPI1_Periph.CR1.SPE := False;
+
+      return GFX.To_RGBA (R, G, B, 16#FF#);
    end Get_Pixel;
 
    ----------------
@@ -285,6 +318,25 @@ package body GFX.ILI9488 is
         (Speed => A0B.STM32F407.GPIO.Low,
          Pull  => A0B.STM32F407.GPIO.Pull_Up);
    end Initialize;
+
+   -------------
+   -- Receive --
+   -------------
+
+   procedure Receive (Byte : out A0B.Types.Unsigned_8) is
+   begin
+      SPI1_Periph.DR.DR := 0;
+
+      while not SPI1_Periph.SR.RXNE loop
+         null;
+      end loop;
+
+      Byte := A0B.Types.Unsigned_8 (SPI1_Periph.DR.DR);
+
+      while not SPI1_Periph.SR.TXE loop
+         null;
+      end loop;
+   end Receive;
 
    --------------
    -- Set_CAPA --
@@ -444,19 +496,22 @@ package body GFX.ILI9488 is
 
       SPI1_Periph.CR1.SPE := True;
 
-      --  Set Column Address (horizontal range)
+      --  Write GRAM at pixel
 
-      DC.Set (False);
-      Transmit (A0B.Types.Unsigned_8 (RAMWR));
-
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
-
-      DC.Set (True);
+      Transmit_Command (RAMWR);
+      --  DC.Set (False);
+      --  Transmit (A0B.Types.Unsigned_8 (RAMWR));
+      --
+      --  while SPI1_Periph.SR.BSY loop
+      --     null;
+      --  end loop;
+      --
+      --  DC.Set (True);
       Transmit (R);
       Transmit (G);
       Transmit (B);
+
+      --  Disable SPI
 
       while SPI1_Periph.SR.BSY loop
          null;
@@ -485,5 +540,21 @@ package body GFX.ILI9488 is
          null;
       end loop;
    end Transmit;
+
+   ----------------------
+   -- Transmit_Command --
+   ----------------------
+
+   procedure Transmit_Command (Command : ILI9488_Command) is
+   begin
+      DC.Set (False);
+      Transmit (A0B.Types.Unsigned_8 (Command));
+
+      while SPI1_Periph.SR.BSY loop
+         null;
+      end loop;
+
+      DC.Set (True);
+   end Transmit_Command;
 
 end GFX.ILI9488;
