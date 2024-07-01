@@ -18,6 +18,13 @@ is
 
    function To_RGBA (R, G, B, A : A0B.Types.Unsigned_8) return RGBA8888;
 
+   procedure From_RGBA8888
+     (C : RGBA8888;
+      R : out A0B.Types.Unsigned_8;
+      G : out A0B.Types.Unsigned_8;
+      B : out A0B.Types.Unsigned_8;
+      A : out A0B.Types.Unsigned_8);
+
 private
 
    type RGBA8888 is new A0B.Types.Unsigned_32;
