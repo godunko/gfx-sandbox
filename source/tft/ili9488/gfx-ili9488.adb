@@ -54,9 +54,15 @@ package body GFX.ILI9488 is
 
    procedure Set_COLMOD;
 
-   procedure Set_CAPA;
+   procedure Set_CAPA
+     (SX : A0B.Types.Unsigned_16;
+      EX : A0B.Types.Unsigned_16;
+      SY : A0B.Types.Unsigned_16;
+      EY : A0B.Types.Unsigned_16);
 
    procedure Fill;
+
+   procedure Transmit (Byte : A0B.Types.Unsigned_8);
 
    -------------
    -- Command --
@@ -112,7 +118,8 @@ package body GFX.ILI9488 is
       LED.Set (True);
 
       Set_COLMOD;
-      Set_CAPA;
+      --  Set_CAPA (0, 479, 0, 319);
+      Set_CAPA (0, 319, 0, 479);
 
       Fill;
    end Enable;
@@ -283,83 +290,76 @@ package body GFX.ILI9488 is
    -- Set_CAPA --
    --------------
 
-   procedure Set_CAPA is
+   procedure Set_CAPA
+     (SX : A0B.Types.Unsigned_16;
+      EX : A0B.Types.Unsigned_16;
+      SY : A0B.Types.Unsigned_16;
+      EY : A0B.Types.Unsigned_16)
+   is
+      use type A0B.Types.Unsigned_16;
 
-      procedure Transmit (Byte : A0B.Types.Unsigned_8);
+      SXH : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (A0B.Types.Shift_Right (SX, 8));
+      SXL : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (SX and 16#FF#);
+      EXH : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (A0B.Types.Shift_Right (EX, 8));
+      EXL : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (EX and 16#FF#);
 
-      procedure Transmit (Byte : A0B.Types.Unsigned_8) is
-         Aux : A0B.Types.Unsigned_16 with Unreferenced;
-
-      begin
-         SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (Byte);
-
-         while not SPI1_Periph.SR.RXNE loop
-            null;
-         end loop;
-
-         Aux := SPI1_Periph.DR.DR;
-
-         while not SPI1_Periph.SR.TXE loop
-            null;
-         end loop;
-      end Transmit;
+      SYH : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (A0B.Types.Shift_Right (SY, 8));
+      SYL : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (SY and 16#FF#);
+      EYH : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (A0B.Types.Shift_Right (EY, 8));
+      EYL : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (EY and 16#FF#);
 
    begin
+      --  Enable SPI
+
       SPI1_Periph.CR1.SPE := True;
+
+      --  Set Column Address (horizontal range)
 
       DC.Set (False);
       Transmit (A0B.Types.Unsigned_8 (CASET));
-      --  SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (CASET);
-      --
-      --  while not SPI1_Periph.SR.RXNE loop
-      --     null;
-      --  end loop;
-      --
-      --  Aux := SPI1_Periph.DR.DR;
-      --
-      --  while not SPI1_Periph.SR.TXE loop
-      --     null;
-      --  end loop;
-
-      DC.Set (True);
-      Transmit (16#00#);
-      Transmit (16#00#);
-      Transmit (16#01#);
-      Transmit (16#3F#);
-
-      DC.Set (False);
-      Transmit (A0B.Types.Unsigned_8 (PASET));
-
-      DC.Set (True);
-      Transmit (16#00#);
-      Transmit (16#00#);
-      Transmit (16#01#);
-      Transmit (16#DF#);
-
-      --  for J in 0 .. 320*480 - 1 loop
-      --  SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (2#0100_0100#);
-      --
-      --  while not SPI1_Periph.SR.RXNE loop
-      --     null;
-      --  end loop;
-      --
-      --  Aux := SPI1_Periph.DR.DR;
-      --
-      --  --     while not SPI1_Periph.SR.TXE loop
-      --  --        null;
-      --  --     end loop;
-      --  --
-      --  --  end loop;
-
-      --  Shutdown
-
-      while not SPI1_Periph.SR.TXE loop
-         null;
-      end loop;
 
       while SPI1_Periph.SR.BSY loop
          null;
       end loop;
+
+      DC.Set (True);
+      Transmit (SXH);
+      Transmit (SXL);
+      Transmit (EXH);
+      Transmit (EXL);
+
+      while SPI1_Periph.SR.BSY loop
+         null;
+      end loop;
+
+      --  Set Page Address (vertical range)
+
+      DC.Set (False);
+      Transmit (A0B.Types.Unsigned_8 (PASET));
+
+      while SPI1_Periph.SR.BSY loop
+         null;
+      end loop;
+
+      DC.Set (True);
+      Transmit (SYH);
+      Transmit (SYL);
+      Transmit (EYH);
+      Transmit (EYL);
+
+      while SPI1_Periph.SR.BSY loop
+         null;
+      end loop;
+
+      --  Disalble SPI
 
       SPI1_Periph.CR1.SPE := False;
    end Set_CAPA;
@@ -429,5 +429,26 @@ package body GFX.ILI9488 is
       null;
    --     Buffer (X, Y) := Color;
    end Set_Pixel;
+
+   --------------
+   -- Transmit --
+   --------------
+
+   procedure Transmit (Byte : A0B.Types.Unsigned_8) is
+      Aux : A0B.Types.Unsigned_16 with Unreferenced;
+
+   begin
+      SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (Byte);
+
+      while not SPI1_Periph.SR.RXNE loop
+         null;
+      end loop;
+
+      Aux := SPI1_Periph.DR.DR;
+
+      while not SPI1_Periph.SR.TXE loop
+         null;
+      end loop;
+   end Transmit;
 
 end GFX.ILI9488;
