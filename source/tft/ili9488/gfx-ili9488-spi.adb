@@ -21,6 +21,8 @@ package body SPI is
    --  RESET : A0B.STM32F407.GPIO.GPIO_Line renames A0B.STM32F407.GPIO.PA1;
    --  LED   : A0B.STM32F407.GPIO.GPIO_Line renames A0B.STM32F407.GPIO.PA3;
 
+   procedure Transmit (Byte : A0B.Types.Unsigned_8);
+
    -------------
    -- Disable --
    -------------
@@ -130,11 +132,11 @@ package body SPI is
       end loop;
    end Receive_Data;
 
-   -------------------
-   -- Transmit_Data --
-   -------------------
+   --------------
+   -- Transmit --
+   --------------
 
-   procedure Transmit_Data (Byte : A0B.Types.Unsigned_8) is
+   procedure Transmit (Byte : A0B.Types.Unsigned_8) is
       Aux : A0B.Types.Unsigned_16 with Unreferenced;
 
    begin
@@ -149,6 +151,15 @@ package body SPI is
       while not SPI1_Periph.SR.TXE loop
          null;
       end loop;
+   end Transmit;
+
+   -------------------
+   -- Transmit_Data --
+   -------------------
+
+   procedure Transmit_Data (Byte : A0B.Types.Unsigned_8) is
+   begin
+      Transmit (Byte);
    end Transmit_Data;
 
    ----------------------
@@ -158,7 +169,7 @@ package body SPI is
    procedure Transmit_Command (Command : ILI9488_Command) is
    begin
       DC.Set (False);
-      Transmit_Data (A0B.Types.Unsigned_8 (Command));
+      Transmit (A0B.Types.Unsigned_8 (Command));
 
       while SPI1_Periph.SR.BSY loop
          null;
