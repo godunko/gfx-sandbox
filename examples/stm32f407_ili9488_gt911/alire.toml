@@ -15,9 +15,19 @@ generate_c = false
 generate_ada = false
 
 [[depends-on]]
-a0b_base = "*"
+a0b_armv7m_systick_clock_timer = "*"
+a0b_stm32f407_gpio = "*"
 gfx_sandbox = "*"
 light_stm32f4disco = "*"
 
 [[pins]]
 gfx_sandbox = { path='../..' }
+
+[[pins]]
+a0b_callbacks = { path='../../../a0b-callbacks' }
+a0b_exti = { path='../../../a0b-exti' }
+a0b_stm32f407 = { path='../../../a0b-stm32f407' }
+a0b_stm32f407_gpio = { path='../../../a0b-stm32f407-gpio' }
+a0b_time = { path='../../../a0b-time' }
+a0b_timer = { path='../../../a0b-timer' }
+ada_synchronous_task_control = { path='../../../ada_synchronous_task_control' }

@@ -19,11 +19,17 @@ build-testsuite:
 build:
 	cd examples/native && alr build -- -cargs -O0
 
+build-stm32f407:
+	cd examples/stm32f407_ili9488_gt911 && alr build
+
 clean:
 	rm -rf .objs bin config alire
 
 gdb: build
 	gdb --command=gdbinit ./bin/gfx-driver
+
+gdb-stm32f407:
+	cd examples/stm32f407_ili9488_gt911 && eval `alr printenv` && arm-eabi-gdb bin/demo.elf
 
 asm:
 	alr build -- -c -u -f gfx-painter.adb -cargs -S -O2
