@@ -8,8 +8,6 @@
 
 with A0B.Delays;
 with A0B.STM32F407.GPIO;
-with A0B.STM32F407.SVD.RCC; use A0B.STM32F407.SVD.RCC;
-with A0B.STM32F407.SVD.SPI; use A0B.STM32F407.SVD.SPI;
 with A0B.Time;
 
 package body GFX.ILI9488 is
@@ -62,40 +60,33 @@ package body GFX.ILI9488 is
 
    procedure Fill;
 
-   procedure Transmit (Byte : A0B.Types.Unsigned_8);
+   package SPI is
 
-   procedure Receive (Byte : out A0B.Types.Unsigned_8);
+      procedure Initialize;
 
-   procedure Transmit_Command (Command : ILI9488_Command);
+      procedure Enable;
+
+      procedure Disable;
+
+      procedure Transmit_Data (Byte : A0B.Types.Unsigned_8);
+
+      procedure Receive_Data (Byte : out A0B.Types.Unsigned_8);
+
+      procedure Transmit_Command (Command : ILI9488_Command);
+
+      procedure Wait_Non_Busy;
+
+   end SPI;
 
    -------------
    -- Command --
    -------------
 
    procedure Command (Command : ILI9488_Command) is
-      Aux : A0B.Types.Unsigned_16 with Unreferenced;
-
    begin
-      SPI1_Periph.CR1.SPE := True;
-      DC.Set (False);
-
-      SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (Command);
-
-      while not SPI1_Periph.SR.RXNE loop
-         null;
-      end loop;
-
-      Aux := SPI1_Periph.DR.DR;
-
-      while not SPI1_Periph.SR.TXE loop
-         null;
-      end loop;
-
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
-
-      SPI1_Periph.CR1.SPE := False;
+      SPI.Enable;
+      SPI.Transmit_Command (Command);
+      SPI.Disable;
    end Command;
 
    ------------
@@ -112,16 +103,13 @@ package body GFX.ILI9488 is
       Command (SLPOUT);
 
       A0B.Delays.Delay_For (A0B.Time.Milliseconds (120));
-      --  for J in 1 .. 84_000_000 loop
-      --     null;
-      --  end loop;
 
       Command (DISON);
       A0B.Delays.Delay_For (A0B.Time.Milliseconds (120));
 
       LED.Set (True);
 
-      Set_COLMOD;
+      --  Set_COLMOD;
       --  Set_CAPA (0, 479, 0, 319);
       Set_CAPA (0, 319, 0, 479);
 
@@ -133,75 +121,17 @@ package body GFX.ILI9488 is
    ----------
 
    procedure Fill is
-      Aux : A0B.Types.Unsigned_16 with Unreferenced;
-
    begin
-      SPI1_Periph.CR1.SPE := True;
-      DC.Set (False);
-
-      SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (RAMWR);
-
-      while not SPI1_Periph.SR.RXNE loop
-         null;
-      end loop;
-
-      Aux := SPI1_Periph.DR.DR;
-
-      while not SPI1_Periph.SR.TXE loop
-         null;
-      end loop;
-
-      DC.Set (True);
+      SPI.Enable;
+      SPI.Transmit_Command (RAMWR);
 
       for J in 0 .. (320 * 480 * 1) - 1 loop
-         SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (16#00#);
-
-         while not SPI1_Periph.SR.RXNE loop
-            null;
-         end loop;
-
-         Aux := SPI1_Periph.DR.DR;
-
-         while not SPI1_Periph.SR.TXE loop
-            null;
-         end loop;
-
-         SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (16#00#);
-
-         while not SPI1_Periph.SR.RXNE loop
-            null;
-         end loop;
-
-         Aux := SPI1_Periph.DR.DR;
-
-         while not SPI1_Periph.SR.TXE loop
-            null;
-         end loop;
-
-         SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (16#00#);
-
-         while not SPI1_Periph.SR.RXNE loop
-            null;
-         end loop;
-
-         Aux := SPI1_Periph.DR.DR;
-
-         while not SPI1_Periph.SR.TXE loop
-            null;
-         end loop;
+         SPI.Transmit_Data (16#00#);
+         SPI.Transmit_Data (16#00#);
+         SPI.Transmit_Data (16#00#);
       end loop;
 
-      --  Shutdown
-
-      while not SPI1_Periph.SR.TXE loop
-         null;
-      end loop;
-
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
-
-      SPI1_Periph.CR1.SPE := False;
+      SPI.Disable;
    end Fill;
 
    ---------------
@@ -225,22 +155,18 @@ package body GFX.ILI9488 is
 
       --  Enable SPI
 
-      SPI1_Periph.CR1.SPE := True;
+      SPI.Enable;
 
       --  Read GRAM at pixel
 
-      Transmit_Command (RAMRD);
-      Receive (R);
-      Receive (G);
-      Receive (B);
+      SPI.Transmit_Command (RAMRD);
+      SPI.Receive_Data (R);
+      SPI.Receive_Data (G);
+      SPI.Receive_Data (B);
 
       --  Disable SPI
 
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
-
-      SPI1_Periph.CR1.SPE := False;
+      SPI.Disable;
 
       return GFX.To_RGBA (R, G, B, 16#FF#);
    end Get_Pixel;
@@ -251,66 +177,8 @@ package body GFX.ILI9488 is
 
    procedure Initialize is
    begin
-      RCC_Periph.AHB1ENR.GPIOAEN := True;
-      RCC_Periph.APB2ENR.SPI1EN := True;
+      SPI.Initialize;
 
-      SPI1_Periph.CR1.SPE := False;
-      --  Disable SPI to be able to configure it.
-
-      SPI1_Periph.CR1 :=
-        (CPHA     => False,
-         --  The first clock transition is the first data capture edge
-         CPOL     => False,   --  CK to 0 when idle
-         MSTR     => True,    --  Master configuration
-         BR       => 2#001#,  --  fPCLK/4
-         --  BR       => 2#011#,  --  fPCLK/16
-         SPE      => False,   --  Peripheral disabled
-         LSBFIRST => False,   --  MSB transmitted first
-         SSI      => False,
-         SSM      => False,   --  Software slave management disabled
-         RXONLY   => False,   --  Full duplex (Transmit and receive)
-         DFF      => False,
-         --  8-bit data frame format is selected for transmission/reception
-         CRCNEXT  => False,
-         CRCEN    => False,   --  CRC calculation disabled
-         BIDIOE   => False,
-         BIDIMODE => False,   -- 2-line unidirectional data mode selected
-         others   => <>);
-
-      SPI1_Periph.CR2 :=
-        (RXDMAEN => False,  --  Rx buffer DMA disabled
-         TXDMAEN => False,  --  Tx buffer DMA disabled
-         SSOE    => True,
-         --  SS output is enabled in master mode and when the cell is enabled.
-         --  The cell cannot work in a multimaster environment.
-         FRF     => False,  --  SPI Motorola mode
-         ERRIE   => False,
-         RXNEIE  => False,
-         TXEIE   => False,
-         others  => <>);
-
-      SPI1_Periph.CR1.SPE := True;
-
-      MISO.Configure_Alternative_Function
-        (A0B.STM32F407.SPI1_MISO,
-         Speed => A0B.STM32F407.GPIO.Very_High,
-         Pull  => A0B.STM32F407.GPIO.Pull_Up);
-      MOSI.Configure_Alternative_Function
-        (A0B.STM32F407.SPI1_MOSI,
-         Speed => A0B.STM32F407.GPIO.Very_High,
-         Pull  => A0B.STM32F407.GPIO.Pull_Up);
-      SCK.Configure_Alternative_Function
-        (A0B.STM32F407.SPI1_SCK,
-         Speed => A0B.STM32F407.GPIO.Very_High,
-         Pull  => A0B.STM32F407.GPIO.Pull_Up);
-      NSS.Configure_Alternative_Function
-        (A0B.STM32F407.SPI1_NSS,
-         Speed => A0B.STM32F407.GPIO.Very_High,
-         Pull  => A0B.STM32F407.GPIO.Pull_Up);
-
-      DC.Configure_Output
-        (Speed => A0B.STM32F407.GPIO.Very_High,
-         Pull  => A0B.STM32F407.GPIO.Pull_Up);
       RESET.Configure_Output
         (Speed => A0B.STM32F407.GPIO.Very_High,
          Pull  => A0B.STM32F407.GPIO.Pull_Up);
@@ -318,25 +186,6 @@ package body GFX.ILI9488 is
         (Speed => A0B.STM32F407.GPIO.Low,
          Pull  => A0B.STM32F407.GPIO.Pull_Up);
    end Initialize;
-
-   -------------
-   -- Receive --
-   -------------
-
-   procedure Receive (Byte : out A0B.Types.Unsigned_8) is
-   begin
-      SPI1_Periph.DR.DR := 0;
-
-      while not SPI1_Periph.SR.RXNE loop
-         null;
-      end loop;
-
-      Byte := A0B.Types.Unsigned_8 (SPI1_Periph.DR.DR);
-
-      while not SPI1_Periph.SR.TXE loop
-         null;
-      end loop;
-   end Receive;
 
    --------------
    -- Set_CAPA --
@@ -371,49 +220,29 @@ package body GFX.ILI9488 is
    begin
       --  Enable SPI
 
-      SPI1_Periph.CR1.SPE := True;
+      SPI.Enable;
 
       --  Set Column Address (horizontal range)
 
-      DC.Set (False);
-      Transmit (A0B.Types.Unsigned_8 (CASET));
+      SPI.Transmit_Command (CASET);
+      SPI.Transmit_Data (SXH);
+      SPI.Transmit_Data (SXL);
+      SPI.Transmit_Data (EXH);
+      SPI.Transmit_Data (EXL);
 
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
-
-      DC.Set (True);
-      Transmit (SXH);
-      Transmit (SXL);
-      Transmit (EXH);
-      Transmit (EXL);
-
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
+      SPI.Wait_Non_Busy;
 
       --  Set Page Address (vertical range)
 
-      DC.Set (False);
-      Transmit (A0B.Types.Unsigned_8 (PASET));
-
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
-
-      DC.Set (True);
-      Transmit (SYH);
-      Transmit (SYL);
-      Transmit (EYH);
-      Transmit (EYL);
-
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
+      SPI.Transmit_Command (PASET);
+      SPI.Transmit_Data (SYH);
+      SPI.Transmit_Data (SYL);
+      SPI.Transmit_Data (EYH);
+      SPI.Transmit_Data (EYL);
 
       --  Disalble SPI
 
-      SPI1_Periph.CR1.SPE := False;
+      SPI.Disable;
    end Set_CAPA;
 
    ----------------
@@ -424,31 +253,36 @@ package body GFX.ILI9488 is
       Aux : A0B.Types.Unsigned_16 with Unreferenced;
 
    begin
-      SPI1_Periph.CR1.SPE := True;
-      DC.Set (False);
+      SPI.Enable;
+      SPI.Transmit_Command (COLMOD);
+      SPI.Transmit_Data (2#0110_0110#);
+      SPI.Disable;
 
-      SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (COLMOD);
-
-      while not SPI1_Periph.SR.RXNE loop
-         null;
-      end loop;
-
-      Aux := SPI1_Periph.DR.DR;
-
-      while not SPI1_Periph.SR.TXE loop
-         null;
-      end loop;
-
-      DC.Set (True);
+      --  SPI1_Periph.CR1.SPE := True;
+      --  DC.Set (False);
+      --
+      --  SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (COLMOD);
+      --
+      --  while not SPI1_Periph.SR.RXNE loop
+      --     null;
+      --  end loop;
+      --
+      --  Aux := SPI1_Periph.DR.DR;
+      --
+      --  while not SPI1_Periph.SR.TXE loop
+      --     null;
+      --  end loop;
+      --
+      --  DC.Set (True);
 
       --  for J in 0 .. 320*480 - 1 loop
-      SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (2#0110_0110#);
-
-      while not SPI1_Periph.SR.RXNE loop
-         null;
-      end loop;
-
-      Aux := SPI1_Periph.DR.DR;
+      --  SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (2#0110_0110#);
+      --
+      --  while not SPI1_Periph.SR.RXNE loop
+      --     null;
+      --  end loop;
+      --
+      --  Aux := SPI1_Periph.DR.DR;
 
       --     while not SPI1_Periph.SR.TXE loop
       --        null;
@@ -458,15 +292,15 @@ package body GFX.ILI9488 is
 
       --  Shutdown
 
-      while not SPI1_Periph.SR.TXE loop
-         null;
-      end loop;
-
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
-
-      SPI1_Periph.CR1.SPE := False;
+      --  while not SPI1_Periph.SR.TXE loop
+      --     null;
+      --  end loop;
+      --
+      --  while SPI1_Periph.SR.BSY loop
+      --     null;
+      --  end loop;
+      --
+      --  SPI1_Periph.CR1.SPE := False;
    end Set_COLMOD;
 
    ---------------
@@ -494,67 +328,24 @@ package body GFX.ILI9488 is
 
       --  Enable SPI
 
-      SPI1_Periph.CR1.SPE := True;
+      SPI.Enable;
 
       --  Write GRAM at pixel
 
-      Transmit_Command (RAMWR);
-      --  DC.Set (False);
-      --  Transmit (A0B.Types.Unsigned_8 (RAMWR));
-      --
-      --  while SPI1_Periph.SR.BSY loop
-      --     null;
-      --  end loop;
-      --
-      --  DC.Set (True);
-      Transmit (R);
-      Transmit (G);
-      Transmit (B);
+      SPI.Transmit_Command (RAMWR);
+      SPI.Transmit_Data (R);
+      SPI.Transmit_Data (G);
+      SPI.Transmit_Data (B);
 
       --  Disable SPI
 
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
-
-      SPI1_Periph.CR1.SPE := False;
+      SPI.Disable;
    end Set_Pixel;
 
-   --------------
-   -- Transmit --
-   --------------
+   ---------
+   -- SPI --
+   ---------
 
-   procedure Transmit (Byte : A0B.Types.Unsigned_8) is
-      Aux : A0B.Types.Unsigned_16 with Unreferenced;
-
-   begin
-      SPI1_Periph.DR.DR := A0B.Types.Unsigned_16 (Byte);
-
-      while not SPI1_Periph.SR.RXNE loop
-         null;
-      end loop;
-
-      Aux := SPI1_Periph.DR.DR;
-
-      while not SPI1_Periph.SR.TXE loop
-         null;
-      end loop;
-   end Transmit;
-
-   ----------------------
-   -- Transmit_Command --
-   ----------------------
-
-   procedure Transmit_Command (Command : ILI9488_Command) is
-   begin
-      DC.Set (False);
-      Transmit (A0B.Types.Unsigned_8 (Command));
-
-      while SPI1_Periph.SR.BSY loop
-         null;
-      end loop;
-
-      DC.Set (True);
-   end Transmit_Command;
+   package body SPI is separate;
 
 end GFX.ILI9488;
