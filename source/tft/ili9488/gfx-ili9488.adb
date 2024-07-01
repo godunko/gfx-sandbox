@@ -424,10 +424,45 @@ package body GFX.ILI9488 is
    procedure Set_Pixel
      (X     : A0B.Types.Unsigned_32;
       Y     : A0B.Types.Unsigned_32;
-      Color : GFX.RGBA8888) is
+      Color : GFX.RGBA8888)
+   is
+      R : A0B.Types.Unsigned_8;
+      G : A0B.Types.Unsigned_8;
+      B : A0B.Types.Unsigned_8;
+      A : A0B.Types.Unsigned_8;
+
    begin
-      null;
-   --     Buffer (X, Y) := Color;
+      GFX.From_RGBA8888 (Color, R, G, B, A);
+
+      Set_CAPA
+        (A0B.Types.Unsigned_16 (X),
+         A0B.Types.Unsigned_16 (X),
+         A0B.Types.Unsigned_16 (Y),
+         A0B.Types.Unsigned_16 (Y));
+
+      --  Enable SPI
+
+      SPI1_Periph.CR1.SPE := True;
+
+      --  Set Column Address (horizontal range)
+
+      DC.Set (False);
+      Transmit (A0B.Types.Unsigned_8 (RAMWR));
+
+      while SPI1_Periph.SR.BSY loop
+         null;
+      end loop;
+
+      DC.Set (True);
+      Transmit (R);
+      Transmit (G);
+      Transmit (B);
+
+      while SPI1_Periph.SR.BSY loop
+         null;
+      end loop;
+
+      SPI1_Periph.CR1.SPE := False;
    end Set_Pixel;
 
    --------------
