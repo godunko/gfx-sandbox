@@ -4,13 +4,13 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
-with GFX.Painter;
+with GFX.Rasterizer;
 with GFX.PPM;
 
 procedure Demo.Driver is
 
    package Painter is
-     new GFX.Painter
+     new GFX.Rasterizer
        (Get_Pixel => GFX.PPM.Get_Pixel,
         Set_Pixel => GFX.PPM.Set_Pixel);
 

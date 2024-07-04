@@ -16,7 +16,7 @@ generic
       Y     : A0B.Types.Unsigned_32;
       Color : GFX.RGBA8888);
 
-package GFX.Painter
+package GFX.Rasterizer
   --  with Pure
 is
 
@@ -32,4 +32,4 @@ private
 
    --  type Fixed_16_16 is new A0B.Types.Integer_32;
 
-end GFX.Painter;
+end GFX.Rasterizer;

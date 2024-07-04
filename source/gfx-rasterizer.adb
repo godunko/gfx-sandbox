@@ -8,7 +8,7 @@ pragma Ada_2022;
 
 with Ada.Unchecked_Conversion;
 
-package body GFX.Painter is
+package body GFX.Rasterizer is
 
    subtype Fixed_16_16 is A0B.Types.Integer_32;
 
@@ -406,4 +406,4 @@ package body GFX.Painter is
       return Fixed_26_6 (Item * 64.0);
    end To_Fixed_26_6;
 
-end GFX.Painter;
+end GFX.Rasterizer;

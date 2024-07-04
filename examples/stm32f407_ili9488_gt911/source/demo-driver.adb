@@ -7,12 +7,12 @@
 with A0B.ARMv7M.SysTick;
 
 with GFX.ILI9488;
-with GFX.Painter;
+with GFX.Rasterizer;
 
 procedure Demo.Driver is
 
    package Painter is
-     new GFX.Painter
+     new GFX.Rasterizer
        (Get_Pixel => GFX.ILI9488.Get_Pixel,
         Set_Pixel => GFX.ILI9488.Set_Pixel);
 
