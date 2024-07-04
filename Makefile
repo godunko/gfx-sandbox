@@ -13,6 +13,8 @@ check: build-testsuite
 	./testsuite/bin/test1
 	diff -u testsuite/test1.ppm out.ppm
 
+build-all: build build-stm32f407 build-testsuite
+
 build-testsuite:
 	cd testsuite && alr build
 
