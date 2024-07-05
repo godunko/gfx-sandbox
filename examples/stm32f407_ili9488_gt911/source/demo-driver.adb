@@ -8,20 +8,12 @@ with A0B.ARMv7M.SysTick;
 
 with GFX.Application;
 with GFX.ILI9488;
-with GFX.Rasterizer;
 
 with Demo.Scene;
 
 procedure Demo.Driver is
 
-   package Painter is
-     new GFX.Rasterizer
-       (Get_Pixel     => GFX.ILI9488.Get_Pixel,
-        Set_Pixel     => GFX.ILI9488.Set_Pixel,
-        Device_Width  => 480,
-        Device_Height => 320);
-
-   package Application is new GFX.Application (Painter, GFX.ILI9488.Set);
+   package Application is new GFX.Application (GFX.ILI9488.Set);
 
 begin
    A0B.ARMv7M.SysTick.Initialize

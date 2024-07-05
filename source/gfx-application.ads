@@ -5,11 +5,8 @@
 --
 
 with GFX.Implementation.Backing_Store;
-with GFX.Rasterizer;
 
 generic
-   with package Rasterizer is new GFX.Rasterizer (<>);
-
    with procedure Set
      (X : GFX.Implementation.Device_Point_Coordinate;
       Y : GFX.Implementation.Device_Point_Coordinate;
