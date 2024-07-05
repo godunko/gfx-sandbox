@@ -4,6 +4,7 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+with GFX.Points;
 limited with GFX.Widgets;
 
 package GFX.Implementation
@@ -28,7 +29,8 @@ is
             Color : GFX.RGBA8888;
 
          when Line =>
-            X1, Y1, X2, Y2 : GFX.Real;
+            Start_Point : GFX.Points.Point;
+            End_Point   : GFX.Points.Point;
       end case;
    end record;
 

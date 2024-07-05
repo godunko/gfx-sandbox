@@ -30,11 +30,9 @@ package body GFX.Painters is
       GFX.Implementation.Length := @ + 1;
 
       GFX.Implementation.Buffer (GFX.Implementation.Length) :=
-        (Kind => GFX.Implementation.Line,
-         X1   => X1,
-         Y1   => Y1,
-         X2   => X2,
-         Y2   => Y2);
+        (Kind        => GFX.Implementation.Line,
+         Start_Point => (X1, Y1),
+         End_Point   => (X2, Y2));
       GFX.Implementation.Length := @ + 1;
    end Draw_Line;
 

@@ -49,11 +49,9 @@ package body GFX.Application is
                   when GFX.Implementation.Line =>
                      declare
                         S : GFX.Points.Point :=
-                          (GFX.Implementation.Buffer (J).X1,
-                           GFX.Implementation.Buffer (J).Y1);
+                          GFX.Implementation.Buffer (J).Start_Point;
                         E : GFX.Points.Point :=
-                          (GFX.Implementation.Buffer (J).X2,
-                           GFX.Implementation.Buffer (J).Y2);
+                          GFX.Implementation.Buffer (J).End_Point;
 
                      begin
                         S := T.Map (S);
