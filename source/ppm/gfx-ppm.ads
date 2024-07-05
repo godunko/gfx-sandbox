@@ -6,7 +6,7 @@
 
 --  Draw into PPM (portable pixmap format) image and save it in file.
 
-with A0B.Types;
+with GFX.Implementation;
 
 package GFX.PPM is
 
@@ -14,13 +14,13 @@ package GFX.PPM is
      (Width : A0B.Types.Unsigned_32; Height : A0B.Types.Unsigned_32);
 
    procedure Set_Pixel
-     (X     : A0B.Types.Unsigned_32;
-      Y     : A0B.Types.Unsigned_32;
+     (X     : GFX.Implementation.Device_Point_Coordinate;
+      Y     : GFX.Implementation.Device_Point_Coordinate;
       Color : GFX.RGBA8888);
 
    function Get_Pixel
-     (X : A0B.Types.Unsigned_32;
-      Y : A0B.Types.Unsigned_32) return GFX.RGBA8888;
+     (X : GFX.Implementation.Device_Point_Coordinate;
+      Y : GFX.Implementation.Device_Point_Coordinate) return GFX.RGBA8888;
 
    procedure Save (File_Name : String);
 

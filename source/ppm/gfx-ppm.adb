@@ -31,10 +31,10 @@ package body GFX.PPM is
    ---------------
 
    function Get_Pixel
-     (X : A0B.Types.Unsigned_32;
-      Y : A0B.Types.Unsigned_32) return GFX.RGBA8888 is
+     (X : GFX.Implementation.Device_Point_Coordinate;
+      Y : GFX.Implementation.Device_Point_Coordinate) return GFX.RGBA8888 is
    begin
-      return Buffer (X, Y);
+      return Buffer (A0B.Types.Unsigned_32 (X), A0B.Types.Unsigned_32 (Y));
    end Get_Pixel;
 
    ----------
@@ -91,11 +91,11 @@ package body GFX.PPM is
    ---------------
 
    procedure Set_Pixel
-     (X     : A0B.Types.Unsigned_32;
-      Y     : A0B.Types.Unsigned_32;
+     (X     : GFX.Implementation.Device_Point_Coordinate;
+      Y     : GFX.Implementation.Device_Point_Coordinate;
       Color : GFX.RGBA8888) is
    begin
-      Buffer (X, Y) := Color;
+      Buffer (A0B.Types.Unsigned_32 (X), A0B.Types.Unsigned_32 (Y)) := Color;
    end Set_Pixel;
 
    --------------

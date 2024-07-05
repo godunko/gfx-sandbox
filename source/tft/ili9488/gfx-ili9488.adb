@@ -129,8 +129,8 @@ package body GFX.ILI9488 is
    ---------------
 
    function Get_Pixel
-     (X : A0B.Types.Unsigned_32;
-      Y : A0B.Types.Unsigned_32) return GFX.RGBA8888
+     (X : GFX.Implementation.Device_Point_Coordinate;
+      Y : GFX.Implementation.Device_Point_Coordinate) return GFX.RGBA8888
    is
       R : A0B.Types.Unsigned_8;
       G : A0B.Types.Unsigned_8;
@@ -313,8 +313,8 @@ package body GFX.ILI9488 is
    ---------------
 
    procedure Set_Pixel
-     (X     : A0B.Types.Unsigned_32;
-      Y     : A0B.Types.Unsigned_32;
+     (X     : GFX.Implementation.Device_Point_Coordinate;
+      Y     : GFX.Implementation.Device_Point_Coordinate;
       Color : GFX.RGBA8888)
    is
       R : A0B.Types.Unsigned_8;

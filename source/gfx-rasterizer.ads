@@ -6,14 +6,16 @@
 
 with A0B.Types;
 
+with GFX.Implementation;
+
 generic
    with function Get_Pixel
-     (X : A0B.Types.Unsigned_32;
-      Y : A0B.Types.Unsigned_32) return GFX.RGBA8888;
+     (X : GFX.Implementation.Device_Point_Coordinate;
+      Y : GFX.Implementation.Device_Point_Coordinate) return GFX.RGBA8888;
 
    with procedure Set_Pixel
-     (X     : A0B.Types.Unsigned_32;
-      Y     : A0B.Types.Unsigned_32;
+     (X     : GFX.Implementation.Device_Point_Coordinate;
+      Y     : GFX.Implementation.Device_Point_Coordinate;
       Color : GFX.RGBA8888);
 
 package GFX.Rasterizer
