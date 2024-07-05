@@ -18,6 +18,9 @@ generic
       Y     : GFX.Implementation.Device_Point_Coordinate;
       Color : GFX.RGBA8888);
 
+   Device_Width  : GFX.Implementation.Device_Point_Coordinate;
+   Device_Height : GFX.Implementation.Device_Point_Coordinate;
+
 package GFX.Rasterizer
   --  with Pure
 is

@@ -11,8 +11,10 @@ procedure Test1 is
 
    package Painter is
      new GFX.Rasterizer
-       (Get_Pixel => GFX.PPM.Get_Pixel,
-        Set_Pixel => GFX.PPM.Set_Pixel);
+     (Get_Pixel     => GFX.PPM.Get_Pixel,
+      Set_Pixel     => GFX.PPM.Set_Pixel,
+      Device_Width  => 130,
+      Device_Height => 130);
 
    C : constant GFX.RGBA8888 := GFX.To_RGBA (0, 255, 0, 255);
 

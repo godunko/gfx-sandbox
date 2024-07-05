@@ -153,7 +153,11 @@ package body GFX.Rasterizer is
          C  : constant RGBA8888 := Color * A;
 
       begin
-         Set_Pixel (XU, YU, Blend (Get_Pixel (XU, YU), C));
+         if X > 0 and X < Device_Width
+           and Y > 0 and Y < Device_Height
+         then
+            Set_Pixel (XU, YU, Blend (Get_Pixel (XU, YU), C));
+         end if;
       end Draw_Pixel;
 
       --  Digital Differential Analyzer (DDA) algorithm is used to draw

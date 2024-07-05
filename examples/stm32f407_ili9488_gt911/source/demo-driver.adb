@@ -16,8 +16,10 @@ procedure Demo.Driver is
 
    package Painter is
      new GFX.Rasterizer
-       (Get_Pixel => GFX.ILI9488.Get_Pixel,
-        Set_Pixel => GFX.ILI9488.Set_Pixel);
+       (Get_Pixel     => GFX.ILI9488.Get_Pixel,
+        Set_Pixel     => GFX.ILI9488.Set_Pixel,
+        Device_Width  => 480,
+        Device_Height => 320);
 
    package Application is new GFX.Application (Painter, GFX.ILI9488.Set);
 

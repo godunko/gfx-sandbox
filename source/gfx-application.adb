@@ -13,8 +13,10 @@ package body GFX.Application is
 
    package Backing_Store_Rasterizer is
      new GFX.Rasterizer
-       (Get_Pixel => GFX.Implementation.Backing_Store.Get_Pixel,
-        Set_Pixel => GFX.Implementation.Backing_Store.Set_Pixel);
+       (Get_Pixel     => GFX.Implementation.Backing_Store.Get_Pixel,
+        Set_Pixel     => GFX.Implementation.Backing_Store.Set_Pixel,
+        Device_Width  => 32,
+        Device_Height => 32);
 
    ---------
    -- Run --
