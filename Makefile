@@ -23,6 +23,8 @@ build:
 
 build-stm32f407:
 	cd examples/stm32f407_ili9488_gt911 && alr build
+	cd examples/stm32f407_ili9488_gt911 && eval `alr printenv` && arm-eabi-objcopy -O binary bin/demo.elf bin/demo.bin
+	cd examples/stm32f407_ili9488_gt911/bin && ls -l demo.*
 
 clean:
 	rm -rf .objs bin config alire
