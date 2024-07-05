@@ -10,6 +10,9 @@ package GFX.Implementation
   with Preelaborate
 is
 
+   subtype Device_Point_Coordinate is A0B.Types.Integer_32;
+   --  Subtype to represent device's point coordinate.
+
    type Widget_Access is access all GFX.Widgets.Abstract_Widget'Class;
 
    Root : Widget_Access;

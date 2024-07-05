@@ -19,7 +19,7 @@ procedure Demo.Driver is
        (Get_Pixel => GFX.ILI9488.Get_Pixel,
         Set_Pixel => GFX.ILI9488.Set_Pixel);
 
-   package Application is new GFX.Application (Painter);
+   package Application is new GFX.Application (Painter, GFX.ILI9488.Set);
 
 begin
    A0B.ARMv7M.SysTick.Initialize

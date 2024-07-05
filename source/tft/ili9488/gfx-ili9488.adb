@@ -262,6 +262,52 @@ package body GFX.ILI9488 is
       SPI.Disable;
    end Set_MADCTL;
 
+   ---------
+   -- Set --
+   ---------
+
+   procedure Set
+     (X : GFX.Implementation.Device_Point_Coordinate;
+      Y : GFX.Implementation.Device_Point_Coordinate;
+      S : not null access GFX.Implementation.Backing_Store.Storage_Array)
+   is
+      use type GFX.Implementation.Device_Point_Coordinate;
+
+      R : A0B.Types.Unsigned_8;
+      G : A0B.Types.Unsigned_8;
+      B : A0B.Types.Unsigned_8;
+      A : A0B.Types.Unsigned_8;
+
+   begin
+      Set_CAPA
+        (A0B.Types.Unsigned_16 (X),
+         A0B.Types.Unsigned_16 (X + 32 - 1),
+         A0B.Types.Unsigned_16 (Y),
+         A0B.Types.Unsigned_16 (Y + 32 - 1));
+
+      --  Enable SPI
+
+      SPI.Enable;
+
+      --  Start GRAM write operation
+
+      SPI.Transmit_Command (RAMWR);
+
+      for J in S'Range loop
+         GFX.From_RGBA8888 (S (J), R, G, B, A);
+
+         --  Write pixel into GRAM
+
+         SPI.Transmit_Data (R);
+         SPI.Transmit_Data (G);
+         SPI.Transmit_Data (B);
+      end loop;
+
+      --  Disable SPI
+
+      SPI.Disable;
+   end Set;
+
    ---------------
    -- Set_Pixel --
    ---------------

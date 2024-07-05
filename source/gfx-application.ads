@@ -4,10 +4,16 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+with GFX.Implementation.Backing_Store;
 with GFX.Rasterizer;
 
 generic
    with package Rasterizer is new GFX.Rasterizer (<>);
+
+   with procedure Set
+     (X : GFX.Implementation.Device_Point_Coordinate;
+      Y : GFX.Implementation.Device_Point_Coordinate;
+      S : not null access GFX.Implementation.Backing_Store.Storage_Array);
 
 package GFX.Application
   --  with Preelaborate

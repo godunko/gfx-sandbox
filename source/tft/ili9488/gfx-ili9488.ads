@@ -8,6 +8,8 @@
 
 with A0B.Types;
 
+with GFX.Implementation.Backing_Store;
+
 package GFX.ILI9488 is
 
    procedure Set_Pixel
@@ -22,5 +24,10 @@ package GFX.ILI9488 is
    procedure Initialize;
 
    procedure Enable;
+
+   procedure Set
+     (X : GFX.Implementation.Device_Point_Coordinate;
+      Y : GFX.Implementation.Device_Point_Coordinate;
+      S : not null access GFX.Implementation.Backing_Store.Storage_Array);
 
 end GFX.ILI9488;
