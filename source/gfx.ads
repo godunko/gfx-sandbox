@@ -14,7 +14,7 @@ is
 
    type Real is new Interfaces.IEEE_Float_32;
 
-   type RGBA8888 is private;
+   type RGBA8888 is private with Preelaborable_Initialization;
 
    function To_RGBA (R, G, B, A : A0B.Types.Unsigned_8) return RGBA8888;
 
