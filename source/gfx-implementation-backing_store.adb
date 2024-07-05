@@ -31,7 +31,7 @@ package body GFX.Implementation.Backing_Store is
      (X : GFX.Implementation.Device_Point_Coordinate;
       Y : GFX.Implementation.Device_Point_Coordinate) return GFX.RGBA8888 is
    begin
-      return Pixel_Storage (X, Y);
+      return Pixel_Storage (Y, X);
    end Get_Pixel;
 
    ---------------
@@ -43,13 +43,13 @@ package body GFX.Implementation.Backing_Store is
       Y     : GFX.Implementation.Device_Point_Coordinate;
       Color : GFX.RGBA8888) is
    begin
-      if X not in Pixel_Storage'Range (1)
-        or Y not in Pixel_Storage'Range (2)
+      if X not in Pixel_Storage'Range (2)
+        or Y not in Pixel_Storage'Range (1)
       then
          return;
       end if;
 
-      Pixel_Storage (X, Y) := Color;
+      Pixel_Storage (Y, X) := Color;
    end Set_Pixel;
 
    -------------
