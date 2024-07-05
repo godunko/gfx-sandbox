@@ -19,10 +19,10 @@ build-testsuite:
 	cd testsuite && alr build
 
 build:
-	cd examples/native && alr build -- -cargs -O0
+	alr --chdir=examples/native build -- -cargs -O0
 
 build-stm32f407:
-	cd examples/stm32f407_ili9488_gt911 && alr build
+	alr --chdir=examples/stm32f407_ili9488_gt911 build
 	cd examples/stm32f407_ili9488_gt911 && eval `alr printenv` && arm-eabi-objcopy -O binary bin/demo.elf bin/demo.bin
 	cd examples/stm32f407_ili9488_gt911/bin && ls -l demo.*
 
