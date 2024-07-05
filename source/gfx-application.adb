@@ -4,6 +4,7 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+with GFX.Points;
 with GFX.Rasterizer;
 with GFX.Transformers;
 with GFX.Widgets;
@@ -47,10 +48,10 @@ package body GFX.Application is
 
                   when GFX.Implementation.Line =>
                      declare
-                        S : GFX.Transformers.Point :=
+                        S : GFX.Points.Point :=
                           (GFX.Implementation.Buffer (J).X1,
                            GFX.Implementation.Buffer (J).Y1);
-                        E : GFX.Transformers.Point :=
+                        E : GFX.Points.Point :=
                           (GFX.Implementation.Buffer (J).X2,
                            GFX.Implementation.Buffer (J).Y2);
 

@@ -6,14 +6,11 @@
 
 pragma Restrictions (No_Elaboration_Code);
 
+with GFX.Points;
+
 package GFX.Transformers
   with Preelaborate
 is
-
-   type Point is record
-      X : GFX.Real;
-      Y : GFX.Real;
-   end record;
 
    type Transformer is tagged limited private
      with Preelaborable_Initialization;
@@ -27,7 +24,7 @@ is
 
    function Map
      (Self : Transformer'Class;
-      Item : Point) return Point;
+      Item : GFX.Points.Point) return GFX.Points.Point;
 
 private
 
