@@ -64,8 +64,8 @@ package body GFX.Application is
             end loop;
 
             Set
-              (GFX.Implementation.Device_Point_Coordinate (C * 32),
-               GFX.Implementation.Device_Point_Coordinate (R * 32),
+              (GFX.Implementation.Device_Pixel_Index (C * 32),
+               GFX.Implementation.Device_Pixel_Index (R * 32),
                GFX.Implementation.Backing_Store.Storage);
          end loop;
       end loop;

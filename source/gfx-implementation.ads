@@ -11,8 +11,12 @@ package GFX.Implementation
   with Preelaborate
 is
 
-   subtype Device_Point_Coordinate is A0B.Types.Integer_32;
-   --  Subtype to represent device's point coordinate.
+   subtype Device_Pixel_Index is A0B.Types.Integer_32;
+   --  Index of the device's hardware pixel.
+
+   subtype Device_Pixel_Coordinate is GFX.Real;
+   --  Coordinate of the device's hardware pixel. Integral value corresponds to
+   --  the center of the hardware pixel.
 
    type Widget_Access is access all GFX.Widgets.Abstract_Widget'Class;
 

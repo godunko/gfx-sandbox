@@ -9,18 +9,18 @@ package GFX.Implementation.Backing_Store
 is
 
    type Storage_Array is array
-     (GFX.Implementation.Device_Point_Coordinate range 0 .. 1_023)
+     (GFX.Implementation.Device_Pixel_Index range 0 .. 1_023)
         of GFX.RGBA8888;
 
    procedure Clear;
 
    function Get_Pixel
-     (X : GFX.Implementation.Device_Point_Coordinate;
-      Y : GFX.Implementation.Device_Point_Coordinate) return GFX.RGBA8888;
+     (X : GFX.Implementation.Device_Pixel_Index;
+      Y : GFX.Implementation.Device_Pixel_Index) return GFX.RGBA8888;
 
    procedure Set_Pixel
-     (X     : GFX.Implementation.Device_Point_Coordinate;
-      Y     : GFX.Implementation.Device_Point_Coordinate;
+     (X     : GFX.Implementation.Device_Pixel_Index;
+      Y     : GFX.Implementation.Device_Pixel_Index;
       Color : GFX.RGBA8888);
 
    function Storage return not null access Storage_Array;

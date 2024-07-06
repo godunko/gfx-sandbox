@@ -8,8 +8,8 @@ with GFX.Implementation.Backing_Store;
 
 generic
    with procedure Set
-     (X : GFX.Implementation.Device_Point_Coordinate;
-      Y : GFX.Implementation.Device_Point_Coordinate;
+     (X : GFX.Implementation.Device_Pixel_Index;
+      Y : GFX.Implementation.Device_Pixel_Index;
       S : not null access GFX.Implementation.Backing_Store.Storage_Array);
 
 package GFX.Application

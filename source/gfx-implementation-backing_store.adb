@@ -7,8 +7,8 @@
 package body GFX.Implementation.Backing_Store is
 
    Pixel_Storage : array
-     (Device_Point_Coordinate range 0 .. 31,
-      Device_Point_Coordinate range 0 .. 31) of GFX.RGBA8888;
+     (Device_Pixel_Index range 0 .. 31,
+      Device_Pixel_Index range 0 .. 31) of GFX.RGBA8888;
 
    -----------
    -- Clear --
@@ -28,8 +28,8 @@ package body GFX.Implementation.Backing_Store is
    ---------------
 
    function Get_Pixel
-     (X : GFX.Implementation.Device_Point_Coordinate;
-      Y : GFX.Implementation.Device_Point_Coordinate) return GFX.RGBA8888 is
+     (X : GFX.Implementation.Device_Pixel_Index;
+      Y : GFX.Implementation.Device_Pixel_Index) return GFX.RGBA8888 is
    begin
       return Pixel_Storage (Y, X);
    end Get_Pixel;
@@ -39,8 +39,8 @@ package body GFX.Implementation.Backing_Store is
    ---------------
 
    procedure Set_Pixel
-     (X     : GFX.Implementation.Device_Point_Coordinate;
-      Y     : GFX.Implementation.Device_Point_Coordinate;
+     (X     : GFX.Implementation.Device_Pixel_Index;
+      Y     : GFX.Implementation.Device_Pixel_Index;
       Color : GFX.RGBA8888) is
    begin
       if X not in Pixel_Storage'Range (2)

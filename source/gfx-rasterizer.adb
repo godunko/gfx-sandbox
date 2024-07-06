@@ -146,10 +146,10 @@ package body GFX.Rasterizer is
          Y : A0B.Types.Integer_32;
          A : A0B.Types.Integer_32)
       is
-         XU : constant GFX.Implementation.Device_Point_Coordinate :=
-           GFX.Implementation.Device_Point_Coordinate (X);
-         YU : constant GFX.Implementation.Device_Point_Coordinate :=
-           GFX.Implementation.Device_Point_Coordinate (Y);
+         XU : constant GFX.Implementation.Device_Pixel_Index :=
+           GFX.Implementation.Device_Pixel_Index (X);
+         YU : constant GFX.Implementation.Device_Pixel_Index :=
+           GFX.Implementation.Device_Pixel_Index (Y);
          C  : constant RGBA8888 := Color * A;
 
       begin

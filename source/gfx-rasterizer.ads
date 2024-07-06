@@ -10,16 +10,16 @@ with GFX.Implementation;
 
 generic
    with function Get_Pixel
-     (X : GFX.Implementation.Device_Point_Coordinate;
-      Y : GFX.Implementation.Device_Point_Coordinate) return GFX.RGBA8888;
+     (X : GFX.Implementation.Device_Pixel_Index;
+      Y : GFX.Implementation.Device_Pixel_Index) return GFX.RGBA8888;
 
    with procedure Set_Pixel
-     (X     : GFX.Implementation.Device_Point_Coordinate;
-      Y     : GFX.Implementation.Device_Point_Coordinate;
+     (X     : GFX.Implementation.Device_Pixel_Index;
+      Y     : GFX.Implementation.Device_Pixel_Index;
       Color : GFX.RGBA8888);
 
-   Device_Width  : GFX.Implementation.Device_Point_Coordinate;
-   Device_Height : GFX.Implementation.Device_Point_Coordinate;
+   Device_Width  : GFX.Implementation.Device_Pixel_Index;
+   Device_Height : GFX.Implementation.Device_Pixel_Index;
 
 package GFX.Rasterizer
   --  with Pure

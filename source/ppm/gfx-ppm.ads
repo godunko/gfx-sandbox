@@ -14,13 +14,13 @@ package GFX.PPM is
      (Width : A0B.Types.Unsigned_32; Height : A0B.Types.Unsigned_32);
 
    procedure Set_Pixel
-     (X     : GFX.Implementation.Device_Point_Coordinate;
-      Y     : GFX.Implementation.Device_Point_Coordinate;
+     (X     : GFX.Implementation.Device_Pixel_Index;
+      Y     : GFX.Implementation.Device_Pixel_Index;
       Color : GFX.RGBA8888);
 
    function Get_Pixel
-     (X : GFX.Implementation.Device_Point_Coordinate;
-      Y : GFX.Implementation.Device_Point_Coordinate) return GFX.RGBA8888;
+     (X : GFX.Implementation.Device_Pixel_Index;
+      Y : GFX.Implementation.Device_Pixel_Index) return GFX.RGBA8888;
 
    procedure Save (File_Name : String);
 
