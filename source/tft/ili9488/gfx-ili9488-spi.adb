@@ -4,11 +4,12 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
---  pragma Ada_2022;
+pragma Ada_2022;
 
+with A0B.ARMv7M.NVIC_Utilities; use A0B.ARMv7M.NVIC_Utilities;
 with A0B.STM32F407.GPIO;
-with A0B.STM32F407.SVD.RCC; use A0B.STM32F407.SVD.RCC;
-with A0B.STM32F407.SVD.SPI; use A0B.STM32F407.SVD.SPI;
+with A0B.STM32F407.SVD.RCC;     use A0B.STM32F407.SVD.RCC;
+with A0B.STM32F407.SVD.SPI;     use A0B.STM32F407.SVD.SPI;
 
 separate (GFX.ILI9488)
 package body SPI is
@@ -22,6 +23,13 @@ package body SPI is
    --  LED   : A0B.STM32F407.GPIO.GPIO_Line renames A0B.STM32F407.GPIO.PA3;
 
    procedure Transmit (Byte : A0B.Types.Unsigned_8);
+
+   Asynchronous_Busy : Boolean := False with Volatile;
+   Transmit_Buffer   : access Unsigned_8_Array;
+   Transmit_Index    : A0B.Types.Unsigned_32;
+
+   procedure SPI1_Handler
+     with Export, Convention => C, External_Name => "SPI1_Handler";
 
    -------------
    -- Disable --
@@ -89,8 +97,6 @@ package body SPI is
          TXEIE   => False,
          others  => <>);
 
-      SPI1_Periph.CR1.SPE := True;
-
       MISO.Configure_Alternative_Function
         (A0B.STM32F407.SPI1_MISO,
          Speed => A0B.STM32F407.GPIO.Very_High,
@@ -111,7 +117,37 @@ package body SPI is
       DC.Configure_Output
         (Speed => A0B.STM32F407.GPIO.Very_High,
          Pull  => A0B.STM32F407.GPIO.Pull_Up);
+
+      Clear_Pending (A0B.STM32F407.SPI1);
+      Enable_Interrupt (A0B.STM32F407.SPI1);
    end Initialize;
+
+   --------------------
+   -- Initiate_Write --
+   --------------------
+
+   procedure Initiate_Write (Packet : Command_Data_Packet) is
+   begin
+      if Asynchronous_Busy then
+         raise Program_Error;
+      end if;
+
+      Asynchronous_Busy := True;
+      Transmit_Buffer   := Packet.Data;
+      Transmit_Index    := 0;
+
+      SPI1_Periph.CR1.SPE := True;
+
+      --  Start transmission of the command byte.
+
+      DC.Set (False);
+      SPI1_Periph.CR2.RXNEIE := True;
+      SPI1_Periph.DR.DR      := A0B.Types.Unsigned_16 (Packet.Command);
+
+      while Asynchronous_Busy loop
+         null;
+      end loop;
+   end Initiate_Write;
 
    ------------------
    -- Receive_Data --
@@ -131,6 +167,89 @@ package body SPI is
          null;
       end loop;
    end Receive_Data;
+
+   ------------------
+   -- SPI1_Handler --
+   ------------------
+
+   procedure SPI1_Handler is
+      use type A0B.Types.Unsigned_32;
+
+      Status : constant SR_Register  := SPI1_Periph.SR;
+      Mask   : constant CR2_Register := SPI1_Periph.CR2;
+      Aux    : A0B.Types.Unsigned_16 with Unreferenced;
+
+   begin
+      if Mask.TXEIE and Status.TXE then
+         SPI1_Periph.DR.DR :=
+           A0B.Types.Unsigned_16 (Transmit_Buffer (Transmit_Index));
+         Transmit_Index    := @ + 1;
+
+         if Transmit_Index > Transmit_Buffer'Last then
+            --  Disable TXE interrupt, there is no more data to transmit.
+            --  Transfer will be done when corresponding byte has been
+            --  received.
+
+            SPI1_Periph.CR2.TXEIE := False;
+         end if;
+      end if;
+
+      if Mask.RXNEIE and Status.RXNE then
+         --  Data has been received, read received byte.
+
+         Aux := SPI1_Periph.DR.DR;
+
+         --  When data transmission has not beed started, set D/C signal and
+         --  enable TX interrupt. Data transmission will be started on next
+         --  execution of the interrupt handler.
+         --
+         --  ??? It should be possible to start data transfer here, why it is
+         --  not described in the RM0090?
+
+         if Transmit_Index = Transmit_Buffer'First then
+            --  First, wait till BSY flag is recet.
+
+            while SPI1_Periph.SR.BSY loop
+               null;
+            end loop;
+
+            DC.Set (True);
+
+            --  Enable TXE interrupt.
+
+            SPI1_Periph.CR2.TXEIE := True;
+         end if;
+
+         --  Data transmission has been finished, check for receive of the all
+         --  data and finish transfer.
+
+         if Transmit_Index > Transmit_Buffer'Last then
+            if Status.TXE then
+               --  TXE is set when the last byte of the transmitted data has
+               --  been transmitted, thus current interrupt read last received
+               --  byte.
+
+               --  Disable RXNE interrupt, it is necessary for mixing
+               --  synchronous/asynchronous code during transition.
+
+               SPI1_Periph.CR2.RXNEIE := False;
+
+               --  Wait till BSY flag is set to False and disable SPI
+               --  controller.
+
+               while SPI1_Periph.SR.BSY loop
+                  null;
+               end loop;
+
+               SPI1_Periph.CR1.SPE := False;
+
+               --  Mark that asynchronous operation has been done.
+
+               Asynchronous_Busy := False;
+            end if;
+         end if;
+      end if;
+   end SPI1_Handler;
 
    --------------
    -- Transmit --

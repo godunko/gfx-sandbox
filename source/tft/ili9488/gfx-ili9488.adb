@@ -48,6 +48,14 @@ package body GFX.ILI9488 is
 
    procedure Fill;
 
+   type Unsigned_8_Array is
+     array (A0B.Types.Unsigned_32 range <>) of A0B.Types.Unsigned_8;
+
+   type Command_Data_Packet is record
+      Command : ILI9488_Command;
+      Data    : not null access Unsigned_8_Array;
+   end record;
+
    package SPI is
 
       procedure Initialize;
@@ -64,7 +72,16 @@ package body GFX.ILI9488 is
 
       procedure Wait_Non_Busy;
 
+      procedure Initiate_Write (Packet : Command_Data_Packet);
+
    end SPI;
+
+   CASET_Data   : aliased Unsigned_8_Array := (0 .. 3 => 0);
+   CASET_Packet : constant Command_Data_Packet :=
+     (Command => CASET, Data => CASET_Data'Access);
+   PASET_Data   : aliased Unsigned_8_Array := (0 .. 3 => 0);
+   PASET_Packet : constant Command_Data_Packet :=
+     (Command => PASET, Data => PASET_Data'Access);
 
    -------------
    -- Command --
@@ -177,6 +194,48 @@ package body GFX.ILI9488 is
          Pull  => A0B.STM32F407.GPIO.Pull_Up);
    end Initialize;
 
+   ------------------
+   -- Prepare_CAPA --
+   ------------------
+
+   procedure Prepare_CAPA
+     (SX : A0B.Types.Unsigned_16;
+      EX : A0B.Types.Unsigned_16;
+      SY : A0B.Types.Unsigned_16;
+      EY : A0B.Types.Unsigned_16)
+   is
+      use type A0B.Types.Unsigned_16;
+
+      SXH : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (A0B.Types.Shift_Right (SX, 8));
+      SXL : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (SX and 16#FF#);
+      EXH : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (A0B.Types.Shift_Right (EX, 8));
+      EXL : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (EX and 16#FF#);
+
+      SYH : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (A0B.Types.Shift_Right (SY, 8));
+      SYL : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (SY and 16#FF#);
+      EYH : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (A0B.Types.Shift_Right (EY, 8));
+      EYL : constant A0B.Types.Unsigned_8 :=
+        A0B.Types.Unsigned_8 (EY and 16#FF#);
+
+   begin
+      CASET_Data (0) := SXH;
+      CASET_Data (1) := SXL;
+      CASET_Data (2) := EXH;
+      CASET_Data (3) := EXL;
+
+      PASET_Data (0) := SYH;
+      PASET_Data (1) := SYL;
+      PASET_Data (2) := EYH;
+      PASET_Data (3) := EYL;
+   end Prepare_CAPA;
+
    --------------
    -- Set_CAPA --
    --------------
@@ -279,11 +338,14 @@ package body GFX.ILI9488 is
       A : A0B.Types.Unsigned_8;
 
    begin
-      Set_CAPA
+      Prepare_CAPA
         (A0B.Types.Unsigned_16 (X),
          A0B.Types.Unsigned_16 (X + 32 - 1),
          A0B.Types.Unsigned_16 (Y),
          A0B.Types.Unsigned_16 (Y + 32 - 1));
+
+      SPI.Initiate_Write (CASET_Packet);
+      SPI.Initiate_Write (PASET_Packet);
 
       --  Enable SPI
 
