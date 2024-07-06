@@ -4,10 +4,17 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+--  Implementaion for STM32F407 microcontroller run @168 MHz.
+--
+--  It uses SPI1 controller and DMA2 streams 0/3 (RX/TX).
+
 pragma Ada_2022;
+
+with System.Storage_Elements;
 
 with A0B.ARMv7M.NVIC_Utilities; use A0B.ARMv7M.NVIC_Utilities;
 with A0B.STM32F407.GPIO;
+with A0B.STM32F407.SVD.DMA;     use A0B.STM32F407.SVD.DMA;
 with A0B.STM32F407.SVD.RCC;     use A0B.STM32F407.SVD.RCC;
 with A0B.STM32F407.SVD.SPI;     use A0B.STM32F407.SVD.SPI;
 
@@ -28,9 +35,68 @@ package body SPI is
    Transmit_Buffer   : access Unsigned_8_Array;
    Transmit_Index    : A0B.Types.Unsigned_32;
    Finished_Callback : A0B.Callbacks.Callback;
+   Receive_Buffer    : aliased A0B.Types.Unsigned_8 with Volatile;
 
    procedure SPI1_Handler
      with Export, Convention => C, External_Name => "SPI1_Handler";
+
+   procedure DMA2_Stream0_Handler
+     with Export, Convention => C, External_Name => "DMA2_Stream0_Handler";
+
+   procedure DMA2_Stream3_Handler
+     with Export, Convention => C, External_Name => "DMA2_Stream3_Handler";
+
+   --------------------------
+   -- DMA2_Stream0_Handler --
+   --------------------------
+
+   procedure DMA2_Stream0_Handler is
+   begin
+      --  Clear interrupt status (both stream 0 (RX) and stream 3 (TX))
+
+      DMA2_Periph.LIFCR :=
+        (CFEIF0  => True,
+         CDMEIF0 => True,
+         CTEIF0  => True,
+         CHTIF0  => True,
+         CTCIF0  => True,
+         CFEIF3  => True,
+         CDMEIF3 => True,
+         CTEIF3  => True,
+         CHTIF3  => True,
+         CTCIF3  => True,
+         others  => <>);
+
+      --  Disable use of DMA by SPI
+
+      SPI1_Periph.CR2.RXDMAEN := False;
+      SPI1_Periph.CR2.TXDMAEN := False;
+
+      --  Wait till BSY flag is set to False and disable SPI controller.
+
+      while SPI1_Periph.SR.BSY loop
+         null;
+      end loop;
+
+      SPI1_Periph.CR1.SPE := False;
+
+      --  Mark that asynchronous operation has been done.
+
+      Asynchronous_Busy := False;
+
+      A0B.Callbacks.Emit (Finished_Callback);
+   end DMA2_Stream0_Handler;
+
+   --------------------------
+   -- DMA2_Stream3_Handler --
+   --------------------------
+
+   procedure DMA2_Stream3_Handler is
+   begin
+      --  This interrupt is not used.
+
+      raise Program_Error;
+   end DMA2_Stream3_Handler;
 
    -------------
    -- Disable --
@@ -121,6 +187,83 @@ package body SPI is
 
       Clear_Pending (A0B.STM32F407.SPI1);
       Enable_Interrupt (A0B.STM32F407.SPI1);
+
+      --  Configure DMA2
+
+      RCC_Periph.AHB1ENR.DMA2EN := True;
+
+      --  Stream 0 (SPI1_RX)
+      --
+      --  Received data is not used anywhere, so single byte buffer is used
+      --  without memory increment.
+
+      DMA2_Periph.S0CR :=
+        (EN      => False,  --  0: Stream disabled
+         DMEIE   => False,  --  0: DME interrupt disabled
+         TEIE    => False,  --  0: TE interrupt disabled
+         HTIE    => False,  --  0: HT interrupt disabled
+         TCIE    => True,   --  1: TC interrupt enabled
+         PFCTRL  => False,  --  0: The DMA is the flow controller
+         DIR     => 2#00#,  --  00: Peripheral-to-memory
+         CIRC    => False,  --  0: Circular mode disabled
+         PINC    => False,  --  0: Peripheral address pointer is fixed
+         MINC    => False,  --  0: Memory address pointer is fixed
+         --  MINC    => True,
+         --  1: Memory address pointer is incremented after each data transfer
+         --  (increment is done according to MSIZE)
+         PSIZE  => 2#00#,   --  00: Byte (8-bit)
+         MSIZE  => 2#00#,   --  00: byte (8-bit)
+         PINCOS => <>,      --  This bit has no meaning if bit PINC = '0'.
+         PL     => 2#01#,   --  01: Medium
+         DBM    => False,   --  0: No buffer switching at the end of transfer
+         CT     => <>,      --  only in double buffer mode
+         PBURST => 2#00#,   --  00: single transfer
+         MBURST => 2#00#,   --  00: single transfer
+         CHSEL  => 2#011#,  --  011: channel 3 selected
+         others => <>);
+
+      DMA2_Periph.S0PAR :=
+        A0B.Types.Unsigned_32
+          (System.Storage_Elements.To_Integer (SPI1_Periph.DR'Address));
+      DMA2_Periph.S0M0AR :=
+        A0B.Types.Unsigned_32
+          (System.Storage_Elements.To_Integer (Receive_Buffer'Address));
+
+      Clear_Pending (A0B.STM32F407.DMA2_Stream0);
+      Enable_Interrupt (A0B.STM32F407.DMA2_Stream0);
+
+      --  Stream 3 (SPI1_TX)
+
+      DMA2_Periph.S3CR :=
+        (EN      => False,  --  0: Stream disabled
+         DMEIE   => False,  --  0: DME interrupt disabled
+         TEIE    => False,  --  0: TE interrupt disabled
+         HTIE    => False,  --  0: HT interrupt disabled
+         TCIE    => False,  --  0: TC interrupt disabled
+         PFCTRL  => False,  --  0: The DMA is the flow controller
+         DIR     => 2#01#,  --  01: Memory-to-peripheral
+         CIRC    => False,  --  0: Circular mode disabled
+         PINC    => False,  --  0: Peripheral address pointer is fixed
+         MINC    => True,
+         --  1: Memory address pointer is incremented after each data transfer
+         --  (increment is done according to MSIZE)
+         PSIZE  => 2#00#,   --  00: Byte (8-bit)
+         MSIZE  => 2#00#,   --  00: byte (8-bit)
+         PINCOS => <>,      --  This bit has no meaning if bit PINC = '0'.
+         PL     => 2#01#,   --  01: Medium
+         DBM    => False,   --  0: No buffer switching at the end of transfer
+         CT     => <>,      --  only in double buffer mode
+         PBURST => 2#00#,   --  00: single transfer
+         MBURST => 2#00#,   --  00: single transfer
+         CHSEL  => 2#011#,  --  011: channel 3 selected
+         others => <>);
+
+      DMA2_Periph.S3PAR :=
+        A0B.Types.Unsigned_32
+          (System.Storage_Elements.To_Integer (SPI1_Periph.DR'Address));
+
+      Clear_Pending (A0B.STM32F407.DMA2_Stream3);
+      Enable_Interrupt (A0B.STM32F407.DMA2_Stream3);
    end Initialize;
 
    --------------------
@@ -199,57 +342,32 @@ package body SPI is
 
          Aux := SPI1_Periph.DR.DR;
 
-         --  When data transmission has not beed started, set D/C signal and
-         --  enable TX interrupt. Data transmission will be started on next
-         --  execution of the interrupt handler.
-         --
-         --  ??? It should be possible to start data transfer here, why it is
-         --  not described in the RM0090?
+         SPI1_Periph.CR2.RXNEIE := False;
 
-         if Transmit_Index = Transmit_Buffer'First then
-            --  First, wait till BSY flag is recet.
+         --  Configure and enable DMA streams 0/3
 
-            while SPI1_Periph.SR.BSY loop
-               null;
-            end loop;
+         DMA2_Periph.S0NDTR.NDT := Transmit_Buffer'Length;
+         DMA2_Periph.S3NDTR.NDT := Transmit_Buffer'Length;
+         DMA2_Periph.S3M0AR :=
+           A0B.Types.Unsigned_32
+             (System.Storage_Elements.To_Integer
+                (Transmit_Buffer (Transmit_Buffer'First)'Address));
 
-            DC.Set (True);
+         DMA2_Periph.S0CR.EN := True;
+         DMA2_Periph.S3CR.EN := True;
 
-            --  Enable TXE interrupt.
+         --  Wait till BSY flag set to False and set D/C signal to data mode.
 
-            SPI1_Periph.CR2.TXEIE := True;
-         end if;
+         while SPI1_Periph.SR.BSY loop
+            null;
+         end loop;
 
-         --  Data transmission has been finished, check for receive of the all
-         --  data and finish transfer.
+         DC.Set (True);
 
-         if Transmit_Index > Transmit_Buffer'Last then
-            if Status.TXE then
-               --  TXE is set when the last byte of the transmitted data has
-               --  been transmitted, thus current interrupt read last received
-               --  byte.
+         --  Start DMA transfer
 
-               --  Disable RXNE interrupt, it is necessary for mixing
-               --  synchronous/asynchronous code during transition.
-
-               SPI1_Periph.CR2.RXNEIE := False;
-
-               --  Wait till BSY flag is set to False and disable SPI
-               --  controller.
-
-               while SPI1_Periph.SR.BSY loop
-                  null;
-               end loop;
-
-               SPI1_Periph.CR1.SPE := False;
-
-               --  Mark that asynchronous operation has been done.
-
-               Asynchronous_Busy := False;
-
-               A0B.Callbacks.Emit (Finished_Callback);
-            end if;
-         end if;
+         SPI1_Periph.CR2.RXDMAEN := True;
+         SPI1_Periph.CR2.TXDMAEN := True;
       end if;
    end SPI1_Handler;
 
