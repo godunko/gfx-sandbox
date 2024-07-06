@@ -8,7 +8,8 @@ package body GFX.Implementation.Backing_Store is
 
    Pixel_Storage : array
      (Device_Pixel_Index range 0 .. 31,
-      Device_Pixel_Index range 0 .. 31) of GFX.RGBA8888;
+      Device_Pixel_Index range 0 .. 31) of GFX.RGBA8888
+     with Linker_Section => ".dtcm.bss";
 
    -----------
    -- Clear --

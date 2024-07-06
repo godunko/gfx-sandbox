@@ -38,7 +38,9 @@ is
       end case;
    end record;
 
-   Buffer : array (A0B.Types.Unsigned_32 range 0 .. 1023) of Command;
-   Length : A0B.Types.Unsigned_32 := 0;
+   Buffer : array (A0B.Types.Unsigned_32 range 0 .. 1023) of Command
+     with Linker_Section => ".dtcm.bss";
+   Length : A0B.Types.Unsigned_32 := 0
+     with Linker_Section => ".dtcm.data";
 
 end GFX.Implementation;
