@@ -176,8 +176,8 @@ package body GFX.Rasterizer is
       --  obvious, due to manual optimization of the code, but it is an
       --  important property.
 
-      Xi1 : constant A0B.Types.Integer_32 := A0B.Types.Integer_32 (X1 * 64.0);
-      Yi1 : constant A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y1 * 64.0);
+      Xi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X1 * 64.0);
+      Yi1 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y1 * 64.0);
       Xi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (X2 * 64.0);
       Yi2 : A0B.Types.Integer_32 := A0B.Types.Integer_32 (Y2 * 64.0);
       --  Map float point coordinates to subpixels.
@@ -201,7 +201,18 @@ package body GFX.Rasterizer is
             Xinc := To_Fixed_16_16_Div (DX, DY);
 
             if Yi1 > Yi2 then
-               raise Program_Error;
+               declare
+                  Aux : A0B.Types.Integer_32;
+
+               begin
+                  Aux := Xi1;
+                  Xi1 := Xi2;
+                  Xi2 := Aux;
+
+                  Aux := Yi1;
+                  Yi1 := Yi2;
+                  Yi2 := Aux;
+               end;
             end if;
 
             X := Shift_Left (Xi1, 10);
