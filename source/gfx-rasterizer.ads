@@ -22,12 +22,15 @@ generic
    Device_Height : GFX.Implementation.Device_Pixel_Index;
 
 package GFX.Rasterizer
-  --  with Pure
+  with Preelaborate
 is
 
    procedure Draw_Line
-     (X1, Y1, X2, Y2 : GFX.Real;
-      Color          : RGBA8888);
+     (X1    : GFX.Implementation.Device_Pixel_Coordinate;
+      Y1    : GFX.Implementation.Device_Pixel_Coordinate;
+      X2    : GFX.Implementation.Device_Pixel_Coordinate;
+      Y2    : GFX.Implementation.Device_Pixel_Coordinate;
+      Color : GFX.RGBA8888);
 
 private
 
