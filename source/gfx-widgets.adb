@@ -4,6 +4,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+pragma Ada_2022;
+
 with GFX.Implementation;
 with GFX.Painters;
 
@@ -28,17 +30,57 @@ package body GFX.Widgets is
    not overriding procedure Paint (Self : in out Abstract_Widget) is
       Painter : GFX.Painters.Painter;
       Color   : constant GFX.RGBA8888 := GFX.To_RGBA (0, 255, 0, 255);
+      X       : GFX.Real;
+      Y       : GFX.Real;
 
    begin
-      Painter.Draw_Line (15.0, 50.0, 16.0, 70.0, Color);
-      Painter.Draw_Line (34.5, 50.0, 35.5, 70.0, Color);
-      Painter.Draw_Line (55.0, 49.5, 56.0, 69.5, Color);
-      Painter.Draw_Line (74.5, 49.5, 75.5, 69.5, Color);
+      Y := 50.0;
+      X := 0.0;
 
-      Painter.Draw_Line (16.0, 80.0, 15.0, 100.0, Color);
-      Painter.Draw_Line (35.5, 80.0, 34.5, 100.0, Color);
-      Painter.Draw_Line (56.0, 79.5, 55.0, 99.5, Color);
-      Painter.Draw_Line (75.5, 79.5, 74.5, 99.5, Color);
+      for J in 1 .. 50 loop
+         Painter.Draw_Line (X, Y, X + 4.5, Y, Color);
+         Painter.Draw_Line (X + 4.5, Y, X + 5.5, Y + 20.0, Color);
+         Painter.Draw_Line (X + 5.5, Y + 20.0, X + 9.0, Y + 20.0, Color);
+         Painter.Draw_Line (X + 9.0, Y + 20.0, X + 10.0, Y, Color);
+
+         X := @ + 10.0;
+      end loop;
+
+      Y := 75.0;
+      X := 0.0;
+
+      for J in 1 .. 25 loop
+         Painter.Draw_Line (X, Y, X + 9.5, Y, Color);
+         Painter.Draw_Line (X + 9.5, Y, X + 10.5, Y + 20.0, Color);
+         Painter.Draw_Line (X + 10.5, Y + 20.0, X + 19.0, Y + 20.0, Color);
+         Painter.Draw_Line (X + 19.0, Y + 20.0, X + 20.0, Y, Color);
+
+         X := @ + 20.0;
+      end loop;
+
+      Y := 100.0;
+      X := 0.0;
+
+      for J in 1 .. 17 loop
+         Painter.Draw_Line (X, Y, X + 14.5, Y, Color);
+         Painter.Draw_Line (X + 14.5, Y, X + 15.5, Y + 20.0, Color);
+         Painter.Draw_Line (X + 15.5, Y + 20.0, X + 29.0, Y + 20.0, Color);
+         Painter.Draw_Line (X + 29.0, Y + 20.0, X + 30.0, Y, Color);
+
+         X := @ + 30.0;
+      end loop;
+
+      Y := 125.0;
+      X := 0.0;
+
+      for J in 1 .. 12 loop
+         Painter.Draw_Line (X, Y, X + 19.5, Y, Color);
+         Painter.Draw_Line (X + 19.5, Y, X + 20.5, Y + 20.0, Color);
+         Painter.Draw_Line (X + 20.5, Y + 20.0, X + 39.0, Y + 20.0, Color);
+         Painter.Draw_Line (X + 39.0, Y + 20.0, X + 40.0, Y, Color);
+
+         X := @ + 40.0;
+      end loop;
    end Paint;
 
 end GFX.Widgets;
