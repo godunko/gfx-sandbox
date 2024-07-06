@@ -27,6 +27,7 @@ package body SPI is
    Asynchronous_Busy : Boolean := False with Volatile;
    Transmit_Buffer   : access Unsigned_8_Array;
    Transmit_Index    : A0B.Types.Unsigned_32;
+   Finished_Callback : A0B.Callbacks.Callback;
 
    procedure SPI1_Handler
      with Export, Convention => C, External_Name => "SPI1_Handler";
@@ -126,7 +127,9 @@ package body SPI is
    -- Initiate_Write --
    --------------------
 
-   procedure Initiate_Write (Packet : Command_Data_Packet) is
+   procedure Initiate_Write
+     (Packet   : Command_Data_Packet;
+      Callback : A0B.Callbacks.Callback) is
    begin
       if Asynchronous_Busy then
          raise Program_Error;
@@ -135,6 +138,7 @@ package body SPI is
       Asynchronous_Busy := True;
       Transmit_Buffer   := Packet.Data;
       Transmit_Index    := 0;
+      Finished_Callback := Callback;
 
       SPI1_Periph.CR1.SPE := True;
 
@@ -143,10 +147,6 @@ package body SPI is
       DC.Set (False);
       SPI1_Periph.CR2.RXNEIE := True;
       SPI1_Periph.DR.DR      := A0B.Types.Unsigned_16 (Packet.Command);
-
-      while Asynchronous_Busy loop
-         null;
-      end loop;
    end Initiate_Write;
 
    ------------------
@@ -246,6 +246,8 @@ package body SPI is
                --  Mark that asynchronous operation has been done.
 
                Asynchronous_Busy := False;
+
+               A0B.Callbacks.Emit (Finished_Callback);
             end if;
          end if;
       end if;

@@ -6,6 +6,7 @@
 
 --  pragma Ada_2022;
 
+with A0B.Callbacks.Generic_Parameterless;
 with A0B.Delays;
 with A0B.STM32F407.GPIO;
 with A0B.Time;
@@ -72,7 +73,9 @@ package body GFX.ILI9488 is
 
       procedure Wait_Non_Busy;
 
-      procedure Initiate_Write (Packet : Command_Data_Packet);
+      procedure Initiate_Write
+        (Packet   : Command_Data_Packet;
+         Callback : A0B.Callbacks.Callback);
 
    end SPI;
 
@@ -82,6 +85,26 @@ package body GFX.ILI9488 is
    PASET_Data   : aliased Unsigned_8_Array := (0 .. 3 => 0);
    PASET_Packet : constant Command_Data_Packet :=
      (Command => PASET, Data => PASET_Data'Access);
+   RAMWR_Data   : aliased Unsigned_8_Array := (0 .. 3_071 => 0);
+   RAMWR_Packet : constant Command_Data_Packet :=
+     (Command => RAMWR, Data => RAMWR_Data'Access);
+
+   Set_Done : Boolean := True with Volatile;
+
+   procedure On_CASET_Finished;
+
+   package On_CASET_Finished_Callbacks is
+     new A0B.Callbacks.Generic_Parameterless (On_CASET_Finished);
+
+   procedure On_PASET_Finished;
+
+   package On_PASET_Finished_Callbacks is
+     new A0B.Callbacks.Generic_Parameterless (On_PASET_Finished);
+
+   procedure On_RAMWR_Finished;
+
+   package On_RAMWR_Finished_Callbacks is
+     new A0B.Callbacks.Generic_Parameterless (On_RAMWR_Finished);
 
    -------------
    -- Command --
@@ -193,6 +216,35 @@ package body GFX.ILI9488 is
         (Speed => A0B.STM32F407.GPIO.Low,
          Pull  => A0B.STM32F407.GPIO.Pull_Up);
    end Initialize;
+
+   -----------------------
+   -- On_CASET_Finished --
+   -----------------------
+
+   procedure On_CASET_Finished is
+   begin
+      SPI.Initiate_Write
+        (PASET_Packet, On_PASET_Finished_Callbacks.Create_Callback);
+   end On_CASET_Finished;
+
+   -----------------------
+   -- On_PASET_Finished --
+   -----------------------
+
+   procedure On_PASET_Finished is
+   begin
+      SPI.Initiate_Write
+        (RAMWR_Packet, On_RAMWR_Finished_Callbacks.Create_Callback);
+   end On_PASET_Finished;
+
+   -----------------------
+   -- On_RAMWR_Finished --
+   -----------------------
+
+   procedure On_RAMWR_Finished is
+   begin
+      Set_Done := True;
+   end On_RAMWR_Finished;
 
    ------------------
    -- Prepare_CAPA --
@@ -338,36 +390,28 @@ package body GFX.ILI9488 is
       A : A0B.Types.Unsigned_8;
 
    begin
+      while not Set_Done loop
+         null;
+      end loop;
+
       Prepare_CAPA
         (A0B.Types.Unsigned_16 (X),
          A0B.Types.Unsigned_16 (X + 32 - 1),
          A0B.Types.Unsigned_16 (Y),
          A0B.Types.Unsigned_16 (Y + 32 - 1));
 
-      SPI.Initiate_Write (CASET_Packet);
-      SPI.Initiate_Write (PASET_Packet);
-
-      --  Enable SPI
-
-      SPI.Enable;
-
-      --  Start GRAM write operation
-
-      SPI.Transmit_Command (RAMWR);
-
       for J in S'Range loop
          GFX.From_RGBA8888 (S (J), R, G, B, A);
 
-         --  Write pixel into GRAM
-
-         SPI.Transmit_Data (R);
-         SPI.Transmit_Data (G);
-         SPI.Transmit_Data (B);
+         RAMWR_Data (A0B.Types.Unsigned_32 (J * 3 + 0)) := R;
+         RAMWR_Data (A0B.Types.Unsigned_32 (J * 3 + 1)) := G;
+         RAMWR_Data (A0B.Types.Unsigned_32 (J * 3 + 2)) := B;
       end loop;
 
-      --  Disable SPI
+      Set_Done := False;
 
-      SPI.Disable;
+      SPI.Initiate_Write
+        (CASET_Packet, On_CASET_Finished_Callbacks.Create_Callback);
    end Set;
 
    ---------------
