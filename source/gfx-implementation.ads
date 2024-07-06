@@ -38,7 +38,7 @@ is
       end case;
    end record;
 
-   Buffer : array (A0B.Types.Unsigned_32 range 0 .. 32) of Command;
+   Buffer : array (A0B.Types.Unsigned_32 range 0 .. 1023) of Command;
    Length : A0B.Types.Unsigned_32 := 0;
 
 end GFX.Implementation;
