@@ -9,6 +9,8 @@ with GFX.PPM;
 
 procedure Test1 is
 
+   use type GFX.Real;
+
    package Painter is
      new GFX.Rasterizer
      (Get_Pixel     => GFX.PPM.Get_Pixel,
@@ -20,6 +22,7 @@ procedure Test1 is
 
 begin
    GFX.PPM.Set_Size (130, 130);
+   Painter.Set_Clip (-0.5, -0.5, 130.5, 130.5);
 
    Painter.Draw_Line (15.0, 50.0, 16.0, 70.0, C);
    Painter.Draw_Line (34.5, 50.0, 35.5, 70.0, C);
