@@ -6,13 +6,15 @@
 
 pragma Restrictions (No_Elaboration_Code);
 
-package GFX.Points
+package GFX.Clip_Regions
   with Pure
 is
 
-   type Point is record
-      X : GFX.Real;
-      Y : GFX.Real;
+   type GX_Clip_Region is record
+      Top    : GFX.Real;
+      Left   : GFX.Real;
+      Right  : GFX.Real;
+      Bottom : GFX.Real;
    end record;
 
-end GFX.Points;
+end GFX.Clip_Regions;

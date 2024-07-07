@@ -43,10 +43,10 @@ package body GFX.Rasterizer is
       Y2 : in out GFX.Real) return Boolean;
    --  Clip line to the area one pixel wider in all directions than device area.
 
-   Xmin : constant GFX.Real := GFX.Real (0 - 1);
-   Xmax : constant GFX.Real := GFX.Real (Device_Width);
-   Ymin : constant GFX.Real := GFX.Real (0 - 1);
-   Ymax : constant GFX.Real := GFX.Real (Device_Height);
+   Xmin : GFX.Real;
+   Xmax : GFX.Real;
+   Ymin : GFX.Real;
+   Ymax : GFX.Real;
 
    -----------
    -- "and" --
@@ -439,6 +439,22 @@ package body GFX.Rasterizer is
          end;
       end if;
    end Draw_Line;
+
+   --------------
+   -- Set_Clip --
+   --------------
+
+   procedure Set_Clip
+     (Top    : GFX.Implementation.Device_Pixel_Coordinate;
+      Left   : GFX.Implementation.Device_Pixel_Coordinate;
+      Right  : GFX.Implementation.Device_Pixel_Coordinate;
+      Bottom : GFX.Implementation.Device_Pixel_Coordinate) is
+   begin
+      Xmin := GFX.Real'Max (0.0, Left) - 1.0;
+      Xmax := GFX.Real'Min (GFX.Real (Device_Width), Right + 0.5);
+      Ymin := GFX.Real'Max (0.0, Top) - 1.0;
+      Ymax := GFX.Real'Min (GFX.Real (Device_Height), Bottom + 0.5);
+   end Set_Clip;
 
    ----------------
    -- Shift_Left --

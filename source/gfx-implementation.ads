@@ -4,6 +4,7 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+with GFX.Clip_Regions;
 with GFX.Points;
 limited with GFX.Widgets;
 
@@ -22,7 +23,7 @@ is
 
    Root : Widget_Access;
 
-   type Command_Kind is (None, Color, Line);
+   type Command_Kind is (None, Color, Clip, Line);
 
    type Command (Kind : Command_Kind := None) is record
       case Kind is
@@ -31,6 +32,9 @@ is
 
          when Color =>
             Color : GFX.RGBA8888;
+
+         when Clip =>
+            Clip_Region : GFX.Clip_Regions.GX_Clip_Region;
 
          when Line =>
             Start_Point : GFX.Points.Point;

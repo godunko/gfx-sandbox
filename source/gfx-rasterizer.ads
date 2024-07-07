@@ -4,6 +4,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+pragma Restrictions (No_Elaboration_Code);
+
 with A0B.Types;
 
 with GFX.Implementation;
@@ -22,7 +24,7 @@ generic
    Device_Height : GFX.Implementation.Device_Pixel_Index;
 
 package GFX.Rasterizer
-  --  with Preelaborate
+  with Preelaborate
 is
 
    procedure Draw_Line
@@ -31,6 +33,12 @@ is
       X2    : GFX.Implementation.Device_Pixel_Coordinate;
       Y2    : GFX.Implementation.Device_Pixel_Coordinate;
       Color : GFX.RGBA8888);
+
+   procedure Set_Clip
+     (Top    : GFX.Implementation.Device_Pixel_Coordinate;
+      Left   : GFX.Implementation.Device_Pixel_Coordinate;
+      Right  : GFX.Implementation.Device_Pixel_Coordinate;
+      Bottom : GFX.Implementation.Device_Pixel_Coordinate);
 
 private
 

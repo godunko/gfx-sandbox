@@ -46,6 +46,26 @@ package body GFX.Application is
                   when GFX.Implementation.Color =>
                      Color := GFX.Implementation.Buffer (J).Color;
 
+                  when GFX.Implementation.Clip =>
+                     declare
+                        TL : GFX.Points.Point :=
+                          (GFX.Implementation.Buffer (J).Clip_Region.Left,
+                           GFX.Implementation.Buffer (J).Clip_Region.Top);
+                        BR : GFX.Points.Point :=
+                          (GFX.Implementation.Buffer (J).Clip_Region.Right,
+                           GFX.Implementation.Buffer (J).Clip_Region.Bottom);
+
+                     begin
+                        TL := T.Map (TL);
+                        BR := T.Map (BR);
+
+                        Backing_Store_Rasterizer.Set_Clip
+                          (Top    => TL.Y,
+                           Left   => TL.X,
+                           Right  => BR.X,
+                           Bottom => BR.Y);
+                     end;
+
                   when GFX.Implementation.Line =>
                      declare
                         S : GFX.Points.Point :=

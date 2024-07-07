@@ -4,6 +4,7 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+with GFX.Clip_Regions;
 with GFX.Transformers;
 
 package GFX.Painters
@@ -22,12 +23,18 @@ is
      (Self : in out Painter'Class;
       To   : GFX.Transformers.Transformer);
 
+   procedure Set_Clip_Region
+     (Self : in out Painter'Class;
+      To   : GFX.Clip_Regions.GX_Clip_Region);
+
 private
 
    type Painter is tagged limited record
-      Color_Value    : GFX.RGBA8888 := 0;
-      Color_Stored   : Boolean := False;
-      Transformation : GFX.Transformers.Transformer;
+      Color_Value        : GFX.RGBA8888 := 0;
+      Color_Stored       : Boolean      := False;
+      Transformation     : GFX.Transformers.Transformer;
+      Clip_Region_Value  : GFX.Clip_Regions.GX_Clip_Region;
+      Clip_Region_Stored : Boolean       := False;
    end record;
 
 end GFX.Painters;
