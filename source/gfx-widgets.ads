@@ -4,6 +4,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+private with GFX.CSS;
+
 package GFX.Widgets
   with Preelaborate
 is
@@ -21,7 +23,7 @@ is
 private
 
    type Abstract_Widget is tagged limited record
-      null;
+      Box : GFX.CSS.CSS_Box;
    end record;
 
 end GFX.Widgets;
