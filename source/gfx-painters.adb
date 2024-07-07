@@ -7,6 +7,7 @@
 pragma Ada_2022;
 
 with GFX.Implementation;
+with GFX.Points;
 
 package body GFX.Painters is
 
@@ -20,6 +21,9 @@ package body GFX.Painters is
    is
       use type A0B.Types.Unsigned_32;
 
+      S : GFX.Points.Point := (X1, Y1);
+      E : GFX.Points.Point := (X2, Y2);
+
    begin
       if not Self.Color_Stored then
          GFX.Implementation.Buffer (GFX.Implementation.Length) :=
@@ -29,10 +33,13 @@ package body GFX.Painters is
          Self.Color_Stored := True;
       end if;
 
+      S := Self.Transformation.Map (S);
+      E := Self.Transformation.Map (E);
+
       GFX.Implementation.Buffer (GFX.Implementation.Length) :=
         (Kind        => GFX.Implementation.Line,
-         Start_Point => (X1, Y1),
-         End_Point   => (X2, Y2));
+         Start_Point => S,
+         End_Point   => E);
       GFX.Implementation.Length := @ + 1;
    end Draw_Line;
 
@@ -47,5 +54,16 @@ package body GFX.Painters is
          Self.Color_Stored := False;
       end if;
    end Set_Color;
+
+   ------------------------
+   -- Set_Transformation --
+   ------------------------
+
+   procedure Set_Transformation
+     (Self : in out Painter'Class;
+      To   : GFX.Transformers.Transformer) is
+   begin
+      Self.Transformation := To;
+   end Set_Transformation;
 
 end GFX.Painters;
