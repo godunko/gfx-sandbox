@@ -43,10 +43,15 @@ package body GFX.Rasterizer is
       Y2 : in out GFX.Real) return Boolean;
    --  Clip line to the area one pixel wider in all directions than device area.
 
-   Xmin : GFX.Real;
-   Xmax : GFX.Real;
-   Ymin : GFX.Real;
-   Ymax : GFX.Real;
+   Xmin : GFX.Real with Volatile;
+   Xmax : GFX.Real with Volatile;
+   Ymin : GFX.Real with Volatile;
+   Ymax : GFX.Real with Volatile;
+
+   Xd_Min : Interfaces.Integer_32 with Volatile;
+   Xd_Max : Interfaces.Integer_32 with Volatile;
+   Yd_Min : Interfaces.Integer_32 with Volatile;
+   Yd_Max : Interfaces.Integer_32 with Volatile;
 
    -----------
    -- "and" --
@@ -233,8 +238,8 @@ package body GFX.Rasterizer is
          C  : constant RGBA8888 := Color * A;
 
       begin
-         if X >= 0 and X < Device_Width
-           and Y >= 0 and Y < Device_Height
+         if X >= Xd_Min and X <= Xd_Max
+           and Y >= Yd_Min and Y <= Yd_Max
          then
             Set_Pixel (XU, YU, Blend (Get_Pixel (XU, YU), C));
          end if;
@@ -448,12 +453,28 @@ package body GFX.Rasterizer is
      (Top    : GFX.Implementation.Device_Pixel_Coordinate;
       Left   : GFX.Implementation.Device_Pixel_Coordinate;
       Right  : GFX.Implementation.Device_Pixel_Coordinate;
-      Bottom : GFX.Implementation.Device_Pixel_Coordinate) is
+      Bottom : GFX.Implementation.Device_Pixel_Coordinate)
+   is
+      use type Interfaces.Integer_32;
+
    begin
-      Xmin := GFX.Real'Max (0.0, Left) - 1.0;
+      Xmin := GFX.Real'Max (0.0, Left + 0.5) - 1.0;
       Xmax := GFX.Real'Min (GFX.Real (Device_Width), Right + 0.5);
-      Ymin := GFX.Real'Max (0.0, Top) - 1.0;
+      Ymin := GFX.Real'Max (0.0, Top + 0.5) - 1.0;
       Ymax := GFX.Real'Min (GFX.Real (Device_Height), Bottom + 0.5);
+
+      Xd_Min :=
+        Interfaces.Integer_32'Max
+          (0, Interfaces.Integer_32 (Left + 0.5));
+      Xd_Max :=
+        Interfaces.Integer_32'Min
+          (Device_Width - 1, Interfaces.Integer_32 (Right - 0.5));
+      Yd_Min :=
+        Interfaces.Integer_32'Max
+          (0, Interfaces.Integer_32 (Top + 0.5));
+      Yd_Max :=
+        Interfaces.Integer_32'Min
+          (Device_Height - 1, Interfaces.Integer_32 (Bottom - 0.5));
    end Set_Clip;
 
    ----------------
