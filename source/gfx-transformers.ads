@@ -12,7 +12,7 @@ package GFX.Transformers
   with Preelaborate
 is
 
-   type Transformer is tagged limited private
+   type Transformer is tagged private
      with Preelaborable_Initialization;
 
    procedure Translate
@@ -28,7 +28,7 @@ is
 
 private
 
-   type Transformer is tagged limited record
+   type Transformer is tagged record
       DX : GFX.Real := 0.0;
       DY : GFX.Real := 0.0;
    end record;
