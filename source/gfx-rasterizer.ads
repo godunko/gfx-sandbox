@@ -22,7 +22,7 @@ generic
    Device_Height : GFX.Implementation.Device_Pixel_Index;
 
 package GFX.Rasterizer
-  with Preelaborate
+  --  with Preelaborate
 is
 
    procedure Draw_Line

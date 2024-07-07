@@ -36,6 +36,18 @@ package body GFX.Rasterizer is
      (Left  : A0B.Types.Integer_32;
       Right : A0B.Types.Unsigned_32) return A0B.Types.Integer_32;
 
+   function Clip_Line
+     (X1 : in out GFX.Real;
+      Y1 : in out GFX.Real;
+      X2 : in out GFX.Real;
+      Y2 : in out GFX.Real) return Boolean;
+   --  Clip line to the area one pixel wider in all directions than device area.
+
+   Xmin : constant GFX.Real := GFX.Real (0 - 1);
+   Xmax : constant GFX.Real := GFX.Real (Device_Width);
+   Ymin : constant GFX.Real := GFX.Real (0 - 1);
+   Ymax : constant GFX.Real := GFX.Real (Device_Height);
+
    -----------
    -- "and" --
    -----------
@@ -75,6 +87,71 @@ package body GFX.Rasterizer is
    begin
       return To_Integer_32 (To_Unsigned_32 (Left) xor Right);
    end "xor";
+
+   ---------------
+   -- Clip_Line --
+   ---------------
+
+   function Clip_Line
+     (X1 : in out GFX.Real;
+      Y1 : in out GFX.Real;
+      X2 : in out GFX.Real;
+      Y2 : in out GFX.Real) return Boolean is
+   begin
+      if X1 < Xmin then
+         if X2 <= Xmin then
+            return True;
+         end if;
+
+         Y1 := @ + (Y2 - Y1) / (X2 - X1) * (Xmin - X1);
+         X1 := Xmin;
+
+      elsif X1 > Xmax then
+         if X2 >= Xmax then
+            return True;
+         end if;
+
+         Y1 := @ + (Y2 - Y1) / (X2 - X1) * (Xmax - X1);
+         X1 := Xmax;
+      end if;
+
+      if X2 < Xmin then
+         Y2 := @ + (Y2 - Y1) / (X2 - X1) * (Xmin - X2);
+         X2 := Xmin;
+
+      elsif X2 > Xmax then
+         Y2 := @ + (Y2 - Y1) / (X2 - X1) * (Xmax - X2);
+         X2 := Xmax;
+      end if;
+
+      if Y1 < Ymin then
+         if Y2 <= Ymin then
+            return True;
+         end if;
+
+         X1 := @ + (X2 - X1) / (Y2 - Y1) * (Ymin - Y1);
+         Y1 := Ymin;
+
+      elsif Y1 > Ymax then
+         if Y2 >= Ymax then
+            return True;
+         end if;
+
+         X1 := @ + (X2 - X1) / (Y2 - Y1) * (Ymax - Y1);
+         Y1 := Ymax;
+      end if;
+
+      if Y2 < Ymin then
+         X2 := @ + (X2 - X1) / (Y2 - Y1) * (Ymin - Y2);
+         Y2 := Ymin;
+
+      elsif Y2 > Ymax then
+         X2 := @ + (X2 - X1) / (Y2 - Y1) * (Ymax - Y2);
+         Y2 := Ymax;
+      end if;
+
+      return False;
+   end Clip_Line;
 
    ---------------
    -- Draw_Line --
@@ -163,6 +240,11 @@ package body GFX.Rasterizer is
          end if;
       end Draw_Pixel;
 
+      Xf1 : GFX.Real := X1;
+      Yf1 : GFX.Real := Y1;
+      Xf2 : GFX.Real := X2;
+      Yf2 : GFX.Real := Y2;
+
       --  Digital Differential Analyzer (DDA) algorithm is used to draw
       --  line. Fixed point 16.16 format is used to improve floating point
       --  interpolation rounding errors on screens with less than 32k pixels
@@ -190,6 +272,18 @@ package body GFX.Rasterizer is
       AE   : A0B.Types.Integer_32;
 
    begin
+      --  Clip line by device area
+
+      if Clip_Line (Xf1, Yf1, Xf2, Yf2) then
+         return;
+      end if;
+
+      Xi1 := A0B.Types.Integer_32 (Xf1 * 64.0);
+      Yi1 := A0B.Types.Integer_32 (Yf1 * 64.0);
+      Xi2 := A0B.Types.Integer_32 (Xf2 * 64.0);
+      Yi2 := A0B.Types.Integer_32 (Yf2 * 64.0);
+      --  Map float point coordinates to subpixels.
+
       if abs DX < abs DY then
          declare
             Y    : A0B.Types.Integer_32;
