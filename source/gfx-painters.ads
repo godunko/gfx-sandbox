@@ -11,12 +11,16 @@ is
    type Painter is tagged limited private;
 
    procedure Draw_Line
-     (Self           : Painter'Class;
-      X1, Y1, X2, Y2 : GFX.Real;
-      Color          : RGBA8888);
+     (Self           : in out Painter'Class;
+      X1, Y1, X2, Y2 : GFX.Real);
+
+   procedure Set_Color (Self : in out Painter'Class; Color : GFX.RGBA8888);
 
 private
 
-   type Painter is tagged limited null record;
+   type Painter is tagged limited record
+      Color_Value  : GFX.RGBA8888 := 0;
+      Color_Stored : Boolean := False;
+   end record;
 
 end GFX.Painters;

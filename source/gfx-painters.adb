@@ -15,19 +15,19 @@ package body GFX.Painters is
    ---------------
 
    procedure Draw_Line
-     (Self           : Painter'Class;
-      X1, Y1, X2, Y2 : GFX.Real;
-      Color          : RGBA8888)
+     (Self           : in out Painter'Class;
+      X1, Y1, X2, Y2 : GFX.Real)
    is
-      pragma Unreferenced (Self);
-
       use type A0B.Types.Unsigned_32;
 
    begin
-      GFX.Implementation.Buffer (GFX.Implementation.Length) :=
-        (Kind  => GFX.Implementation.Color,
-         Color => Color);
-      GFX.Implementation.Length := @ + 1;
+      if not Self.Color_Stored then
+         GFX.Implementation.Buffer (GFX.Implementation.Length) :=
+           (Kind  => GFX.Implementation.Color,
+            Color => Self.Color_Value);
+         GFX.Implementation.Length := @ + 1;
+         Self.Color_Stored := True;
+      end if;
 
       GFX.Implementation.Buffer (GFX.Implementation.Length) :=
         (Kind        => GFX.Implementation.Line,
@@ -35,5 +35,17 @@ package body GFX.Painters is
          End_Point   => (X2, Y2));
       GFX.Implementation.Length := @ + 1;
    end Draw_Line;
+
+   ---------------
+   -- Set_Color --
+   ---------------
+
+   procedure Set_Color (Self : in out Painter'Class; Color : GFX.RGBA8888) is
+   begin
+      if Self.Color_Value /= Color then
+         Self.Color_Value  := Color;
+         Self.Color_Stored := False;
+      end if;
+   end Set_Color;
 
 end GFX.Painters;

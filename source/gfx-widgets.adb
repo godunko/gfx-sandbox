@@ -34,14 +34,16 @@ package body GFX.Widgets is
       Y       : GFX.Real;
 
    begin
+      Painter.Set_Color (Color);
+
       Y := 50.0;
       X := 0.0;
 
       for J in 1 .. 50 loop
-         Painter.Draw_Line (X, Y, X + 4.5, Y, Color);
-         Painter.Draw_Line (X + 4.5, Y, X + 5.5, Y + 20.0, Color);
-         Painter.Draw_Line (X + 5.5, Y + 20.0, X + 9.0, Y + 20.0, Color);
-         Painter.Draw_Line (X + 9.0, Y + 20.0, X + 10.0, Y, Color);
+         Painter.Draw_Line (X, Y, X + 4.5, Y);
+         Painter.Draw_Line (X + 4.5, Y, X + 5.5, Y + 20.0);
+         Painter.Draw_Line (X + 5.5, Y + 20.0, X + 9.0, Y + 20.0);
+         Painter.Draw_Line (X + 9.0, Y + 20.0, X + 10.0, Y);
 
          X := @ + 10.0;
       end loop;
@@ -50,10 +52,10 @@ package body GFX.Widgets is
       X := 0.0;
 
       for J in 1 .. 25 loop
-         Painter.Draw_Line (X, Y, X + 9.5, Y, Color);
-         Painter.Draw_Line (X + 9.5, Y, X + 10.5, Y + 20.0, Color);
-         Painter.Draw_Line (X + 10.5, Y + 20.0, X + 19.0, Y + 20.0, Color);
-         Painter.Draw_Line (X + 19.0, Y + 20.0, X + 20.0, Y, Color);
+         Painter.Draw_Line (X, Y, X + 9.5, Y);
+         Painter.Draw_Line (X + 9.5, Y, X + 10.5, Y + 20.0);
+         Painter.Draw_Line (X + 10.5, Y + 20.0, X + 19.0, Y + 20.0);
+         Painter.Draw_Line (X + 19.0, Y + 20.0, X + 20.0, Y);
 
          X := @ + 20.0;
       end loop;
@@ -62,10 +64,10 @@ package body GFX.Widgets is
       X := 0.0;
 
       for J in 1 .. 17 loop
-         Painter.Draw_Line (X, Y, X + 14.5, Y, Color);
-         Painter.Draw_Line (X + 14.5, Y, X + 15.5, Y + 20.0, Color);
-         Painter.Draw_Line (X + 15.5, Y + 20.0, X + 29.0, Y + 20.0, Color);
-         Painter.Draw_Line (X + 29.0, Y + 20.0, X + 30.0, Y, Color);
+         Painter.Draw_Line (X, Y, X + 14.5, Y);
+         Painter.Draw_Line (X + 14.5, Y, X + 15.5, Y + 20.0);
+         Painter.Draw_Line (X + 15.5, Y + 20.0, X + 29.0, Y + 20.0);
+         Painter.Draw_Line (X + 29.0, Y + 20.0, X + 30.0, Y);
 
          X := @ + 30.0;
       end loop;
@@ -74,10 +76,10 @@ package body GFX.Widgets is
       X := 0.0;
 
       for J in 1 .. 12 loop
-         Painter.Draw_Line (X, Y, X + 19.5, Y, Color);
-         Painter.Draw_Line (X + 19.5, Y, X + 20.5, Y + 20.0, Color);
-         Painter.Draw_Line (X + 20.5, Y + 20.0, X + 39.0, Y + 20.0, Color);
-         Painter.Draw_Line (X + 39.0, Y + 20.0, X + 40.0, Y, Color);
+         Painter.Draw_Line (X, Y, X + 19.5, Y);
+         Painter.Draw_Line (X + 19.5, Y, X + 20.5, Y + 20.0);
+         Painter.Draw_Line (X + 20.5, Y + 20.0, X + 39.0, Y + 20.0);
+         Painter.Draw_Line (X + 39.0, Y + 20.0, X + 40.0, Y);
 
          X := @ + 40.0;
       end loop;
