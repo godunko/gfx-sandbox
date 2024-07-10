@@ -37,8 +37,8 @@ is
             Clip_Region : GFX.Clip_Regions.GX_Clip_Region;
 
          when Line =>
-            Start_Point : GFX.Points.Point;
-            End_Point   : GFX.Points.Point;
+            Start_Point : GFX.Points.GF_Point;
+            End_Point   : GFX.Points.GF_Point;
       end case;
    end record;
 

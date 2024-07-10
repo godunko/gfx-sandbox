@@ -48,10 +48,10 @@ package body GFX.Application is
 
                   when GFX.Implementation.Clip =>
                      declare
-                        TL : GFX.Points.Point :=
+                        TL : GFX.Points.GF_Point :=
                           (GFX.Implementation.Buffer (J).Clip_Region.Left,
                            GFX.Implementation.Buffer (J).Clip_Region.Top);
-                        BR : GFX.Points.Point :=
+                        BR : GFX.Points.GF_Point :=
                           (GFX.Implementation.Buffer (J).Clip_Region.Right,
                            GFX.Implementation.Buffer (J).Clip_Region.Bottom);
 
@@ -68,9 +68,9 @@ package body GFX.Application is
 
                   when GFX.Implementation.Line =>
                      declare
-                        S : GFX.Points.Point :=
+                        S : GFX.Points.GF_Point :=
                           GFX.Implementation.Buffer (J).Start_Point;
-                        E : GFX.Points.Point :=
+                        E : GFX.Points.GF_Point :=
                           GFX.Implementation.Buffer (J).End_Point;
 
                      begin

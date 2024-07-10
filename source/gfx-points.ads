@@ -10,7 +10,7 @@ package GFX.Points
   with Pure
 is
 
-   type Point is record
+   type GF_Point is record
       X : GFX.Real;
       Y : GFX.Real;
    end record;

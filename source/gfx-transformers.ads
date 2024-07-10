@@ -24,7 +24,7 @@ is
 
    function Map
      (Self : Transformer'Class;
-      Item : GFX.Points.Point) return GFX.Points.Point;
+      Item : GFX.Points.GF_Point) return GFX.Points.GF_Point;
 
 private
 

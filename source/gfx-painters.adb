@@ -21,8 +21,8 @@ package body GFX.Painters is
    is
       use type A0B.Types.Unsigned_32;
 
-      S : GFX.Points.Point := (X1, Y1);
-      E : GFX.Points.Point := (X2, Y2);
+      S : GFX.Points.GF_Point := (X1, Y1);
+      E : GFX.Points.GF_Point := (X2, Y2);
 
    begin
       if not Self.Clip_Region_Stored then

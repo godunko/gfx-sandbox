@@ -18,7 +18,7 @@ is
 
    function Map
      (Self : Transformer'Class;
-      Item : GFX.Points.Point) return GFX.Points.Point is
+      Item : GFX.Points.GF_Point) return GFX.Points.GF_Point is
    begin
       return (Item.X + Self.DX, Item.Y + Self.DY);
    end Map;
