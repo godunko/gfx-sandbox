@@ -53,6 +53,8 @@ package body GFX.Rasterizer is
    Yd_Min : Interfaces.Integer_32 with Volatile;
    Yd_Max : Interfaces.Integer_32 with Volatile;
 
+   Color : GFX.RGBA8888;
+
    -----------
    -- "and" --
    -----------
@@ -166,8 +168,7 @@ package body GFX.Rasterizer is
      (X1    : GFX.Implementation.Device_Pixel_Coordinate;
       Y1    : GFX.Implementation.Device_Pixel_Coordinate;
       X2    : GFX.Implementation.Device_Pixel_Coordinate;
-      Y2    : GFX.Implementation.Device_Pixel_Coordinate;
-      Color : GFX.RGBA8888)
+      Y2    : GFX.Implementation.Device_Pixel_Coordinate)
    is
       use A0B.Types;
       use type A0B.Types.Integer_32;
@@ -476,6 +477,15 @@ package body GFX.Rasterizer is
         Interfaces.Integer_32'Min
           (Device_Height - 1, Interfaces.Integer_32 (Bottom - 0.5));
    end Set_Clip;
+
+   ---------------
+   -- Set_Color --
+   ---------------
+
+   procedure Set_Color (To : GFX.RGBA8888) is
+   begin
+      Color := To;
+   end Set_Color;
 
    ----------------
    -- Shift_Left --

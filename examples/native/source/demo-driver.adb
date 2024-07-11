@@ -27,18 +27,19 @@ begin
    --  GFX.PPM.Set_Pixel (1, 1, 16#00FF_FFFF#);
    --  GFX.PPM.Set_Pixel (2, 1, 16#0000_0000#);
 
-   Painter.Draw_Line (10.0, 50.0, 15.0, 50.0, Color);
-   Painter.Draw_Line (16.0, 70.0, 21.0, 70.0, Color);
+   Painter.Set_Color (Color);
+   Painter.Draw_Line (10.0, 50.0, 15.0, 50.0);
+   Painter.Draw_Line (16.0, 70.0, 21.0, 70.0);
 
-   Painter.Draw_Line (15.0, 50.0, 16.0, 70.0, Color);
-   Painter.Draw_Line (34.5, 50.0, 35.5, 70.0, Color);
-   Painter.Draw_Line (55.0, 49.5, 56.0, 69.5, Color);
-   Painter.Draw_Line (74.5, 49.5, 75.5, 69.5, Color);
+   Painter.Draw_Line (15.0, 50.0, 16.0, 70.0);
+   Painter.Draw_Line (34.5, 50.0, 35.5, 70.0);
+   Painter.Draw_Line (55.0, 49.5, 56.0, 69.5);
+   Painter.Draw_Line (74.5, 49.5, 75.5, 69.5);
 
-   Painter.Draw_Line (16.0, 80.0, 15.0, 100.0, Color);
-   Painter.Draw_Line (35.5, 80.0, 34.5, 100.0, Color);
-   Painter.Draw_Line (56.0, 79.5, 55.0, 99.5, Color);
-   Painter.Draw_Line (75.5, 79.5, 74.5, 99.5, Color);
+   Painter.Draw_Line (16.0, 80.0, 15.0, 100.0);
+   Painter.Draw_Line (35.5, 80.0, 34.5, 100.0);
+   Painter.Draw_Line (56.0, 79.5, 55.0, 99.5);
+   Painter.Draw_Line (75.5, 79.5, 74.5, 99.5);
 
    --  GFX.Painter.Draw_Line (100.0, 50.0, 300.0, 190.0, 16#00FFFFFF#);
 

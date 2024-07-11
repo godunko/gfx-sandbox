@@ -23,16 +23,17 @@ procedure Test1 is
 begin
    GFX.PPM.Set_Size (130, 130);
    Painter.Set_Clip (-0.5, -0.5, 130.5, 130.5);
+   Painter.Set_Color (C);
 
-   Painter.Draw_Line (15.0, 50.0, 16.0, 70.0, C);
-   Painter.Draw_Line (34.5, 50.0, 35.5, 70.0, C);
-   Painter.Draw_Line (55.0, 49.5, 56.0, 69.5, C);
-   Painter.Draw_Line (74.5, 49.5, 75.5, 69.5, C);
+   Painter.Draw_Line (15.0, 50.0, 16.0, 70.0);
+   Painter.Draw_Line (34.5, 50.0, 35.5, 70.0);
+   Painter.Draw_Line (55.0, 49.5, 56.0, 69.5);
+   Painter.Draw_Line (74.5, 49.5, 75.5, 69.5);
 
-   Painter.Draw_Line (16.0, 80.0, 15.0, 100.0, C);
-   Painter.Draw_Line (35.5, 80.0, 34.5, 100.0, C);
-   Painter.Draw_Line (56.0, 79.5, 55.0, 99.5, C);
-   Painter.Draw_Line (75.5, 79.5, 74.5, 99.5, C);
+   Painter.Draw_Line (16.0, 80.0, 15.0, 100.0);
+   Painter.Draw_Line (35.5, 80.0, 34.5, 100.0);
+   Painter.Draw_Line (56.0, 79.5, 55.0, 99.5);
+   Painter.Draw_Line (75.5, 79.5, 74.5, 99.5);
 
    GFX.PPM.Save ("out.ppm");
 end Test1;

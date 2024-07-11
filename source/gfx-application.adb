@@ -77,8 +77,8 @@ package body GFX.Application is
                         S := T.Map (S);
                         E := T.Map (E);
 
-                        Backing_Store_Rasterizer.Draw_Line
-                          (S.X, S.Y, E.X, E.Y, Color);
+                        Backing_Store_Rasterizer.Set_Color (Color);
+                        Backing_Store_Rasterizer.Draw_Line (S.X, S.Y, E.X, E.Y);
                      end;
                end case;
             end loop;
