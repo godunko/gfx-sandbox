@@ -123,9 +123,15 @@ package body GFX.Widgets is
 
       Painter.Set_Transformation (Transformation);
       Painter.Set_Clip_Region (Clip_Region);
-      Painter.Set_Color (Color);
 
-      Y := 50.0;
+      Painter.Set_Color (GFX.To_RGBA (127, 127, 127, 255));
+      Painter.Set_Width (3.0);
+      Painter.Draw_Line (1.0, 5.0, 400.0, 5.0);
+
+      Painter.Set_Color (Color);
+      Painter.Set_Width (1.0);
+
+      Y := 50.5;
       X := 0.0;
 
       for J in 1 .. 50 loop
@@ -137,7 +143,7 @@ package body GFX.Widgets is
          X := @ + 10.0;
       end loop;
 
-      Y := 75.0;
+      Y := 75.5;
       X := 0.0;
 
       for J in 1 .. 25 loop
@@ -149,7 +155,7 @@ package body GFX.Widgets is
          X := @ + 20.0;
       end loop;
 
-      Y := 100.0;
+      Y := 100.5;
       X := 0.0;
 
       for J in 1 .. 17 loop
@@ -161,7 +167,7 @@ package body GFX.Widgets is
          X := @ + 30.0;
       end loop;
 
-      Y := 125.0;
+      Y := 125.5;
       X := 0.0;
 
       for J in 1 .. 12 loop
