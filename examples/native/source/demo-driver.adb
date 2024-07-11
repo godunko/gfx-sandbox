@@ -27,7 +27,7 @@ begin
    --  GFX.PPM.Set_Pixel (1, 1, 16#00FF_FFFF#);
    --  GFX.PPM.Set_Pixel (2, 1, 16#0000_0000#);
 
-   Painter.Set_Color (Color);
+   Painter.Set_Settings (Color, 1.0);
    Painter.Draw_Line (10.0, 50.0, 15.0, 50.0);
    Painter.Draw_Line (16.0, 70.0, 21.0, 70.0);
 

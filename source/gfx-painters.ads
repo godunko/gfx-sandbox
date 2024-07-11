@@ -17,7 +17,9 @@ is
      (Self           : in out Painter'Class;
       X1, Y1, X2, Y2 : GFX.Real);
 
-   procedure Set_Color (Self : in out Painter'Class; Color : GFX.RGBA8888);
+   procedure Set_Color (Self : in out Painter'Class; To : GFX.RGBA8888);
+
+   procedure Set_Width (Self : in out Painter'Class; To : GFX.Real);
 
    procedure Set_Transformation
      (Self : in out Painter'Class;
@@ -31,10 +33,11 @@ private
 
    type Painter is tagged limited record
       Color_Value        : GFX.RGBA8888 := 0;
-      Color_Stored       : Boolean      := False;
+      Width_Value        : GFX.Real     := 1.0;
+      Settings_Stored    : Boolean      := False;
       Transformation     : GFX.Transformers.Transformer;
       Clip_Region_Value  : GFX.Clip_Regions.GX_Clip_Region;
-      Clip_Region_Stored : Boolean       := False;
+      Clip_Region_Stored : Boolean      := False;
    end record;
 
 end GFX.Painters;

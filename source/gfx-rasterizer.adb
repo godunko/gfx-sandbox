@@ -54,6 +54,7 @@ package body GFX.Rasterizer is
    Yd_Max : Interfaces.Integer_32 with Volatile;
 
    Color : GFX.RGBA8888;
+   Width : GFX.Real;
 
    -----------
    -- "and" --
@@ -165,10 +166,10 @@ package body GFX.Rasterizer is
    ---------------
 
    procedure Draw_Line
-     (X1    : GFX.Implementation.Device_Pixel_Coordinate;
-      Y1    : GFX.Implementation.Device_Pixel_Coordinate;
-      X2    : GFX.Implementation.Device_Pixel_Coordinate;
-      Y2    : GFX.Implementation.Device_Pixel_Coordinate)
+     (X1 : GFX.Implementation.Device_Pixel_Coordinate;
+      Y1 : GFX.Implementation.Device_Pixel_Coordinate;
+      X2 : GFX.Implementation.Device_Pixel_Coordinate;
+      Y2 : GFX.Implementation.Device_Pixel_Coordinate)
    is
       use A0B.Types;
       use type A0B.Types.Integer_32;
@@ -278,6 +279,10 @@ package body GFX.Rasterizer is
       AE   : A0B.Types.Integer_32;
 
    begin
+      if Width /= 1.0 then
+         raise Program_Error;
+      end if;
+
       --  Clip line by device area
 
       if Clip_Line (Xf1, Yf1, Xf2, Yf2) then
@@ -478,14 +483,17 @@ package body GFX.Rasterizer is
           (Device_Height - 1, Interfaces.Integer_32 (Bottom - 0.5));
    end Set_Clip;
 
-   ---------------
-   -- Set_Color --
-   ---------------
+   ------------------
+   -- Set_Settings --
+   ------------------
 
-   procedure Set_Color (To : GFX.RGBA8888) is
+   procedure Set_Settings
+     (Color : GFX.RGBA8888;
+      Width : GFX.Real) is
    begin
-      Color := To;
-   end Set_Color;
+      Rasterizer.Color := Color;
+      Rasterizer.Width := Width;
+   end Set_Settings;
 
    ----------------
    -- Shift_Left --

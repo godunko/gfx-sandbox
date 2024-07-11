@@ -16,15 +16,16 @@ is
 
    Root : Widget_Access;
 
-   type Command_Kind is (None, Color, Clip, Line);
+   type Command_Kind is (None, Settings, Clip, Line);
 
    type Command (Kind : Command_Kind := None) is record
       case Kind is
          when None =>
             null;
 
-         when Color =>
+         when Settings =>
             Color : GFX.RGBA8888;
+            Width : GFX.Real;
 
          when Clip =>
             Clip_Region : GFX.Clip_Regions.GX_Clip_Region;

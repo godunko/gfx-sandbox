@@ -34,13 +34,14 @@ package body GFX.Painters is
          Self.Clip_Region_Stored := True;
       end if;
 
-      if not Self.Color_Stored then
+      if not Self.Settings_Stored then
          GFX.Implementation.Snapshots.Buffer
            (GFX.Implementation.Snapshots.Length) :=
-           (Kind  => GFX.Implementation.Snapshots.Color,
-            Color => Self.Color_Value);
+           (Kind  => GFX.Implementation.Snapshots.Settings,
+            Color => Self.Color_Value,
+            Width => Self.Width_Value);
          GFX.Implementation.Snapshots.Length := @ + 1;
-         Self.Color_Stored := True;
+         Self.Settings_Stored := True;
       end if;
 
       S := Self.Transformation.Map (S);
@@ -75,11 +76,11 @@ package body GFX.Painters is
    -- Set_Color --
    ---------------
 
-   procedure Set_Color (Self : in out Painter'Class; Color : GFX.RGBA8888) is
+   procedure Set_Color (Self : in out Painter'Class; To : GFX.RGBA8888) is
    begin
-      if Self.Color_Value /= Color then
-         Self.Color_Value  := Color;
-         Self.Color_Stored := False;
+      if Self.Color_Value /= To then
+         Self.Color_Value     := To;
+         Self.Settings_Stored := False;
       end if;
    end Set_Color;
 
@@ -93,5 +94,17 @@ package body GFX.Painters is
    begin
       Self.Transformation := To;
    end Set_Transformation;
+
+   ---------------
+   -- Set_Width --
+   ---------------
+
+   procedure Set_Width (Self : in out Painter'Class; To : GFX.Real) is
+   begin
+      if Self.Width_Value /= To then
+         Self.Width_Value     := To;
+         Self.Settings_Stored := False;
+      end if;
+   end Set_Width;
 
 end GFX.Painters;

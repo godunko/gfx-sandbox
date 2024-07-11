@@ -27,7 +27,9 @@ package GFX.Rasterizer
   with Preelaborate
 is
 
-   procedure Set_Color (To : GFX.RGBA8888);
+   procedure Set_Settings
+     (Color : GFX.RGBA8888;
+      Width : GFX.Real);
 
    procedure Draw_Line
      (X1    : GFX.Implementation.Device_Pixel_Coordinate;

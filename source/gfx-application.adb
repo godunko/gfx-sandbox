@@ -42,9 +42,10 @@ package body GFX.Application is
                   when GFX.Implementation.Snapshots.None =>
                      null;
 
-                  when GFX.Implementation.Snapshots.Color =>
-                     Backing_Store_Rasterizer.Set_Color
-                       (GFX.Implementation.Snapshots.Buffer (J).Color);
+                  when GFX.Implementation.Snapshots.Settings =>
+                     Backing_Store_Rasterizer.Set_Settings
+                       (GFX.Implementation.Snapshots.Buffer (J).Color,
+                        GFX.Implementation.Snapshots.Buffer (J).Width);
 
                   when GFX.Implementation.Snapshots.Clip =>
                      declare
