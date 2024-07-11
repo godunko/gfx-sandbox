@@ -17,7 +17,7 @@ pragma Restrictions (No_Elaboration_Code);
 with Interfaces;
 
 package GFX.Implementation.Fixed_Types
-  with Preelaborate
+  with Pure
 is
 
    subtype Integer is Interfaces.Integer_32;

@@ -7,7 +7,7 @@
 pragma Ada_2022;
 
 with GFX.Clip_Regions;
-with GFX.Implementation;
+with GFX.Implementation.Snapshots;
 with GFX.Painters;
 with GFX.Transformers;
 
@@ -61,7 +61,7 @@ package body GFX.Widgets is
       Width  : A0B.Types.Integer_32;
       Height : A0B.Types.Integer_32) is
    begin
-      GFX.Implementation.Root := Self'Unchecked_Access;
+      GFX.Implementation.Snapshots.Root := Self'Unchecked_Access;
 
       Self.Box.Computed_Border_Bottom := 2.0;
       Self.Box.Computed_Border_Left   := 2.0;

@@ -4,6 +4,7 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+with GFX.Implementation.Snapshots;
 with GFX.Points;
 with GFX.Rasterizer;
 with GFX.Transformers;
@@ -30,7 +31,7 @@ package body GFX.Application is
       T : GFX.Transformers.Transformer;
 
    begin
-      GFX.Implementation.Root.Paint;
+      GFX.Implementation.Snapshots.Root.Paint;
 
       for C in 0 .. 14 loop
          for R in 0 .. 9 loop
@@ -38,22 +39,26 @@ package body GFX.Application is
             T.Set_Identity;
             T.Translate (GFX.Real (-(C * 32)), GFX.Real (-(R * 32)));
 
-            for J in 0 .. GFX.Implementation.Length - 1 loop
-               case GFX.Implementation.Buffer (J).Kind is
-                  when GFX.Implementation.None =>
+            for J in 0 .. GFX.Implementation.Snapshots.Length - 1 loop
+               case GFX.Implementation.Snapshots.Buffer (J).Kind is
+                  when GFX.Implementation.Snapshots.None =>
                      null;
 
-                  when GFX.Implementation.Color =>
-                     Color := GFX.Implementation.Buffer (J).Color;
+                  when GFX.Implementation.Snapshots.Color =>
+                     Color := GFX.Implementation.Snapshots.Buffer (J).Color;
 
-                  when GFX.Implementation.Clip =>
+                  when GFX.Implementation.Snapshots.Clip =>
                      declare
                         TL : GFX.Points.GF_Point :=
-                          (GFX.Implementation.Buffer (J).Clip_Region.Left,
-                           GFX.Implementation.Buffer (J).Clip_Region.Top);
+                          (GFX.Implementation.Snapshots.Buffer
+                             (J).Clip_Region.Left,
+                           GFX.Implementation.Snapshots.Buffer
+                             (J).Clip_Region.Top);
                         BR : GFX.Points.GF_Point :=
-                          (GFX.Implementation.Buffer (J).Clip_Region.Right,
-                           GFX.Implementation.Buffer (J).Clip_Region.Bottom);
+                          (GFX.Implementation.Snapshots.Buffer
+                             (J).Clip_Region.Right,
+                           GFX.Implementation.Snapshots.Buffer
+                             (J).Clip_Region.Bottom);
 
                      begin
                         TL := T.Map (TL);
@@ -66,12 +71,12 @@ package body GFX.Application is
                            Bottom => BR.Y);
                      end;
 
-                  when GFX.Implementation.Line =>
+                  when GFX.Implementation.Snapshots.Line =>
                      declare
                         S : GFX.Points.GF_Point :=
-                          GFX.Implementation.Buffer (J).Start_Point;
+                          GFX.Implementation.Snapshots.Buffer (J).Start_Point;
                         E : GFX.Points.GF_Point :=
-                          GFX.Implementation.Buffer (J).End_Point;
+                          GFX.Implementation.Snapshots.Buffer (J).End_Point;
 
                      begin
                         S := T.Map (S);

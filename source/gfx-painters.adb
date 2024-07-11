@@ -6,7 +6,7 @@
 
 pragma Ada_2022;
 
-with GFX.Implementation;
+with GFX.Implementation.Snapshots;
 with GFX.Points;
 
 package body GFX.Painters is
@@ -26,29 +26,32 @@ package body GFX.Painters is
 
    begin
       if not Self.Clip_Region_Stored then
-         GFX.Implementation.Buffer (GFX.Implementation.Length) :=
-           (Kind        => GFX.Implementation.Clip,
+         GFX.Implementation.Snapshots.Buffer
+           (GFX.Implementation.Snapshots.Length) :=
+           (Kind        => GFX.Implementation.Snapshots.Clip,
             Clip_Region => Self.Clip_Region_Value);
-         GFX.Implementation.Length := @ + 1;
+         GFX.Implementation.Snapshots.Length := @ + 1;
          Self.Clip_Region_Stored := True;
       end if;
 
       if not Self.Color_Stored then
-         GFX.Implementation.Buffer (GFX.Implementation.Length) :=
-           (Kind  => GFX.Implementation.Color,
+         GFX.Implementation.Snapshots.Buffer
+           (GFX.Implementation.Snapshots.Length) :=
+           (Kind  => GFX.Implementation.Snapshots.Color,
             Color => Self.Color_Value);
-         GFX.Implementation.Length := @ + 1;
+         GFX.Implementation.Snapshots.Length := @ + 1;
          Self.Color_Stored := True;
       end if;
 
       S := Self.Transformation.Map (S);
       E := Self.Transformation.Map (E);
 
-      GFX.Implementation.Buffer (GFX.Implementation.Length) :=
-        (Kind        => GFX.Implementation.Line,
+      GFX.Implementation.Snapshots.Buffer
+        (GFX.Implementation.Snapshots.Length) :=
+        (Kind        => GFX.Implementation.Snapshots.Line,
          Start_Point => S,
          End_Point   => E);
-      GFX.Implementation.Length := @ + 1;
+      GFX.Implementation.Snapshots.Length := @ + 1;
    end Draw_Line;
 
    ---------------------
