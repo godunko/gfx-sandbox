@@ -12,8 +12,6 @@ with GFX.Widgets;
 
 package body GFX.Application is
 
-   Color : GFX.RGBA8888;
-
    package Backing_Store_Rasterizer is
      new GFX.Rasterizer
        (Get_Pixel     => GFX.Implementation.Backing_Store.Get_Pixel,
@@ -45,7 +43,8 @@ package body GFX.Application is
                      null;
 
                   when GFX.Implementation.Snapshots.Color =>
-                     Color := GFX.Implementation.Snapshots.Buffer (J).Color;
+                     Backing_Store_Rasterizer.Set_Color
+                       (GFX.Implementation.Snapshots.Buffer (J).Color);
 
                   when GFX.Implementation.Snapshots.Clip =>
                      declare
@@ -82,7 +81,6 @@ package body GFX.Application is
                         S := T.Map (S);
                         E := T.Map (E);
 
-                        Backing_Store_Rasterizer.Set_Color (Color);
                         Backing_Store_Rasterizer.Draw_Line (S.X, S.Y, E.X, E.Y);
                      end;
                end case;
