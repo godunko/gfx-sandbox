@@ -8,6 +8,9 @@ pragma Ada_2022;
 
 with Ada.Unchecked_Conversion;
 
+with GFX.Implementation.Rasterizer;
+with GFX.Points;
+
 package body GFX.Rasterizer is
 
    subtype Fixed_16_16 is A0B.Types.Integer_32;
@@ -55,6 +58,18 @@ package body GFX.Rasterizer is
 
    Color : GFX.RGBA8888;
    Width : GFX.Real;
+
+   procedure Fill_Span
+     (X        : GFX.Implementation.Device_Pixel_Index;
+      Y        : GFX.Implementation.Device_Pixel_Index;
+      Width    : GFX.Implementation.Device_Pixel_Count;
+      Coverage : GFX.Implementation.Grayscale);
+
+   procedure Draw_Thick_Line
+     (A : GFX.Points.GF_Point;
+      B : GFX.Points.GF_Point);
+   --  Draw straight line between given two points of the given width. It
+   --  supports anti-aliasing.
 
    -----------
    -- "and" --
@@ -280,7 +295,7 @@ package body GFX.Rasterizer is
 
    begin
       if Width /= 1.0 then
-         raise Program_Error;
+         Draw_Thick_Line ((X1, Y1), (X2, Y2));
       end if;
 
       --  Clip line by device area
@@ -450,6 +465,111 @@ package body GFX.Rasterizer is
          end;
       end if;
    end Draw_Line;
+
+   ---------------------
+   -- Draw_Thick_Line --
+   ---------------------
+
+   procedure Draw_Thick_Line
+     (A : GFX.Points.GF_Point;
+      B : GFX.Points.GF_Point) is
+   begin
+      GFX.Implementation.Rasterizer.Draw_Line
+        (A, B, Width, Fill_Span'Access);
+   end Draw_Thick_Line;
+
+   ---------------
+   -- Fill_Span --
+   ---------------
+
+   procedure Fill_Span
+     (X        : GFX.Implementation.Device_Pixel_Index;
+      Y        : GFX.Implementation.Device_Pixel_Index;
+      Width    : GFX.Implementation.Device_Pixel_Count;
+      Coverage : GFX.Implementation.Grayscale)
+   is
+      use Interfaces;
+      --  use type A0B.Types.Unsigned_32;
+
+      procedure Draw_Pixel
+        (X : A0B.Types.Integer_32;
+         Y : A0B.Types.Integer_32;
+         A : A0B.Types.Integer_32);
+
+      function "*"
+        (Left : RGBA8888; Right : A0B.Types.Integer_32) return RGBA8888
+        with Pre => Right in 0 .. 255;
+
+      function Blend (V : RGBA8888; C : RGBA8888) return RGBA8888;
+
+      ---------
+      -- "*" --
+      ---------
+
+      function "*"
+        (Left : RGBA8888; Right : A0B.Types.Integer_32) return RGBA8888
+      is
+         RB : A0B.Types.Unsigned_32 := A0B.Types.Unsigned_32 (Left);
+         GA : A0B.Types.Unsigned_32 :=
+           A0B.Types.Shift_Right (A0B.Types.Unsigned_32 (Left), 8);
+
+      begin
+         RB := @  and 16#00FF_00FF#;
+         RB := @ * Unsigned_32 (Right);
+         RB := @ + (Shift_Right (@, 8) and 16#00FF_00FF#);
+         RB := @ + 16#0080_0080#;
+         RB := @ and 16#FF00_FF00#;
+
+         GA := @  and 16#00FF_00FF#;
+         GA := @ * Unsigned_32 (Right);
+         GA := @ + (Shift_Right (@, 8) and 16#00FF_00FF#);
+         GA := @ + 16#0080_0080#;
+         GA := @ and 16#FF00_FF00#;
+
+         return RGBA8888 (A0B.Types.Shift_Right (RB, 8) or GA);
+      end "*";
+
+      -----------
+      -- Blend --
+      -----------
+
+      function Blend (V : RGBA8888; C : RGBA8888) return RGBA8888 is
+         --  use type A0B.Types.Unsigned_32;
+
+      begin
+         return
+           C + V * A0B.Types.Integer_32
+             (A0B.Types.Shift_Right (not A0B.Types.Unsigned_32 (C), 24));
+      end Blend;
+
+      ----------------
+      -- Draw_Pixel --
+      ----------------
+
+      procedure Draw_Pixel
+        (X : A0B.Types.Integer_32;
+         Y : A0B.Types.Integer_32;
+         A : A0B.Types.Integer_32)
+      is
+         XU : constant GFX.Implementation.Device_Pixel_Index :=
+           GFX.Implementation.Device_Pixel_Index (X);
+         YU : constant GFX.Implementation.Device_Pixel_Index :=
+           GFX.Implementation.Device_Pixel_Index (Y);
+         C  : constant RGBA8888 := Color * A;
+
+      begin
+         if X >= Xd_Min and X <= Xd_Max
+           and Y >= Yd_Min and Y <= Yd_Max
+         then
+            Set_Pixel (XU, YU, Blend (Get_Pixel (XU, YU), C));
+         end if;
+      end Draw_Pixel;
+
+   begin
+      for Current_X in X .. X + Width - 1 loop
+         Draw_Pixel (Current_X, Y, A0B.Types.Integer_32 (Coverage));
+      end loop;
+   end Fill_Span;
 
    --------------
    -- Set_Clip --

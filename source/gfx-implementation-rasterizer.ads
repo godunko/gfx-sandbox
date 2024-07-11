@@ -15,6 +15,8 @@
 
 pragma Restrictions (No_Elaboration_Code);
 
+with GFX.Points;
+
 package GFX.Implementation.Rasterizer
   with Preelaborate
 is
