@@ -6,15 +6,12 @@
 
 with A0B.ARMv7M.SysTick;
 
-with GFX.Application;
 with GFX.ILI9488;
 
+with Demo.Application;
 with Demo.Scene;
 
 procedure Demo.Driver is
-
-   package Application is new GFX.Application (GFX.ILI9488.Set);
-
 begin
    A0B.ARMv7M.SysTick.Initialize
      (Use_Processor_Clock => True,
@@ -24,5 +21,5 @@ begin
    GFX.ILI9488.Enable;
 
    Demo.Scene.Initialize;
-   Application.Run;
+   Demo.Application.Run;
 end Demo.Driver;
