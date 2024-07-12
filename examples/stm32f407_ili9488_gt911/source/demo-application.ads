@@ -7,4 +7,5 @@
 with GFX.Application;
 with GFX.ILI9488;
 
-package Demo.Application is new GFX.Application (GFX.ILI9488.Set);
+package Demo.Application is
+  new GFX.Application (GFX.ILI9488.Set, GFX.ILI9488.CSS_Device_Transformation);

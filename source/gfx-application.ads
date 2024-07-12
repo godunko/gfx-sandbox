@@ -5,12 +5,16 @@
 --
 
 with GFX.Implementation.Backing_Store;
+with GFX.Transformers;
 
 generic
    with procedure Set
      (X : GFX.Implementation.Device_Pixel_Index;
       Y : GFX.Implementation.Device_Pixel_Index;
       S : not null access GFX.Implementation.Backing_Store.Storage_Array);
+
+   with procedure CSS_Device_Transformation
+     (Transformation : out GFX.Transformers.GX_Transformer);
 
 package GFX.Application
   --  with Preelaborate

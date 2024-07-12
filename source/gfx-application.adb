@@ -7,7 +7,6 @@
 with GFX.Implementation.Snapshots;
 with GFX.Points;
 with GFX.Rasterizer;
-with GFX.Transformers;
 with GFX.Widgets;
 
 package body GFX.Application is
@@ -29,6 +28,8 @@ package body GFX.Application is
       T : GFX.Transformers.GX_Transformer;
 
    begin
+      CSS_Device_Transformation (GFX.Implementation.Snapshots.CSS_To_Device);
+
       GFX.Implementation.Snapshots.Root.Paint;
 
       for C in 0 .. 14 loop

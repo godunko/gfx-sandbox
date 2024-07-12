@@ -12,7 +12,7 @@ package body Demo.Scene is
 
    procedure Initialize is
    begin
-      Widget.Initialize (480, 320);
+      Widget.Initialize (277, 185);
    end Initialize;
 
 end Demo.Scene;

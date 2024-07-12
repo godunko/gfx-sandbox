@@ -26,12 +26,26 @@ package body GFX.Painters is
 
    begin
       if not Self.Clip_Region_Stored then
-         GFX.Implementation.Snapshots.Buffer
-           (GFX.Implementation.Snapshots.Length) :=
-           (Kind        => GFX.Implementation.Snapshots.Clip,
-            Clip_Region => Self.Clip_Region_Value);
-         GFX.Implementation.Snapshots.Length := @ + 1;
-         Self.Clip_Region_Stored := True;
+         declare
+            C : constant GFX.Clip_Regions.GX_Clip_Region :=
+              Self.Clip_Region_Value;
+            A : GFX.Points.GF_Point := (C.Left, C.Top);
+            B : GFX.Points.GF_Point := (C.Right, C.Bottom);
+
+         begin
+            A := GFX.Implementation.Snapshots.CSS_To_Device.Map (A);
+            B := GFX.Implementation.Snapshots.CSS_To_Device.Map (B);
+            --  ??? Should it be better synchronized with device pixels, like
+            --  move clipping edges a bit out to clip between device pixels ???
+
+            GFX.Implementation.Snapshots.Buffer
+              (GFX.Implementation.Snapshots.Length) :=
+              (Kind        => GFX.Implementation.Snapshots.Clip,
+               Clip_Region =>
+                 (Top => A.Y, Left => A.X, Right => B.X, Bottom => B.Y));
+            GFX.Implementation.Snapshots.Length := @ + 1;
+            Self.Clip_Region_Stored := True;
+         end;
       end if;
 
       if not Self.Settings_Stored then
@@ -39,13 +53,19 @@ package body GFX.Painters is
            (GFX.Implementation.Snapshots.Length) :=
            (Kind  => GFX.Implementation.Snapshots.Settings,
             Color => Self.Color_Value,
-            Width => Self.Width_Value);
+            Width =>
+              (if Self.Width_Value = 1.0
+               then 1.0 else Self.Width_Value * 1.72930288));
+         --  XXX Width should be scaled properly !!!
          GFX.Implementation.Snapshots.Length := @ + 1;
          Self.Settings_Stored := True;
       end if;
 
       S := Self.Transformation.Map (S);
       E := Self.Transformation.Map (E);
+
+      S := GFX.Implementation.Snapshots.CSS_To_Device.Map (S);
+      E := GFX.Implementation.Snapshots.CSS_To_Device.Map (E);
 
       GFX.Implementation.Snapshots.Buffer
         (GFX.Implementation.Snapshots.Length) :=

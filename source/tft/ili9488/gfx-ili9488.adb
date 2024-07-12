@@ -13,6 +13,20 @@ with A0B.Time;
 
 package body GFX.ILI9488 is
 
+   --  3.5" display, 48.96x73.44 active area, 320x480 resolution
+
+   MM_Inch               : constant := 1.0 / 25.4;
+   --  MM to Inch conversion factor
+
+   Horizontal_Size       : constant := 73.44 * MM_Inch;
+   Vertical_Size         : constant := 48.96 * MM_Inch;
+   Horizontal_Resolution : constant := 480;
+   Vertical_Resolution   : constant := 320;
+   --  Phisical size (in inches) and resolution of the display.
+
+   CSS_Pixel_Density     : constant := 96.0;
+   --  Density of the CSS pixel.
+
    procedure PendSV_Handler is null
      with Export, Convention => C, External_Name => "PendSV_Handler";
 
@@ -116,6 +130,25 @@ package body GFX.ILI9488 is
       SPI.Transmit_Command (Command);
       SPI.Disable;
    end Command;
+
+   -------------------------------
+   -- CSS_Device_Transformation --
+   -------------------------------
+
+   procedure CSS_Device_Transformation
+     (Transformation : out GFX.Transformers.GX_Transformer)
+   is
+      DH : constant GFX.Real :=
+        GFX.Real (Horizontal_Resolution) / Horizontal_Size;
+      DV : constant GFX.Real := GFX.Real (Vertical_Resolution) / Vertical_Size;
+
+      SH : constant GFX.Real := DH / CSS_Pixel_Density;
+      SV : constant GFX.Real := DV / CSS_Pixel_Density;
+
+   begin
+      Transformation.Set_Identity;
+      Transformation.Scale (SH, SV);
+   end CSS_Device_Transformation;
 
    ------------
    -- Enable --

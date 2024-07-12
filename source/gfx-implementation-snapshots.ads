@@ -6,6 +6,7 @@
 
 with GFX.Clip_Regions;
 with GFX.Points;
+with GFX.Transformers;
 limited with GFX.Widgets;
 
 package GFX.Implementation.Snapshots
@@ -14,7 +15,8 @@ is
 
    type Widget_Access is access all GFX.Widgets.Abstract_Widget'Class;
 
-   Root : Widget_Access;
+   Root          : Widget_Access;
+   CSS_To_Device : GFX.Transformers.GX_Transformer;
 
    type Command_Kind is (None, Settings, Clip, Line);
 

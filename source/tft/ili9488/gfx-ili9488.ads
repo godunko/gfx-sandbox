@@ -4,9 +4,10 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
---  ILI9488 320x480 SPI display
+--  3.5" ILI9488 320x480 SPI display
 
 with GFX.Implementation.Backing_Store;
+with GFX.Transformers;
 
 package GFX.ILI9488 is
 
@@ -27,5 +28,8 @@ package GFX.ILI9488 is
      (X : GFX.Implementation.Device_Pixel_Index;
       Y : GFX.Implementation.Device_Pixel_Index;
       S : not null access GFX.Implementation.Backing_Store.Storage_Array);
+
+   procedure CSS_Device_Transformation
+     (Transformation : out GFX.Transformers.GX_Transformer);
 
 end GFX.ILI9488;
