@@ -13,8 +13,8 @@ package body GFX.Application is
 
    Screen_Horizontal_Resolution : constant := 480;
    Screen_Veritical_Resolution  : constant := 320;
-   Backing_Store_Width          : constant := 32;
-   Backing_Store_Height         : constant := 32;
+   Backing_Store_Width          : constant := 64;
+   Backing_Store_Height         : constant := 64;
 
    package Backing_Store_Rasterizer is
      new GFX.Rasterizer
@@ -35,9 +35,11 @@ package body GFX.Application is
    ---------
 
    procedure Run is
+      use type A0B.Types.Integer_32;
       use type A0B.Types.Unsigned_32;
 
       T : GFX.Transformers.GX_Transformer;
+      W : GFX.Implementation.Device_Pixel_Count;
 
    begin
       CSS_Device_Transformation (GFX.Implementation.Snapshots.CSS_To_Device);
@@ -46,8 +48,15 @@ package body GFX.Application is
 
       for C in 0 .. Last_Column loop
          for R in 0 .. Last_Row loop
+            W :=
+              GFX.Implementation.Device_Pixel_Count'Min
+                (Backing_Store_Width,
+                 Screen_Horizontal_Resolution
+                   - Backing_Store_Width
+                       * GFX.Implementation.Device_Pixel_Count (C));
+
             GFX.Implementation.Backing_Store.Set_Size
-              (Backing_Store_Width, Backing_Store_Height);
+              (W, Backing_Store_Height);
             GFX.Implementation.Backing_Store.Clear;
             T.Set_Identity;
             T.Translate
@@ -107,7 +116,7 @@ package body GFX.Application is
             Set
               (GFX.Implementation.Device_Pixel_Index (C * Backing_Store_Width),
                GFX.Implementation.Device_Pixel_Index (R * Backing_Store_Height),
-               Backing_Store_Width,
+               W,
                Backing_Store_Height,
                GFX.Implementation.Backing_Store.Storage);
          end loop;

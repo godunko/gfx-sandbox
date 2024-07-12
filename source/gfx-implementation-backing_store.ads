@@ -9,7 +9,7 @@ package GFX.Implementation.Backing_Store
 is
 
    type Storage_Array is array
-     (GFX.Implementation.Device_Pixel_Index range 0 .. 1_023)
+     (GFX.Implementation.Device_Pixel_Index range 0 .. 4_095)
         of GFX.RGBA8888;
 
    procedure Clear;
