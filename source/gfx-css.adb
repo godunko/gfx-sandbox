@@ -41,12 +41,15 @@ package body GFX.CSS is
       Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
       Transformation : out GFX.Transformers.GX_Transformer) is
    begin
-      Clip_Region.Top    := Self.Computed_Content_Y;
-      Clip_Region.Left   := Self.Computed_Content_X;
+      --  Clip Region is larger by 0.5 pixel each size to don't clip halt of the
+      --  pixel.
+
+      Clip_Region.Top    := Self.Computed_Content_Y - 0.5;
+      Clip_Region.Left   := Self.Computed_Content_X - 0.5;
       Clip_Region.Right  :=
-        Self.Computed_Content_X + Self.Computed_Content_Width;
+        Self.Computed_Content_X + Self.Computed_Content_Width - 0.5;
       Clip_Region.Bottom :=
-        Self.Computed_Content_Y + Self.Computed_Content_Height;
+        Self.Computed_Content_Y + Self.Computed_Content_Height - 0.5;
 
       Transformation.Set_Identity;
       Transformation.Translate

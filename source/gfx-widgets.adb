@@ -20,49 +20,52 @@ package body GFX.Widgets is
    procedure Initialize
      (Self   : out Abstract_Widget'Class;
       Width  : A0B.Types.Integer_32;
-      Height : A0B.Types.Integer_32) is
+      Height : A0B.Types.Integer_32)
+   is
+      ET : GFX.Real;
+      EL : GFX.Real;
+      ER : GFX.Real;
+      EB : GFX.Real;
+
    begin
       GFX.Implementation.Snapshots.Root := Self'Unchecked_Access;
 
-      Self.Box.Computed_Border_Bottom := 2.0;
-      Self.Box.Computed_Border_Left   := 2.0;
-      Self.Box.Computed_Border_Right  := 2.0;
-      Self.Box.Computed_Border_Top    := 2.0;
-
-      Self.Box.Computed_Padding_Bottom := 2.0;
+      Self.Box.Computed_Padding_Top    := 2.0;
       Self.Box.Computed_Padding_Left   := 2.0;
       Self.Box.Computed_Padding_Right  := 2.0;
-      Self.Box.Computed_Padding_Top    := 2.0;
+      Self.Box.Computed_Padding_Bottom := 2.0;
 
-      Self.Box.Computed_Margin_Bottom := 2.0;
+      Self.Box.Computed_Border_Top    := 2.0;
+      Self.Box.Computed_Border_Left   := 2.0;
+      Self.Box.Computed_Border_Right  := 2.0;
+      Self.Box.Computed_Border_Bottom := 2.0;
+
+      Self.Box.Computed_Margin_Top    := 2.0;
       Self.Box.Computed_Margin_Left   := 2.0;
       Self.Box.Computed_Margin_Right  := 2.0;
-      Self.Box.Computed_Margin_Top    := 2.0;
+      Self.Box.Computed_Margin_Bottom := 2.0;
 
-      Self.Box.Computed_Content_X :=
-        Self.Box.Computed_Margin_Left
-          + Self.Box.Computed_Border_Left
-          + Self.Box.Computed_Padding_Left
-          - 0.5;
-      Self.Box.Computed_Content_Y :=
-        Self.Box.Computed_Margin_Top
+      ET :=
+        Self.Box.Computed_Padding_Top
           + Self.Box.Computed_Border_Top
-          + Self.Box.Computed_Padding_Top
-          - 0.5;
-      Self.Box.Computed_Content_Width :=
-        GFX.Real (Width)
-          - Self.Box.Computed_Content_X
-          - Self.Box.Computed_Margin_Right
-          - Self.Box.Computed_Border_Right
-          - Self.Box.Computed_Padding_Right
-          + 0.5;
-      Self.Box.Computed_Content_Height :=
-        GFX.Real (Height)
-          - Self.Box.Computed_Content_Y
-          - Self.Box.Computed_Margin_Bottom
-          - Self.Box.Computed_Border_Bottom
-          - Self.Box.Computed_Padding_Bottom
-          + 0.5;
+          + Self.Box.Computed_Margin_Top;
+      EL :=
+        Self.Box.Computed_Padding_Left
+          + Self.Box.Computed_Border_Left
+          + Self.Box.Computed_Margin_Left;
+      ER :=
+        Self.Box.Computed_Padding_Right
+          + Self.Box.Computed_Border_Right
+          + Self.Box.Computed_Margin_Right;
+      EB :=
+        Self.Box.Computed_Padding_Bottom
+          + Self.Box.Computed_Border_Bottom
+          + Self.Box.Computed_Margin_Bottom;
+
+      Self.Box.Computed_Content_X      := 0.0 + EL;
+      Self.Box.Computed_Content_Y      := 0.0 + ET;
+      Self.Box.Computed_Content_Width  := GFX.Real (Width) - EL - ER;
+      Self.Box.Computed_Content_Height := GFX.Real (Height) - ET - EB;
    end Initialize;
 
    -----------
@@ -99,16 +102,18 @@ package body GFX.Widgets is
 
       begin
          Painter.Set_Width (BT);
-         Painter.Draw_Line (0.0 + BL, 0.0 + BT2, W - BR, 0.0 + BT2);
+         Painter.Draw_Line (BL - 0.5, BT2 - 0.5, W - 0.5 - BR, BT2 - 0.5);
 
          Painter.Set_Width (BL);
-         Painter.Draw_Line (0.0 + BL2, 0.0 + BT, 0.0 + BL2, H - BB);
+         Painter.Draw_Line (BL2 - 0.5, BT - 0.5, BL2 - 0.5, H - BB - 0.5);
 
          Painter.Set_Width (BR);
-         Painter.Draw_Line (W - BR2, 0.0 + BT, W - BR2, H - BB);
+         Painter.Draw_Line
+           (W - BR2 - 0.5, BT - 0.5, W - BR2 - 0.5, H - BB - 0.5);
 
          Painter.Set_Width (BR);
-         Painter.Draw_Line (0.0 + BL, H - BB2, W - BR, H - BB2);
+         Painter.Draw_Line
+           (BL - 0.5, H - BB2 - 0.5, W - BR - 0.5, H - BB2 - 0.5);
       end;
 
       GFX.CSS.Content_Box (Self.Box, Clip_Region, Transformation);
