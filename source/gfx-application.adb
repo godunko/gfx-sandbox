@@ -11,12 +11,24 @@ with GFX.Widgets;
 
 package body GFX.Application is
 
+   Screen_Horizontal_Resolution : constant := 480;
+   Screen_Veritical_Resolution  : constant := 320;
+   Backing_Store_Width          : constant := 32;
+   Backing_Store_Height         : constant := 32;
+
    package Backing_Store_Rasterizer is
      new GFX.Rasterizer
        (Get_Pixel     => GFX.Implementation.Backing_Store.Get_Pixel,
         Set_Pixel     => GFX.Implementation.Backing_Store.Set_Pixel,
-        Device_Width  => 32,
-        Device_Height => 32);
+        Device_Width  => Backing_Store_Width,
+        Device_Height => Backing_Store_Height);
+
+   Last_Column : constant Positive :=
+     (Screen_Horizontal_Resolution + Backing_Store_Width - 1)
+        / Backing_Store_Width - 1;
+   Last_Row    : constant Positive :=
+     (Screen_Veritical_Resolution + Backing_Store_Height - 1)
+        / Backing_Store_Height - 1;
 
    ---------
    -- Run --
@@ -32,12 +44,15 @@ package body GFX.Application is
 
       GFX.Implementation.Snapshots.Root.Paint;
 
-      for C in 0 .. 14 loop
-         for R in 0 .. 9 loop
-            GFX.Implementation.Backing_Store.Set_Size (32, 32);
+      for C in 0 .. Last_Column loop
+         for R in 0 .. Last_Row loop
+            GFX.Implementation.Backing_Store.Set_Size
+              (Backing_Store_Width, Backing_Store_Height);
             GFX.Implementation.Backing_Store.Clear;
             T.Set_Identity;
-            T.Translate (GFX.Real (-(C * 32)), GFX.Real (-(R * 32)));
+            T.Translate
+              (GFX.Real (-(C * Backing_Store_Width)),
+               GFX.Real (-(R * Backing_Store_Height)));
 
             for J in 0 .. GFX.Implementation.Snapshots.Length - 1 loop
                case GFX.Implementation.Snapshots.Buffer (J).Kind is
@@ -90,10 +105,10 @@ package body GFX.Application is
             end loop;
 
             Set
-              (GFX.Implementation.Device_Pixel_Index (C * 32),
-               GFX.Implementation.Device_Pixel_Index (R * 32),
-               32,
-               32,
+              (GFX.Implementation.Device_Pixel_Index (C * Backing_Store_Width),
+               GFX.Implementation.Device_Pixel_Index (R * Backing_Store_Height),
+               Backing_Store_Width,
+               Backing_Store_Height,
                GFX.Implementation.Backing_Store.Storage);
          end loop;
       end loop;
