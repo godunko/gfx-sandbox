@@ -413,8 +413,9 @@ package body GFX.ILI9488 is
    procedure Set
      (X : GFX.Implementation.Device_Pixel_Index;
       Y : GFX.Implementation.Device_Pixel_Index;
-      S : not null access GFX.Implementation.Backing_Store.Storage_Array;
-      C : GFX.Implementation.Device_Pixel_Count)
+      W : GFX.Implementation.Device_Pixel_Count;
+      H : GFX.Implementation.Device_Pixel_Count;
+      S : not null access GFX.Implementation.Backing_Store.Storage_Array)
    is
       use type GFX.Implementation.Device_Pixel_Index;
 
@@ -434,7 +435,7 @@ package body GFX.ILI9488 is
          A0B.Types.Unsigned_16 (Y),
          A0B.Types.Unsigned_16 (Y + 32 - 1));
 
-      for J in 0 .. C - 1 loop
+      for J in 0 .. (W * H) - 1 loop
          GFX.From_RGBA8888 (S (J), R, G, B, A);
 
          RAMWR_Data (A0B.Types.Unsigned_32 (J * 3 + 0)) := R;

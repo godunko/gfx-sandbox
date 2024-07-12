@@ -92,8 +92,9 @@ package body GFX.Application is
             Set
               (GFX.Implementation.Device_Pixel_Index (C * 32),
                GFX.Implementation.Device_Pixel_Index (R * 32),
-               GFX.Implementation.Backing_Store.Storage,
-               GFX.Implementation.Backing_Store.Storage_Size);
+               32,
+               32,
+               GFX.Implementation.Backing_Store.Storage);
          end loop;
       end loop;
    end Run;

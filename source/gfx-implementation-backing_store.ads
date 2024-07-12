@@ -25,8 +25,6 @@ is
 
    function Storage return not null access Storage_Array;
 
-   function Storage_Size return GFX.Implementation.Device_Pixel_Count;
-
    procedure Set_Size
      (Width  : GFX.Implementation.Device_Pixel_Count;
       Height : GFX.Implementation.Device_Pixel_Count);

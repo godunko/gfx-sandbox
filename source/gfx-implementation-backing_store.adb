@@ -70,13 +70,4 @@ package body GFX.Implementation.Backing_Store is
       return Pixels'Unchecked_Access;
    end Storage;
 
-   ------------------
-   -- Storage_Size --
-   ------------------
-
-   function Storage_Size return GFX.Implementation.Device_Pixel_Count is
-   begin
-      return Width * Height;
-   end Storage_Size;
-
 end GFX.Implementation.Backing_Store;
