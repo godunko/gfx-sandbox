@@ -6,10 +6,12 @@
 
 package body GFX.Implementation.Backing_Store is
 
-   Pixel_Storage : array
-     (Device_Pixel_Index range 0 .. 31,
-      Device_Pixel_Index range 0 .. 31) of GFX.RGBA8888
+   use type Interfaces.Integer_32;
+
+   Pixels : aliased Storage_Array
      with Linker_Section => ".dtcm.bss";
+   Width  : GFX.Implementation.Device_Pixel_Count;
+   Height : GFX.Implementation.Device_Pixel_Count;
 
    -----------
    -- Clear --
@@ -17,10 +19,8 @@ package body GFX.Implementation.Backing_Store is
 
    procedure Clear is
    begin
-      for R in Pixel_Storage'Range (1) loop
-         for C in Pixel_Storage'Range (2) loop
-            Pixel_Storage (R, C) := To_RGBA (0, 0, 0, 0);
-         end loop;
+      for J in 0 .. (Width * Height) - 1 loop
+         Pixels (J) := To_RGBA (0, 0, 0, 0);
       end loop;
    end Clear;
 
@@ -32,7 +32,7 @@ package body GFX.Implementation.Backing_Store is
      (X : GFX.Implementation.Device_Pixel_Index;
       Y : GFX.Implementation.Device_Pixel_Index) return GFX.RGBA8888 is
    begin
-      return Pixel_Storage (Y, X);
+      return Pixels (Y * Width + X);
    end Get_Pixel;
 
    ---------------
@@ -44,25 +44,39 @@ package body GFX.Implementation.Backing_Store is
       Y     : GFX.Implementation.Device_Pixel_Index;
       Color : GFX.RGBA8888) is
    begin
-      if X not in Pixel_Storage'Range (2)
-        or Y not in Pixel_Storage'Range (1)
-      then
-         return;
+      if X < Width and Y < Height then
+         Pixels (Y * Width + X) := Color;
       end if;
-
-      Pixel_Storage (Y, X) := Color;
    end Set_Pixel;
+
+   --------------
+   -- Set_Size --
+   --------------
+
+   procedure Set_Size
+     (Width  : GFX.Implementation.Device_Pixel_Count;
+      Height : GFX.Implementation.Device_Pixel_Count) is
+   begin
+      Backing_Store.Width  := Width;
+      Backing_Store.Height := Height;
+   end Set_Size;
 
    -------------
    -- Storage --
    -------------
 
    function Storage return not null access Storage_Array is
-      Aux : aliased Storage_Array
-        with Import, Address => Pixel_Storage'Address;
-
    begin
-      return Aux'Unchecked_Access;
+      return Pixels'Unchecked_Access;
    end Storage;
+
+   ------------------
+   -- Storage_Size --
+   ------------------
+
+   function Storage_Size return GFX.Implementation.Device_Pixel_Count is
+   begin
+      return Width * Height;
+   end Storage_Size;
 
 end GFX.Implementation.Backing_Store;
