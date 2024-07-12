@@ -81,21 +81,21 @@ is
    procedure Content_Box
      (Self           : CSS_Box;
       Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
-      Transformation : out GFX.Transformers.Transformer);
+      Transformation : out GFX.Transformers.GX_Transformer);
 
    procedure Padding_Box
      (Self           : CSS_Box;
       Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
-      Transformation : out GFX.Transformers.Transformer);
+      Transformation : out GFX.Transformers.GX_Transformer);
 
    procedure Border_Box
      (Self           : CSS_Box;
       Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
-      Transformation : out GFX.Transformers.Transformer);
+      Transformation : out GFX.Transformers.GX_Transformer);
 
    procedure Margin_Box
      (Self           : CSS_Box;
       Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
-      Transformation : out GFX.Transformers.Transformer);
+      Transformation : out GFX.Transformers.GX_Transformer);
 
 end GFX.CSS;

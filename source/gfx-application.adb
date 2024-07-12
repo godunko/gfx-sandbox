@@ -26,7 +26,7 @@ package body GFX.Application is
    procedure Run is
       use type A0B.Types.Unsigned_32;
 
-      T : GFX.Transformers.Transformer;
+      T : GFX.Transformers.GX_Transformer;
 
    begin
       GFX.Implementation.Snapshots.Root.Paint;

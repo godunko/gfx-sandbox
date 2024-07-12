@@ -23,7 +23,7 @@ is
 
    procedure Set_Transformation
      (Self : in out Painter'Class;
-      To   : GFX.Transformers.Transformer);
+      To   : GFX.Transformers.GX_Transformer);
 
    procedure Set_Clip_Region
      (Self : in out Painter'Class;
@@ -35,7 +35,7 @@ private
       Color_Value        : GFX.RGBA8888 := 0;
       Width_Value        : GFX.Real     := 1.0;
       Settings_Stored    : Boolean      := False;
-      Transformation     : GFX.Transformers.Transformer;
+      Transformation     : GFX.Transformers.GX_Transformer;
       Clip_Region_Value  : GFX.Clip_Regions.GX_Clip_Region;
       Clip_Region_Stored : Boolean      := False;
    end record;

@@ -90,7 +90,7 @@ package body GFX.Painters is
 
    procedure Set_Transformation
      (Self : in out Painter'Class;
-      To   : GFX.Transformers.Transformer) is
+      To   : GFX.Transformers.GX_Transformer) is
    begin
       Self.Transformation := To;
    end Set_Transformation;

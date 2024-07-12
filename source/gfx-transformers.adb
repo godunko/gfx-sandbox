@@ -17,7 +17,7 @@ is
    ---------
 
    function Map
-     (Self : Transformer'Class;
+     (Self : GX_Transformer'Class;
       Item : GFX.Points.GF_Point) return GFX.Points.GF_Point is
    begin
       return (Item.X + Self.DX, Item.Y + Self.DY);
@@ -27,7 +27,7 @@ is
    -- Set_Identity --
    ------------------
 
-   procedure Set_Identity (Self : in out Transformer'Class) is
+   procedure Set_Identity (Self : in out GX_Transformer'Class) is
    begin
       Self.DX := 0.0;
       Self.DY := 0.0;
@@ -38,7 +38,7 @@ is
    ---------------
 
    procedure Translate
-     (Self : in out Transformer'Class;
+     (Self : in out GX_Transformer'Class;
       DX   : GFX.Real;
       DY   : GFX.Real) is
    begin

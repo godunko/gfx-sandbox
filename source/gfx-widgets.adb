@@ -73,7 +73,7 @@ package body GFX.Widgets is
       Color   : constant GFX.RGBA8888 := GFX.To_RGBA (0, 255, 0, 255);
 
       Painter        : GFX.Painters.Painter;
-      Transformation : GFX.Transformers.Transformer;
+      Transformation : GFX.Transformers.GX_Transformer;
       Clip_Region    : GFX.Clip_Regions.GX_Clip_Region;
       X              : GFX.Real;
       Y              : GFX.Real;

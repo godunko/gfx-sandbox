@@ -17,7 +17,7 @@ package body GFX.CSS is
    procedure Border_Box
      (Self           : CSS_Box;
       Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
-      Transformation : out GFX.Transformers.Transformer) is
+      Transformation : out GFX.Transformers.GX_Transformer) is
    begin
       Padding_Box (Self, Clip_Region, Transformation);
 
@@ -39,7 +39,7 @@ package body GFX.CSS is
    procedure Content_Box
      (Self           : CSS_Box;
       Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
-      Transformation : out GFX.Transformers.Transformer) is
+      Transformation : out GFX.Transformers.GX_Transformer) is
    begin
       Clip_Region.Top    := Self.Computed_Content_Y;
       Clip_Region.Left   := Self.Computed_Content_X;
@@ -61,7 +61,7 @@ package body GFX.CSS is
    procedure Margin_Box
      (Self           : CSS_Box;
       Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
-      Transformation : out GFX.Transformers.Transformer) is
+      Transformation : out GFX.Transformers.GX_Transformer) is
    begin
       Border_Box (Self, Clip_Region, Transformation);
 
@@ -83,7 +83,7 @@ package body GFX.CSS is
    procedure Padding_Box
      (Self           : CSS_Box;
       Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
-      Transformation : out GFX.Transformers.Transformer) is
+      Transformation : out GFX.Transformers.GX_Transformer) is
    begin
       Content_Box (Self, Clip_Region, Transformation);
 
