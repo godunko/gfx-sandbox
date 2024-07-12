@@ -127,7 +127,7 @@ package body GFX.Implementation.Fixed_Types is
    begin
       return
         To_Fixed_16
-          (LH * RH * 2*16 + LH * RL + LL * RH + Shift_Right (LL * RL, 16));
+          (LH * RH * 2**16 + LH * RL + LL * RH + (LL * RL) / 2**16);
    end Multiply_Coverage;
 
    --------------------
