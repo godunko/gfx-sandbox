@@ -20,8 +20,21 @@ is
      (Self : GX_Transformer'Class;
       Item : GFX.Points.GF_Point) return GFX.Points.GF_Point is
    begin
-      return (Item.X + Self.DX, Item.Y + Self.DY);
+      return (Item.X * Self.SX + Self.DX, Item.Y * Self.SY + Self.DY);
    end Map;
+
+   -----------
+   -- Scale --
+   -----------
+
+   procedure Scale
+     (Self : in out GX_Transformer'Class;
+      SX   : GFX.Real;
+      SY   : GFX.Real) is
+   begin
+      Self.SX := @ * SX;
+      Self.SY := @ * SY;
+   end Scale;
 
    ------------------
    -- Set_Identity --
@@ -29,6 +42,8 @@ is
 
    procedure Set_Identity (Self : in out GX_Transformer'Class) is
    begin
+      Self.SX := 1.0;
+      Self.SY := 1.0;
       Self.DX := 0.0;
       Self.DY := 0.0;
    end Set_Identity;
