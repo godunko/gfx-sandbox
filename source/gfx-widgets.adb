@@ -13,45 +13,6 @@ with GFX.Transformers;
 
 package body GFX.Widgets is
 
-   procedure Content_Box_Clip_Region
-     (Self        : Abstract_Widget'Class;
-      Clip_Region : out GFX.Clip_Regions.GX_Clip_Region);
-
-   procedure Content_Box_Transformation
-     (Self           : Abstract_Widget'Class;
-      Transformation : out GFX.Transformers.Transformer);
-
-   -----------------------------
-   -- Content_Box_Clip_Region --
-   -----------------------------
-
-   procedure Content_Box_Clip_Region
-     (Self        : Abstract_Widget'Class;
-      Clip_Region : out GFX.Clip_Regions.GX_Clip_Region) is
-   begin
-      Clip_Region.Top := Self.Box.Computed_Content_Y;
-      Clip_Region.Left := Self.Box.Computed_Content_X;
-      Clip_Region.Right :=
-        Self.Box.Computed_Content_X + Self.Box.Computed_Content_Width;
-      Clip_Region.Bottom :=
-        Self.Box.Computed_Content_Y + Self.Box.Computed_Content_Height;
-   end Content_Box_Clip_Region;
-
-   --------------------------------
-   -- Content_Box_Transformation --
-   --------------------------------
-
-   procedure Content_Box_Transformation
-     (Self           : Abstract_Widget'Class;
-      Transformation : out GFX.Transformers.Transformer) is
-   begin
-      Transformation.Set_Identity;
-
-      Transformation.Translate
-        (Self.Box.Computed_Content_X,
-         Self.Box.Computed_Content_Y);
-   end Content_Box_Transformation;
-
    ----------------
    -- Initialize --
    ----------------
@@ -118,16 +79,41 @@ package body GFX.Widgets is
       Y              : GFX.Real;
 
    begin
-      Self.Content_Box_Transformation (Transformation);
-      Self.Content_Box_Clip_Region (Clip_Region);
-
+      GFX.CSS.Border_Box (Self.Box, Clip_Region, Transformation);
       Painter.Set_Transformation (Transformation);
       Painter.Set_Clip_Region (Clip_Region);
 
       Painter.Set_Color (GFX.To_RGBA (127, 127, 127, 255));
-      Painter.Set_Width (3.0);
-      Painter.Draw_Line (1.0, 5.0, 400.0, 5.0);
 
+      declare
+         W   : constant GFX.Real := Clip_Region.Right - Clip_Region.Left;
+         H   : constant GFX.Real := Clip_Region.Bottom - Clip_Region.Top;
+         BT  : constant GFX.Real := Self.Box.Computed_Border_Top;
+         BL  : constant GFX.Real := Self.Box.Computed_Border_Left;
+         BR  : constant GFX.Real := Self.Box.Computed_Border_Right;
+         BB  : constant GFX.Real := Self.Box.Computed_Border_Bottom;
+         BT2 : constant GFX.Real := BT / 2.0;
+         BL2 : constant GFX.Real := BL / 2.0;
+         BR2 : constant GFX.Real := BR / 2.0;
+         BB2 : constant GFX.Real := BB / 2.0;
+
+      begin
+         Painter.Set_Width (BT);
+         Painter.Draw_Line (0.0 + BL, 0.0 + BT2, W - BR, 0.0 + BT2);
+
+         Painter.Set_Width (BL);
+         Painter.Draw_Line (0.0 + BL2, 0.0 + BT, 0.0 + BL2, H - BB);
+
+         Painter.Set_Width (BR);
+         Painter.Draw_Line (W - BR2, 0.0 + BT, W - BR2, H - BB);
+
+         Painter.Set_Width (BR);
+         Painter.Draw_Line (0.0 + BL, H - BB2, W - BR, H - BB2);
+      end;
+
+      GFX.CSS.Content_Box (Self.Box, Clip_Region, Transformation);
+      Painter.Set_Transformation (Transformation);
+      Painter.Set_Clip_Region (Clip_Region);
       Painter.Set_Color (Color);
       Painter.Set_Width (1.0);
 

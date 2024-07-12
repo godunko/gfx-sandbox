@@ -6,6 +6,9 @@
 
 pragma Restrictions (No_Elaboration_Code);
 
+with GFX.Clip_Regions;
+with GFX.Transformers;
+
 package GFX.CSS
   with Pure
 is
@@ -74,5 +77,25 @@ is
       Computed_Content_Width  : CSS_Pixel_Length;
       Computed_Content_Height : CSS_Pixel_Length;
    end record;
+
+   procedure Content_Box
+     (Self           : CSS_Box;
+      Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
+      Transformation : out GFX.Transformers.Transformer);
+
+   procedure Padding_Box
+     (Self           : CSS_Box;
+      Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
+      Transformation : out GFX.Transformers.Transformer);
+
+   procedure Border_Box
+     (Self           : CSS_Box;
+      Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
+      Transformation : out GFX.Transformers.Transformer);
+
+   procedure Margin_Box
+     (Self           : CSS_Box;
+      Clip_Region    : out GFX.Clip_Regions.GX_Clip_Region;
+      Transformation : out GFX.Transformers.Transformer);
 
 end GFX.CSS;
