@@ -297,7 +297,7 @@ package body GFX.Implementation.Rasterizer is
                Fill_1 (RI - LI + 1, One);
 
             else
-               Fill_2 (RI, RI - LI + 1 - 1, One, RI, 1, RC);
+               Fill_2 (LI, RI - LI + 1 - 1, One, RI, 1, RC);
             end if;
 
          elsif LI + 1 /= RI then
