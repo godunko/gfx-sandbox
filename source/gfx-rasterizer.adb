@@ -472,10 +472,20 @@ package body GFX.Rasterizer is
 
    procedure Draw_Thick_Line
      (A : GFX.Points.GF_Point;
-      B : GFX.Points.GF_Point) is
+      B : GFX.Points.GF_Point)
+   is
+      AX : GFX.Real := A.X;
+      AY : GFX.Real := A.Y;
+      BX : GFX.Real := B.X;
+      BY : GFX.Real := B.Y;
+
    begin
+      if Clip_Line (AX, AY, BX, BY) then
+         return;
+      end if;
+
       GFX.Implementation.Rasterizer.Draw_Line
-        (A, B, Width, Fill_Span'Access);
+        ((AX, AY), (BX, BY), Width, Fill_Span'Access);
    end Draw_Thick_Line;
 
    ---------------
