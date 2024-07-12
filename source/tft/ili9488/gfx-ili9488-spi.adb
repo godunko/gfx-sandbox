@@ -34,6 +34,7 @@ package body SPI is
    Asynchronous_Busy : Boolean := False with Volatile;
    Transmit_Buffer   : access Unsigned_8_Array;
    Transmit_Index    : A0B.Types.Unsigned_32;
+   Transmit_Count    : A0B.Types.Unsigned_32;
    Finished_Callback : A0B.Callbacks.Callback;
    Receive_Buffer    : aliased A0B.Types.Unsigned_8 with Volatile;
 
@@ -280,6 +281,7 @@ package body SPI is
 
       Asynchronous_Busy := True;
       Transmit_Buffer   := Packet.Data;
+      Transmit_Count    := Packet.Size;
       Transmit_Index    := 0;
       Finished_Callback := Callback;
 
@@ -328,7 +330,7 @@ package body SPI is
            A0B.Types.Unsigned_16 (Transmit_Buffer (Transmit_Index));
          Transmit_Index    := @ + 1;
 
-         if Transmit_Index > Transmit_Buffer'Last then
+         if Transmit_Index >= Transmit_Count then
             --  Disable TXE interrupt, there is no more data to transmit.
             --  Transfer will be done when corresponding byte has been
             --  received.
@@ -346,8 +348,8 @@ package body SPI is
 
          --  Configure and enable DMA streams 0/3
 
-         DMA2_Periph.S0NDTR.NDT := Transmit_Buffer'Length;
-         DMA2_Periph.S3NDTR.NDT := Transmit_Buffer'Length;
+         DMA2_Periph.S0NDTR.NDT := S0NDTR_NDT_Field (Transmit_Count);
+         DMA2_Periph.S3NDTR.NDT := S0NDTR_NDT_Field (Transmit_Count);
          DMA2_Periph.S3M0AR :=
            A0B.Types.Unsigned_32
              (System.Storage_Elements.To_Integer

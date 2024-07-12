@@ -69,6 +69,7 @@ package body GFX.ILI9488 is
    type Command_Data_Packet is record
       Command : ILI9488_Command;
       Data    : not null access Unsigned_8_Array;
+      Size    : A0B.Types.Unsigned_32;
    end record;
 
    package SPI is
@@ -95,13 +96,13 @@ package body GFX.ILI9488 is
 
    CASET_Data   : aliased Unsigned_8_Array := (0 .. 3 => 0);
    CASET_Packet : constant Command_Data_Packet :=
-     (Command => CASET, Data => CASET_Data'Access);
+     (Command => CASET, Data => CASET_Data'Access, Size => 4);
    PASET_Data   : aliased Unsigned_8_Array := (0 .. 3 => 0);
    PASET_Packet : constant Command_Data_Packet :=
-     (Command => PASET, Data => PASET_Data'Access);
-   RAMWR_Data   : aliased Unsigned_8_Array := (0 .. 3_071 => 0);
-   RAMWR_Packet : constant Command_Data_Packet :=
-     (Command => RAMWR, Data => RAMWR_Data'Access);
+     (Command => PASET, Data => PASET_Data'Access, Size => 4);
+   RAMWR_Data   : aliased Unsigned_8_Array := (0 .. 12_287 => 0);
+   RAMWR_Packet : Command_Data_Packet :=
+     (Command => RAMWR, Data => RAMWR_Data'Access, Size => 0);
 
    Set_Done : Boolean := True with Volatile;
 
@@ -431,9 +432,9 @@ package body GFX.ILI9488 is
 
       Prepare_CAPA
         (A0B.Types.Unsigned_16 (X),
-         A0B.Types.Unsigned_16 (X + 32 - 1),
+         A0B.Types.Unsigned_16 (X + W - 1),
          A0B.Types.Unsigned_16 (Y),
-         A0B.Types.Unsigned_16 (Y + 32 - 1));
+         A0B.Types.Unsigned_16 (Y + H - 1));
 
       for J in 0 .. (W * H) - 1 loop
          GFX.From_RGBA8888 (S (J), R, G, B, A);
@@ -443,6 +444,7 @@ package body GFX.ILI9488 is
          RAMWR_Data (A0B.Types.Unsigned_32 (J * 3 + 2)) := B;
       end loop;
 
+      RAMWR_Packet.Size := A0B.Types.Unsigned_32 (W * H * 3);
       Set_Done := False;
 
       SPI.Initiate_Write
