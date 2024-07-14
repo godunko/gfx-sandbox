@@ -1,5 +1,6 @@
-.objs
-.vscode
-alire
-config
-bin
+/.objs/
+/.vscode/
+/alire/
+/bin/
+/config/
+/subprojects/
