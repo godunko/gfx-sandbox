@@ -15,6 +15,9 @@ check: build-testsuite
 
 build-all: build build-stm32f407 build-testsuite
 
+build-lib:
+	alr build
+
 build-testsuite:
 	cd testsuite && alr build
 
