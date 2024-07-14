@@ -8,7 +8,7 @@ pragma Ada_2022;
 
 with Ada.Unchecked_Conversion;
 
-with GFX.Implementation.Rasterizer;
+with GFX.Drawing.Primitive_Rasterizer;
 with GFX.Points;
 
 package body GFX.Rasterizer is
@@ -484,7 +484,7 @@ package body GFX.Rasterizer is
          return;
       end if;
 
-      GFX.Implementation.Rasterizer.Draw_Line
+      GFX.Drawing.Primitive_Rasterizer.Draw_Line
         ((AX, AY), (BX, BY), Width, Fill_Span'Access);
    end Draw_Thick_Line;
 
