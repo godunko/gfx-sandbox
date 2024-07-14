@@ -35,7 +35,6 @@ package body GFX.Application is
    ---------
 
    procedure Run is
-      use type Interfaces.Integer_32;
       use type Interfaces.Unsigned_32;
 
       T : GFX.Transformers.GX_Transformer;
