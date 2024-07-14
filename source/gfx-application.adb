@@ -39,7 +39,7 @@ package body GFX.Application is
       use type Interfaces.Unsigned_32;
 
       T : GFX.Transformers.GX_Transformer;
-      W : GFX.Implementation.Device_Pixel_Count;
+      W : GFX.Drawing.Device_Pixel_Count;
 
    begin
       CSS_Device_Transformation (GFX.Implementation.Snapshots.CSS_To_Device);
@@ -49,11 +49,11 @@ package body GFX.Application is
       for C in 0 .. Last_Column loop
          for R in 0 .. Last_Row loop
             W :=
-              GFX.Implementation.Device_Pixel_Count'Min
+              GFX.Drawing.Device_Pixel_Count'Min
                 (Backing_Store_Width,
                  Screen_Horizontal_Resolution
                    - Backing_Store_Width
-                       * GFX.Implementation.Device_Pixel_Count (C));
+                       * GFX.Drawing.Device_Pixel_Count (C));
 
             GFX.Implementation.Backing_Store.Set_Size
               (W, Backing_Store_Height);
@@ -114,8 +114,8 @@ package body GFX.Application is
             end loop;
 
             Set
-              (GFX.Implementation.Device_Pixel_Index (C * Backing_Store_Width),
-               GFX.Implementation.Device_Pixel_Index (R * Backing_Store_Height),
+              (GFX.Drawing.Device_Pixel_Index (C * Backing_Store_Width),
+               GFX.Drawing.Device_Pixel_Index (R * Backing_Store_Height),
                W,
                Backing_Store_Height,
                GFX.Implementation.Backing_Store.Storage);

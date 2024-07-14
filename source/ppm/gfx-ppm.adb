@@ -31,8 +31,8 @@ package body GFX.PPM is
    ---------------
 
    function Get_Pixel
-     (X : GFX.Implementation.Device_Pixel_Index;
-      Y : GFX.Implementation.Device_Pixel_Index) return GFX.RGBA8888 is
+     (X : GFX.Drawing.Device_Pixel_Index;
+      Y : GFX.Drawing.Device_Pixel_Index) return GFX.RGBA8888 is
    begin
       return Buffer (A0B.Types.Unsigned_32 (X), A0B.Types.Unsigned_32 (Y));
    end Get_Pixel;
@@ -91,8 +91,8 @@ package body GFX.PPM is
    ---------------
 
    procedure Set_Pixel
-     (X     : GFX.Implementation.Device_Pixel_Index;
-      Y     : GFX.Implementation.Device_Pixel_Index;
+     (X     : GFX.Drawing.Device_Pixel_Index;
+      Y     : GFX.Drawing.Device_Pixel_Index;
       Color : GFX.RGBA8888) is
    begin
       Buffer (A0B.Types.Unsigned_32 (X), A0B.Types.Unsigned_32 (Y)) := Color;

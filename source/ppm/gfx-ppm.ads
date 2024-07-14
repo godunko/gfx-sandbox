@@ -8,7 +8,7 @@
 
 with A0B.Types;
 
-with GFX.Implementation;
+with GFX.Drawing;
 
 package GFX.PPM is
 
@@ -16,13 +16,13 @@ package GFX.PPM is
      (Width : A0B.Types.Unsigned_32; Height : A0B.Types.Unsigned_32);
 
    procedure Set_Pixel
-     (X     : GFX.Implementation.Device_Pixel_Index;
-      Y     : GFX.Implementation.Device_Pixel_Index;
+     (X     : GFX.Drawing.Device_Pixel_Index;
+      Y     : GFX.Drawing.Device_Pixel_Index;
       Color : GFX.RGBA8888);
 
    function Get_Pixel
-     (X : GFX.Implementation.Device_Pixel_Index;
-      Y : GFX.Implementation.Device_Pixel_Index) return GFX.RGBA8888;
+     (X : GFX.Drawing.Device_Pixel_Index;
+      Y : GFX.Drawing.Device_Pixel_Index) return GFX.RGBA8888;
 
    procedure Save (File_Name : String);
 

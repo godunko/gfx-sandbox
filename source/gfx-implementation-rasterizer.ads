@@ -15,6 +15,7 @@
 
 pragma Restrictions (No_Elaboration_Code);
 
+with GFX.Drawing;
 with GFX.Points;
 
 package GFX.Implementation.Rasterizer
@@ -22,20 +23,20 @@ package GFX.Implementation.Rasterizer
 is
 
    type Fill_Span_Subprogram is
-     access procedure (X        : GFX.Implementation.Device_Pixel_Index;
-                       Y        : GFX.Implementation.Device_Pixel_Index;
-                       Width    : GFX.Implementation.Device_Pixel_Count;
-                       Coverage : GFX.Implementation.Grayscale);
+     access procedure (X        : GFX.Drawing.Device_Pixel_Index;
+                       Y        : GFX.Drawing.Device_Pixel_Index;
+                       Width    : GFX.Drawing.Device_Pixel_Count;
+                       Coverage : GFX.Drawing.Grayscale);
 
    procedure Draw_Line
      (Point_A   : GFX.Points.GF_Point;
       Point_B   : GFX.Points.GF_Point;
       Width     : GFX.Real;
       Fill_Span : not null access procedure
-        (X        : GFX.Implementation.Device_Pixel_Index;
-         Y        : GFX.Implementation.Device_Pixel_Index;
-         Width    : GFX.Implementation.Device_Pixel_Count;
-         Coverage : GFX.Implementation.Grayscale));
+        (X        : GFX.Drawing.Device_Pixel_Index;
+         Y        : GFX.Drawing.Device_Pixel_Index;
+         Width    : GFX.Drawing.Device_Pixel_Count;
+         Coverage : GFX.Drawing.Grayscale));
       --  Draw_Span : not null Draw_Span_Subprogram);
    --  Draw straight line between given two points of the given width. It
    --  supports anti-aliasing.
@@ -43,15 +44,15 @@ is
 private
 
    procedure Internal_Fill_Rectangle
-     (Top       : GFX.Implementation.Device_Pixel_Coordinate;
-      Left      : GFX.Implementation.Device_Pixel_Coordinate;
-      Right     : GFX.Implementation.Device_Pixel_Coordinate;
-      Bottom    : GFX.Implementation.Device_Pixel_Coordinate;
+     (Top       : GFX.Drawing.Device_Pixel_Coordinate;
+      Left      : GFX.Drawing.Device_Pixel_Coordinate;
+      Right     : GFX.Drawing.Device_Pixel_Coordinate;
+      Bottom    : GFX.Drawing.Device_Pixel_Coordinate;
       Fill_Span : not null access procedure
-        (X        : GFX.Implementation.Device_Pixel_Index;
-         Y        : GFX.Implementation.Device_Pixel_Index;
-         Width    : GFX.Implementation.Device_Pixel_Count;
-         Coverage : GFX.Implementation.Grayscale));
+        (X        : GFX.Drawing.Device_Pixel_Index;
+         Y        : GFX.Drawing.Device_Pixel_Index;
+         Width    : GFX.Drawing.Device_Pixel_Count;
+         Coverage : GFX.Drawing.Grayscale));
       --  Draw_Span : not null Draw_Span_Subprogram);
    --  Draw rectangle.
 

@@ -8,20 +8,20 @@ pragma Restrictions (No_Elaboration_Code);
 
 with A0B.Types;
 
-with GFX.Implementation;
+with GFX.Drawing;
 
 generic
    with function Get_Pixel
-     (X : GFX.Implementation.Device_Pixel_Index;
-      Y : GFX.Implementation.Device_Pixel_Index) return GFX.RGBA8888;
+     (X : GFX.Drawing.Device_Pixel_Index;
+      Y : GFX.Drawing.Device_Pixel_Index) return GFX.RGBA8888;
 
    with procedure Set_Pixel
-     (X     : GFX.Implementation.Device_Pixel_Index;
-      Y     : GFX.Implementation.Device_Pixel_Index;
+     (X     : GFX.Drawing.Device_Pixel_Index;
+      Y     : GFX.Drawing.Device_Pixel_Index;
       Color : GFX.RGBA8888);
 
-   Device_Width  : GFX.Implementation.Device_Pixel_Index;
-   Device_Height : GFX.Implementation.Device_Pixel_Index;
+   Device_Width  : GFX.Drawing.Device_Pixel_Index;
+   Device_Height : GFX.Drawing.Device_Pixel_Index;
 
 package GFX.Rasterizer
   with Preelaborate
@@ -32,17 +32,17 @@ is
       Width : GFX.Real);
 
    procedure Draw_Line
-     (X1    : GFX.Implementation.Device_Pixel_Coordinate;
-      Y1    : GFX.Implementation.Device_Pixel_Coordinate;
-      X2    : GFX.Implementation.Device_Pixel_Coordinate;
-      Y2    : GFX.Implementation.Device_Pixel_Coordinate);
+     (X1    : GFX.Drawing.Device_Pixel_Coordinate;
+      Y1    : GFX.Drawing.Device_Pixel_Coordinate;
+      X2    : GFX.Drawing.Device_Pixel_Coordinate;
+      Y2    : GFX.Drawing.Device_Pixel_Coordinate);
    --  Draw straight line between two given points.
 
    procedure Set_Clip
-     (Top    : GFX.Implementation.Device_Pixel_Coordinate;
-      Left   : GFX.Implementation.Device_Pixel_Coordinate;
-      Right  : GFX.Implementation.Device_Pixel_Coordinate;
-      Bottom : GFX.Implementation.Device_Pixel_Coordinate);
+     (Top    : GFX.Drawing.Device_Pixel_Coordinate;
+      Left   : GFX.Drawing.Device_Pixel_Coordinate;
+      Right  : GFX.Drawing.Device_Pixel_Coordinate;
+      Bottom : GFX.Drawing.Device_Pixel_Coordinate);
 
 private
 

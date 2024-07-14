@@ -16,7 +16,8 @@ generate_ada = false
 
 [[depends-on]]
 a0b_base = "*"
-gfx = "~0.1.0-dev"
+gfx_drawing = "~0.1.0-dev"
 
 [[pins]]
-gfx = { path='subprojects/gfx' }
+gfx_core = { path='subprojects/gfx-core' }
+gfx_drawing = { path='subprojects/gfx-drawing' }

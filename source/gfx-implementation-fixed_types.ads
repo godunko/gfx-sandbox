@@ -16,6 +16,8 @@ pragma Restrictions (No_Elaboration_Code);
 
 with Interfaces;
 
+with GFX.Drawing;
+
 package GFX.Implementation.Fixed_Types
   with Pure
 is
@@ -29,7 +31,7 @@ is
    One : constant Fixed_16;
 
    function To_Fixed_6
-     (Item : GFX.Implementation.Device_Pixel_Coordinate) return Fixed_6;
+     (Item : GFX.Drawing.Device_Pixel_Coordinate) return Fixed_6;
    --  Convert given floating point value to binary fixed point value with 6
    --  bits of precision.
 
@@ -38,8 +40,8 @@ is
    function "-" (Left : Fixed_16; Right : Fixed_16) return Fixed_16;
 
    function Is_Equal_Fixed_6
-     (Left  : GFX.Implementation.Device_Pixel_Coordinate;
-      Right : GFX.Implementation.Device_Pixel_Coordinate) return Boolean;
+     (Left  : GFX.Drawing.Device_Pixel_Coordinate;
+      Right : GFX.Drawing.Device_Pixel_Coordinate) return Boolean;
    --  Return True when two given values is equal when converted to Fixed_6
    --  type.
    --
@@ -47,7 +49,7 @@ is
    --  optimized ???
 
    function To_Fixed_16
-     (Item : GFX.Implementation.Device_Pixel_Coordinate) return Fixed_16;
+     (Item : GFX.Drawing.Device_Pixel_Coordinate) return Fixed_16;
    --  Convert given floating point value to binary fixed point value with 16
    --  bits of precision with the coordinate system offset.
 
@@ -76,7 +78,7 @@ is
    --  This subprogram is intended to be used for multiplication of the coverage
    --  values, thus arguments must be in 0.0 .. 1.0 range.
 
-   function To_Grayscale (Item : Fixed_16) return GFX.Implementation.Grayscale;
+   function To_Grayscale (Item : Fixed_16) return GFX.Drawing.Grayscale;
    --  Converts given fixed point value in range 0.0 .. 1.0 into grayscale value
    --  in range 0 .. 255.
 

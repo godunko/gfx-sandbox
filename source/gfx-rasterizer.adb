@@ -60,10 +60,10 @@ package body GFX.Rasterizer is
    Width : GFX.Real;
 
    procedure Fill_Span
-     (X        : GFX.Implementation.Device_Pixel_Index;
-      Y        : GFX.Implementation.Device_Pixel_Index;
-      Width    : GFX.Implementation.Device_Pixel_Count;
-      Coverage : GFX.Implementation.Grayscale);
+     (X        : GFX.Drawing.Device_Pixel_Index;
+      Y        : GFX.Drawing.Device_Pixel_Index;
+      Width    : GFX.Drawing.Device_Pixel_Count;
+      Coverage : GFX.Drawing.Grayscale);
 
    procedure Draw_Thick_Line
      (A : GFX.Points.GF_Point;
@@ -181,10 +181,10 @@ package body GFX.Rasterizer is
    ---------------
 
    procedure Draw_Line
-     (X1 : GFX.Implementation.Device_Pixel_Coordinate;
-      Y1 : GFX.Implementation.Device_Pixel_Coordinate;
-      X2 : GFX.Implementation.Device_Pixel_Coordinate;
-      Y2 : GFX.Implementation.Device_Pixel_Coordinate)
+     (X1 : GFX.Drawing.Device_Pixel_Coordinate;
+      Y1 : GFX.Drawing.Device_Pixel_Coordinate;
+      X2 : GFX.Drawing.Device_Pixel_Coordinate;
+      Y2 : GFX.Drawing.Device_Pixel_Coordinate)
    is
       use A0B.Types;
       use type A0B.Types.Integer_32;
@@ -248,10 +248,10 @@ package body GFX.Rasterizer is
          Y : A0B.Types.Integer_32;
          A : A0B.Types.Integer_32)
       is
-         XU : constant GFX.Implementation.Device_Pixel_Index :=
-           GFX.Implementation.Device_Pixel_Index (X);
-         YU : constant GFX.Implementation.Device_Pixel_Index :=
-           GFX.Implementation.Device_Pixel_Index (Y);
+         XU : constant GFX.Drawing.Device_Pixel_Index :=
+           GFX.Drawing.Device_Pixel_Index (X);
+         YU : constant GFX.Drawing.Device_Pixel_Index :=
+           GFX.Drawing.Device_Pixel_Index (Y);
          C  : constant RGBA8888 := Color * A;
 
       begin
@@ -493,10 +493,10 @@ package body GFX.Rasterizer is
    ---------------
 
    procedure Fill_Span
-     (X        : GFX.Implementation.Device_Pixel_Index;
-      Y        : GFX.Implementation.Device_Pixel_Index;
-      Width    : GFX.Implementation.Device_Pixel_Count;
-      Coverage : GFX.Implementation.Grayscale)
+     (X        : GFX.Drawing.Device_Pixel_Index;
+      Y        : GFX.Drawing.Device_Pixel_Index;
+      Width    : GFX.Drawing.Device_Pixel_Count;
+      Coverage : GFX.Drawing.Grayscale)
    is
       use Interfaces;
       --  use type A0B.Types.Unsigned_32;
@@ -561,10 +561,10 @@ package body GFX.Rasterizer is
          Y : A0B.Types.Integer_32;
          A : A0B.Types.Integer_32)
       is
-         XU : constant GFX.Implementation.Device_Pixel_Index :=
-           GFX.Implementation.Device_Pixel_Index (X);
-         YU : constant GFX.Implementation.Device_Pixel_Index :=
-           GFX.Implementation.Device_Pixel_Index (Y);
+         XU : constant GFX.Drawing.Device_Pixel_Index :=
+           GFX.Drawing.Device_Pixel_Index (X);
+         YU : constant GFX.Drawing.Device_Pixel_Index :=
+           GFX.Drawing.Device_Pixel_Index (Y);
          C  : constant RGBA8888 := Color * A;
 
       begin
@@ -586,10 +586,10 @@ package body GFX.Rasterizer is
    --------------
 
    procedure Set_Clip
-     (Top    : GFX.Implementation.Device_Pixel_Coordinate;
-      Left   : GFX.Implementation.Device_Pixel_Coordinate;
-      Right  : GFX.Implementation.Device_Pixel_Coordinate;
-      Bottom : GFX.Implementation.Device_Pixel_Coordinate)
+     (Top    : GFX.Drawing.Device_Pixel_Coordinate;
+      Left   : GFX.Drawing.Device_Pixel_Coordinate;
+      Right  : GFX.Drawing.Device_Pixel_Coordinate;
+      Bottom : GFX.Drawing.Device_Pixel_Coordinate)
    is
       use type Interfaces.Integer_32;
 

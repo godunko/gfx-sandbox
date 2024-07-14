@@ -4,6 +4,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+with A0B.Types;
+
 with GFX.Clip_Regions;
 with GFX.Points;
 with GFX.Transformers;

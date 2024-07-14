@@ -91,8 +91,8 @@ package body GFX.Implementation.Fixed_Types is
    ----------------------
 
    function Is_Equal_Fixed_6
-     (Left  : GFX.Implementation.Device_Pixel_Coordinate;
-      Right : GFX.Implementation.Device_Pixel_Coordinate) return Boolean is
+     (Left  : GFX.Drawing.Device_Pixel_Coordinate;
+      Right : GFX.Drawing.Device_Pixel_Coordinate) return Boolean is
    begin
       return To_Fixed_6 (Left) = To_Fixed_6 (Right);
       --  ??? Can it be optimized like:
@@ -144,7 +144,7 @@ package body GFX.Implementation.Fixed_Types is
    ----------------
 
    function To_Fixed_6
-     (Item : GFX.Implementation.Device_Pixel_Coordinate) return Fixed_6 is
+     (Item : GFX.Drawing.Device_Pixel_Coordinate) return Fixed_6 is
    begin
       return Fixed_6 (Item * Fixed_6_Scale);
    end To_Fixed_6;
@@ -154,7 +154,7 @@ package body GFX.Implementation.Fixed_Types is
    -----------------
 
    function To_Fixed_16
-     (Item : GFX.Implementation.Device_Pixel_Coordinate) return Fixed_16 is
+     (Item : GFX.Drawing.Device_Pixel_Coordinate) return Fixed_16 is
    begin
       return Fixed_16 (Item * Fixed_16_Scale - Fixed_16_Offset);
    end To_Fixed_16;
@@ -164,10 +164,10 @@ package body GFX.Implementation.Fixed_Types is
    ------------------
 
    function To_Grayscale
-     (Item : Fixed_16) return GFX.Implementation.Grayscale is
+     (Item : Fixed_16) return GFX.Drawing.Grayscale is
    begin
       return
-        GFX.Implementation.Grayscale
+        GFX.Drawing.Grayscale
           (Shift_Right (To_Unsigned (Item) * 255, 16));
    end To_Grayscale;
 
