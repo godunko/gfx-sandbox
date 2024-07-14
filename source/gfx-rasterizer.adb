@@ -488,7 +488,7 @@ package body GFX.Rasterizer is
          return;
       end if;
 
-      GFX.Drawing.Primitive_Rasterizer.Draw_Line
+      GFX.Drawing.Primitive_Rasterizer.Rasterize_Line
         ((AX, AY), (BX, BY), Width, Fill_Span'Access);
    end Draw_Thick_Line;
 
