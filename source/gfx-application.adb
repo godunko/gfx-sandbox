@@ -35,8 +35,8 @@ package body GFX.Application is
    ---------
 
    procedure Run is
-      use type A0B.Types.Integer_32;
-      use type A0B.Types.Unsigned_32;
+      use type Interfaces.Integer_32;
+      use type Interfaces.Unsigned_32;
 
       T : GFX.Transformers.GX_Transformer;
       W : GFX.Implementation.Device_Pixel_Count;
@@ -120,6 +120,10 @@ package body GFX.Application is
                Backing_Store_Height,
                GFX.Implementation.Backing_Store.Storage);
          end loop;
+      end loop;
+
+      loop
+         null;
       end loop;
    end Run;
 

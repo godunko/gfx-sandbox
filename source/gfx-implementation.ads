@@ -53,6 +53,8 @@
 --  number are rounded in different directions. It is ignored by the algoriphms.
 --
 
+with A0B.Types;
+
 package GFX.Implementation
   with Pure
 is

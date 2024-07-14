@@ -6,6 +6,8 @@
 
 --  Draw into PPM (portable pixmap format) image and save it in file.
 
+with A0B.Types;
+
 with GFX.Implementation;
 
 package GFX.PPM is

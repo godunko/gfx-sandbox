@@ -138,7 +138,7 @@ package body SPI is
          --  The first clock transition is the first data capture edge
          CPOL     => False,   --  CK to 0 when idle
          MSTR     => True,    --  Master configuration
-         BR       => 2#001#,  --  fPCLK/4
+         BR       => 2#001#,  --  fPCLK/???
          --  BR       => 2#011#,  --  fPCLK/16
          SPE      => False,   --  Peripheral disabled
          LSBFIRST => False,   --  MSB transmitted first

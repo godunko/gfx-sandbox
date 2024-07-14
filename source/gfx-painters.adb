@@ -19,7 +19,7 @@ package body GFX.Painters is
      (Self           : in out Painter'Class;
       X1, Y1, X2, Y2 : GFX.Real)
    is
-      use type A0B.Types.Unsigned_32;
+      use type Interfaces.Unsigned_32;
 
       S : GFX.Points.GF_Point := (X1, Y1);
       E : GFX.Points.GF_Point := (X2, Y2);

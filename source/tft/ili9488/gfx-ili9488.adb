@@ -10,6 +10,7 @@ with A0B.Callbacks.Generic_Parameterless;
 with A0B.Delays;
 with A0B.STM32F407.GPIO;
 with A0B.Time;
+with A0B.Types;
 
 package body GFX.ILI9488 is
 
