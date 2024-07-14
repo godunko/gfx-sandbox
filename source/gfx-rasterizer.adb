@@ -31,6 +31,8 @@ package body GFX.Rasterizer is
      (Item   : A0B.Types.Integer_32;
       Amount : Natural) return A0B.Types.Integer_32;
 
+   function Integral (Item : Fixed_16_16) return GFX.Drawing.Device_Pixel_Index;
+
    function "and"
      (Left  : A0B.Types.Integer_32;
       Right : A0B.Types.Unsigned_32) return A0B.Types.Integer_32;
@@ -51,10 +53,10 @@ package body GFX.Rasterizer is
    Ymin : GFX.Real with Volatile;
    Ymax : GFX.Real with Volatile;
 
-   Xd_Min : Interfaces.Integer_32 with Volatile;
-   Xd_Max : Interfaces.Integer_32 with Volatile;
-   Yd_Min : Interfaces.Integer_32 with Volatile;
-   Yd_Max : Interfaces.Integer_32 with Volatile;
+   Xd_Min : GFX.Drawing.Device_Pixel_Index with Volatile;
+   Xd_Max : GFX.Drawing.Device_Pixel_Index with Volatile;
+   Yd_Min : GFX.Drawing.Device_Pixel_Index with Volatile;
+   Yd_Max : GFX.Drawing.Device_Pixel_Index with Volatile;
 
    Color : GFX.RGBA8888;
    Width : GFX.Real;
@@ -195,8 +197,8 @@ package body GFX.Rasterizer is
       function Blend (V : RGBA8888; C : RGBA8888) return RGBA8888;
 
       procedure Draw_Pixel
-        (X : A0B.Types.Integer_32;
-         Y : A0B.Types.Integer_32;
+        (X : GFX.Drawing.Device_Pixel_Index;
+         Y : GFX.Drawing.Device_Pixel_Index;
          A : A0B.Types.Integer_32);
 
       ---------
@@ -244,14 +246,12 @@ package body GFX.Rasterizer is
       ----------------
 
       procedure Draw_Pixel
-        (X : A0B.Types.Integer_32;
-         Y : A0B.Types.Integer_32;
+        (X : GFX.Drawing.Device_Pixel_Index;
+         Y : GFX.Drawing.Device_Pixel_Index;
          A : A0B.Types.Integer_32)
       is
-         XU : constant GFX.Drawing.Device_Pixel_Index :=
-           GFX.Drawing.Device_Pixel_Index (X);
-         YU : constant GFX.Drawing.Device_Pixel_Index :=
-           GFX.Drawing.Device_Pixel_Index (Y);
+         XU : constant GFX.Drawing.Device_Pixel_Index := X;
+         YU : constant GFX.Drawing.Device_Pixel_Index := Y;
          C  : constant RGBA8888 := Color * A;
 
       begin
@@ -312,8 +312,8 @@ package body GFX.Rasterizer is
 
       if abs DX < abs DY then
          declare
-            Y    : A0B.Types.Integer_32;
-            YS   : A0B.Types.Integer_32;
+            Y    : GFX.Drawing.Device_Pixel_Index;
+            YS   : GFX.Drawing.Device_Pixel_Index;
             X    : Fixed_16_16;
             Xinc : Fixed_16_16;
 
@@ -346,8 +346,10 @@ package body GFX.Rasterizer is
             --  half of the pixel more in each direction. Adjustment of
             --  the starting point is done too, but optimized out.
 
-            Y  := Shift_Right_Arithmetic (Yi1, 6);
-            YS := Shift_Right_Arithmetic (Yi2, 6);
+            Y  :=
+              GFX.Drawing.Device_Pixel_Index (Shift_Right_Arithmetic (Yi1, 6));
+            YS :=
+              GFX.Drawing.Device_Pixel_Index (Shift_Right_Arithmetic (Yi2, 6));
 
             if Y = YS then
                AS := Yi2 - Yi1;
@@ -362,11 +364,11 @@ package body GFX.Rasterizer is
 
             A := Shift_Right_Arithmetic (X, 8) and 16#FF#;
             Draw_Pixel
-              (Shift_Right_Arithmetic (X, 16),
+              (Integral (X),
                Y,
                Shift_Right_Arithmetic ((A xor 16#FF#) * AS, 6));
             Draw_Pixel
-              (Shift_Right_Arithmetic (X, 16) + 1,
+              (Integral (X) + 1,
                Y,
                Shift_Right_Arithmetic (A * AS, 6));
 
@@ -375,8 +377,8 @@ package body GFX.Rasterizer is
 
             while Y < YS loop
                A := Shift_Right_Arithmetic (X, 8) and 16#FF#;
-               Draw_Pixel (Shift_Right_Arithmetic (X, 16), Y, A xor 16#FF#);
-               Draw_Pixel (Shift_Right_Arithmetic (X, 16) + 1, Y, A);
+               Draw_Pixel (Integral (X), Y, A xor 16#FF#);
+               Draw_Pixel (Integral (X) + 1, Y, A);
 
                X := @ + Xinc;
                Y := @ + 1;
@@ -386,11 +388,11 @@ package body GFX.Rasterizer is
 
             A := Shift_Right_Arithmetic (X, 8) and 16#FF#;
             Draw_Pixel
-              (Shift_Right_Arithmetic (X, 16),
+              (Integral (X),
                Y,
                Shift_Right_Arithmetic ((A xor 16#FF#) * AE, 6));
             Draw_Pixel
-              (Shift_Right_Arithmetic (X, 16) + 1,
+              (Integral (X) + 1,
                Y,
                Shift_Right_Arithmetic (A * AE, 6));
          end;
@@ -401,8 +403,8 @@ package body GFX.Rasterizer is
          end if;
 
          declare
-            X    : A0B.Types.Integer_32;
-            XS   : A0B.Types.Integer_32;
+            X    : GFX.Drawing.Device_Pixel_Index;
+            XS   : GFX.Drawing.Device_Pixel_Index;
             Y    : Fixed_16_16;
             Yinc : Fixed_16_16;
 
@@ -419,8 +421,10 @@ package body GFX.Rasterizer is
             Y   := @ - Yinc / 2;
             Xi2 := @ + 63;
 
-            X  := Shift_Right_Arithmetic (Xi1, 6);
-            XS := Shift_Right_Arithmetic (Xi2, 6);
+            X  :=
+              GFX.Drawing.Device_Pixel_Index (Shift_Right_Arithmetic (Xi1, 6));
+            XS :=
+              GFX.Drawing.Device_Pixel_Index (Shift_Right_Arithmetic (Xi2, 6));
 
             if X = XS then
                AS := Xi2 - Xi1;
@@ -434,11 +438,11 @@ package body GFX.Rasterizer is
             A := Shift_Right_Arithmetic (Y, 8) and 16#FF#;
             Draw_Pixel
               (X,
-               Shift_Right_Arithmetic (Y, 16),
+               Integral (Y),
                Shift_Right_Arithmetic ((A xor 16#FF#) * AS, 6));
             Draw_Pixel
               (X,
-               Shift_Right_Arithmetic (Y, 16) + 1,
+               Integral (Y) + 1,
                Shift_Right_Arithmetic (A * AS, 6));
 
             Y := @ + Yinc;
@@ -446,8 +450,8 @@ package body GFX.Rasterizer is
 
             while X < XS loop
                A := Shift_Right_Arithmetic (Y, 8) and 16#FF#;
-               Draw_Pixel (X, Shift_Right_Arithmetic (Y, 16), A xor 16#FF#);
-               Draw_Pixel (X, Shift_Right_Arithmetic (Y, 16) + 1, A);
+               Draw_Pixel (X, Integral (Y), A xor 16#FF#);
+               Draw_Pixel (X, Integral (Y) + 1, A);
 
                Y := @ + Yinc;
                X := @ + 1;
@@ -456,11 +460,11 @@ package body GFX.Rasterizer is
             A := Shift_Right_Arithmetic (Y, 8) and 16#FF#;
             Draw_Pixel
               (X,
-               Shift_Right_Arithmetic (Y, 16),
+               Integral (Y),
                Shift_Right_Arithmetic ((A xor 16#FF#) * AE, 6));
             Draw_Pixel
               (X,
-               Shift_Right_Arithmetic (Y, 16) + 1,
+               Integral (Y) + 1,
                Shift_Right_Arithmetic (A * AE, 6));
          end;
       end if;
@@ -502,8 +506,8 @@ package body GFX.Rasterizer is
       --  use type A0B.Types.Unsigned_32;
 
       procedure Draw_Pixel
-        (X : A0B.Types.Integer_32;
-         Y : A0B.Types.Integer_32;
+        (X : GFX.Drawing.Device_Pixel_Index;
+         Y : GFX.Drawing.Device_Pixel_Index;
          A : A0B.Types.Integer_32);
 
       function "*"
@@ -557,14 +561,12 @@ package body GFX.Rasterizer is
       ----------------
 
       procedure Draw_Pixel
-        (X : A0B.Types.Integer_32;
-         Y : A0B.Types.Integer_32;
+        (X : GFX.Drawing.Device_Pixel_Index;
+         Y : GFX.Drawing.Device_Pixel_Index;
          A : A0B.Types.Integer_32)
       is
-         XU : constant GFX.Drawing.Device_Pixel_Index :=
-           GFX.Drawing.Device_Pixel_Index (X);
-         YU : constant GFX.Drawing.Device_Pixel_Index :=
-           GFX.Drawing.Device_Pixel_Index (Y);
+         XU : constant GFX.Drawing.Device_Pixel_Index := X;
+         YU : constant GFX.Drawing.Device_Pixel_Index := Y;
          C  : constant RGBA8888 := Color * A;
 
       begin
@@ -582,6 +584,16 @@ package body GFX.Rasterizer is
    end Fill_Span;
 
    --------------
+   -- Integral --
+   --------------
+
+   function Integral
+     (Item : Fixed_16_16) return GFX.Drawing.Device_Pixel_Index is
+   begin
+      return GFX.Drawing.Device_Pixel_Index (Shift_Right_Arithmetic (Item, 16));
+   end Integral;
+
+   --------------
    -- Set_Clip --
    --------------
 
@@ -589,10 +601,7 @@ package body GFX.Rasterizer is
      (Top    : GFX.Drawing.Device_Pixel_Coordinate;
       Left   : GFX.Drawing.Device_Pixel_Coordinate;
       Right  : GFX.Drawing.Device_Pixel_Coordinate;
-      Bottom : GFX.Drawing.Device_Pixel_Coordinate)
-   is
-      use type Interfaces.Integer_32;
-
+      Bottom : GFX.Drawing.Device_Pixel_Coordinate) is
    begin
       Xmin := GFX.Real'Max (0.0, Left + 0.5) - 1.0;
       Xmax := GFX.Real'Min (GFX.Real (Device_Width), Right + 0.5);
@@ -600,17 +609,17 @@ package body GFX.Rasterizer is
       Ymax := GFX.Real'Min (GFX.Real (Device_Height), Bottom + 0.5);
 
       Xd_Min :=
-        Interfaces.Integer_32'Max
-          (0, Interfaces.Integer_32 (Left + 0.5));
+        GFX.Drawing.Device_Pixel_Index'Max
+          (0, GFX.Drawing.Device_Pixel_Index (Left + 0.5));
       Xd_Max :=
-        Interfaces.Integer_32'Min
-          (Device_Width - 1, Interfaces.Integer_32 (Right - 0.5));
+        GFX.Drawing.Device_Pixel_Index'Min
+          (Device_Width - 1, GFX.Drawing.Device_Pixel_Index (Right - 0.5));
       Yd_Min :=
-        Interfaces.Integer_32'Max
-          (0, Interfaces.Integer_32 (Top + 0.5));
+        GFX.Drawing.Device_Pixel_Index'Max
+          (0, GFX.Drawing.Device_Pixel_Index (Top + 0.5));
       Yd_Max :=
-        Interfaces.Integer_32'Min
-          (Device_Height - 1, Interfaces.Integer_32 (Bottom - 0.5));
+        GFX.Drawing.Device_Pixel_Index'Min
+          (Device_Height - 1, GFX.Drawing.Device_Pixel_Index (Bottom - 0.5));
    end Set_Clip;
 
    ------------------

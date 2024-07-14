@@ -419,8 +419,6 @@ package body GFX.ILI9488 is
       H : GFX.Drawing.Device_Pixel_Count;
       S : not null access GFX.Implementation.Backing_Store.Storage_Array)
    is
-      use type GFX.Drawing.Device_Pixel_Index;
-
       R : A0B.Types.Unsigned_8;
       G : A0B.Types.Unsigned_8;
       B : A0B.Types.Unsigned_8;
