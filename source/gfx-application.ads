@@ -4,16 +4,16 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
-with GFX.Drawing;
+with GFX.Rasteriser;
 with GFX.Implementation.Backing_Store;
 with GFX.Transformers;
 
 generic
    with procedure Set
-     (X : GFX.Drawing.Device_Pixel_Index;
-      Y : GFX.Drawing.Device_Pixel_Index;
-      W : GFX.Drawing.Device_Pixel_Count;
-      H : GFX.Drawing.Device_Pixel_Count;
+     (X : GFX.Rasteriser.Device_Pixel_Index;
+      Y : GFX.Rasteriser.Device_Pixel_Index;
+      W : GFX.Rasteriser.Device_Pixel_Count;
+      H : GFX.Rasteriser.Device_Pixel_Count;
       S : not null access GFX.Implementation.Backing_Store.Storage_Array);
 
    with procedure CSS_Device_Transformation

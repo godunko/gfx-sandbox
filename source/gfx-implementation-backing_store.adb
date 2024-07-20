@@ -6,12 +6,10 @@
 
 package body GFX.Implementation.Backing_Store is
 
-   use type Interfaces.Integer_32;
-
    Pixels : aliased Storage_Array
      with Linker_Section => ".dtcm.bss";
-   Width  : GFX.Drawing.Device_Pixel_Count;
-   Height : GFX.Drawing.Device_Pixel_Count;
+   Width  : GFX.Rasteriser.Device_Pixel_Count;
+   Height : GFX.Rasteriser.Device_Pixel_Count;
 
    -----------
    -- Clear --
@@ -29,8 +27,8 @@ package body GFX.Implementation.Backing_Store is
    ---------------
 
    function Get_Pixel
-     (X : GFX.Drawing.Device_Pixel_Index;
-      Y : GFX.Drawing.Device_Pixel_Index) return GFX.RGBA8888 is
+     (X : GFX.Rasteriser.Device_Pixel_Index;
+      Y : GFX.Rasteriser.Device_Pixel_Index) return GFX.RGBA8888 is
    begin
       return Pixels (Y * Width + X);
    end Get_Pixel;
@@ -40,8 +38,8 @@ package body GFX.Implementation.Backing_Store is
    ---------------
 
    procedure Set_Pixel
-     (X     : GFX.Drawing.Device_Pixel_Index;
-      Y     : GFX.Drawing.Device_Pixel_Index;
+     (X     : GFX.Rasteriser.Device_Pixel_Index;
+      Y     : GFX.Rasteriser.Device_Pixel_Index;
       Color : GFX.RGBA8888) is
    begin
       if X < Width and Y < Height then
@@ -54,8 +52,8 @@ package body GFX.Implementation.Backing_Store is
    --------------
 
    procedure Set_Size
-     (Width  : GFX.Drawing.Device_Pixel_Count;
-      Height : GFX.Drawing.Device_Pixel_Count) is
+     (Width  : GFX.Rasteriser.Device_Pixel_Count;
+      Height : GFX.Rasteriser.Device_Pixel_Count) is
    begin
       Backing_Store.Width  := Width;
       Backing_Store.Height := Height;

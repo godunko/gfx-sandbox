@@ -204,8 +204,8 @@ package body GFX.ILI9488 is
    ---------------
 
    function Get_Pixel
-     (X : GFX.Drawing.Device_Pixel_Index;
-      Y : GFX.Drawing.Device_Pixel_Index) return GFX.RGBA8888
+     (X : GFX.Rasteriser.Device_Pixel_Index;
+      Y : GFX.Rasteriser.Device_Pixel_Index) return GFX.RGBA8888
    is
       R : A0B.Types.Unsigned_8;
       G : A0B.Types.Unsigned_8;
@@ -413,10 +413,10 @@ package body GFX.ILI9488 is
    ---------
 
    procedure Set
-     (X : GFX.Drawing.Device_Pixel_Index;
-      Y : GFX.Drawing.Device_Pixel_Index;
-      W : GFX.Drawing.Device_Pixel_Count;
-      H : GFX.Drawing.Device_Pixel_Count;
+     (X : GFX.Rasteriser.Device_Pixel_Index;
+      Y : GFX.Rasteriser.Device_Pixel_Index;
+      W : GFX.Rasteriser.Device_Pixel_Count;
+      H : GFX.Rasteriser.Device_Pixel_Count;
       S : not null access GFX.Implementation.Backing_Store.Storage_Array)
    is
       R : A0B.Types.Unsigned_8;
@@ -455,8 +455,8 @@ package body GFX.ILI9488 is
    ---------------
 
    procedure Set_Pixel
-     (X     : GFX.Drawing.Device_Pixel_Index;
-      Y     : GFX.Drawing.Device_Pixel_Index;
+     (X     : GFX.Rasteriser.Device_Pixel_Index;
+      Y     : GFX.Rasteriser.Device_Pixel_Index;
       Color : GFX.RGBA8888)
    is
       R : A0B.Types.Unsigned_8;
