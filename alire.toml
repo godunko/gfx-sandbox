@@ -16,7 +16,7 @@ generate_ada = false
 
 [[depends-on]]
 a0b_base = "*"
-gfx_rasteriser = "~0.1.0-dev"
+gfx_rasteriser = "*"
 
 [[pins]]
 gfx_core = { path='subprojects/gfx-core' }
