@@ -11,7 +11,7 @@ package GFX.Implementation.Backing_Store
 is
 
    type Storage_Array is array
-     (GFX.Rasteriser.Device_Pixel_Index range 0 .. 4_095)
+     (Interfaces.Unsigned_32 range 0 .. 4_095)
         of GFX.RGBA8888;
 
    procedure Clear;
@@ -28,7 +28,9 @@ is
    function Storage return not null access Storage_Array;
 
    procedure Set_Size
-     (Width  : GFX.Rasteriser.Device_Pixel_Count;
+     (X      : GFX.Rasteriser.Device_Pixel_Index;
+      Y      : GFX.Rasteriser.Device_Pixel_Index;
+      Width  : GFX.Rasteriser.Device_Pixel_Count;
       Height : GFX.Rasteriser.Device_Pixel_Count);
 
 end GFX.Implementation.Backing_Store;

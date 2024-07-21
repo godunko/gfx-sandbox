@@ -10,6 +10,14 @@ package body GFX.Implementation.Backing_Store is
      with Linker_Section => ".dtcm.bss";
    Width  : GFX.Rasteriser.Device_Pixel_Count;
    Height : GFX.Rasteriser.Device_Pixel_Count;
+   X_Min  : GFX.Rasteriser.Device_Pixel_Index;
+   X_Max  : GFX.Rasteriser.Device_Pixel_Index;
+   Y_Min  : GFX.Rasteriser.Device_Pixel_Index;
+   Y_Max  : GFX.Rasteriser.Device_Pixel_Index;
+
+   function Offset
+     (X : GFX.Rasteriser.Device_Pixel_Index;
+      Y : GFX.Rasteriser.Device_Pixel_Index) return Interfaces.Unsigned_32;
 
    -----------
    -- Clear --
@@ -17,7 +25,7 @@ package body GFX.Implementation.Backing_Store is
 
    procedure Clear is
    begin
-      for J in 0 .. (Width * Height) - 1 loop
+      for J in 0 .. Interfaces.Unsigned_32 (Width * Height - 1) loop
          Pixels (J) := To_RGBA (0, 0, 0, 0);
       end loop;
    end Clear;
@@ -30,8 +38,19 @@ package body GFX.Implementation.Backing_Store is
      (X : GFX.Rasteriser.Device_Pixel_Index;
       Y : GFX.Rasteriser.Device_Pixel_Index) return GFX.RGBA8888 is
    begin
-      return Pixels (Y * Width + X);
+      return Pixels (Offset (X, Y));
    end Get_Pixel;
+
+   ------------
+   -- Offset --
+   ------------
+
+   function Offset
+     (X : GFX.Rasteriser.Device_Pixel_Index;
+      Y : GFX.Rasteriser.Device_Pixel_Index) return Interfaces.Unsigned_32 is
+   begin
+      return Interfaces.Unsigned_32 ((Y - Y_Min) * Width + X - X_Min);
+   end Offset;
 
    ---------------
    -- Set_Pixel --
@@ -42,8 +61,8 @@ package body GFX.Implementation.Backing_Store is
       Y     : GFX.Rasteriser.Device_Pixel_Index;
       Color : GFX.RGBA8888) is
    begin
-      if X < Width and Y < Height then
-         Pixels (Y * Width + X) := Color;
+      if X in X_Min .. X_Max and Y in Y_Min .. Y_Max then
+         Pixels (Offset (X, Y)) := Color;
       end if;
    end Set_Pixel;
 
@@ -52,11 +71,18 @@ package body GFX.Implementation.Backing_Store is
    --------------
 
    procedure Set_Size
-     (Width  : GFX.Rasteriser.Device_Pixel_Count;
+     (X      : GFX.Rasteriser.Device_Pixel_Index;
+      Y      : GFX.Rasteriser.Device_Pixel_Index;
+      Width  : GFX.Rasteriser.Device_Pixel_Count;
       Height : GFX.Rasteriser.Device_Pixel_Count) is
    begin
       Backing_Store.Width  := Width;
       Backing_Store.Height := Height;
+
+      X_Min := X;
+      X_Max := X + Width - 1;
+      Y_Min := Y;
+      Y_Max := Y + Height - 1;
    end Set_Size;
 
    -------------

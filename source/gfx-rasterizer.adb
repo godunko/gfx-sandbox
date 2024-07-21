@@ -54,6 +54,11 @@ package body GFX.Rasterizer is
    Ymin : GFX.GX_Real with Volatile;
    Ymax : GFX.GX_Real with Volatile;
 
+   XCmin : GFX.GX_Real with Volatile;
+   XCmax : GFX.GX_Real with Volatile;
+   YCmin : GFX.GX_Real with Volatile;
+   YCmax : GFX.GX_Real with Volatile;
+
    Xd_Min : GFX.Rasteriser.Device_Pixel_Index with Volatile;
    Xd_Max : GFX.Rasteriser.Device_Pixel_Index with Volatile;
    Yd_Min : GFX.Rasteriser.Device_Pixel_Index with Volatile;
@@ -295,6 +300,11 @@ package body GFX.Rasterizer is
       AE   : A0B.Types.Integer_32;
 
    begin
+      Xmin := GX_Real'Max (XCmin, GX_Real (Xd_Min)) - Width - 0.5;
+      Xmax := GX_Real'Min (XCmax, GX_Real (Xd_Max)) + Width + 0.5;
+      Ymin := GX_Real'Max (YCmin, GX_Real (Yd_Min)) - Width - 0.5;
+      Ymax := GX_Real'Min (YCmax, GX_Real (Yd_Max)) + Width + 0.5;
+
       if Width /= 1.0 then
          Draw_Thick_Line ((X1, Y1), (X2, Y2));
       end if;
@@ -415,7 +425,18 @@ package body GFX.Rasterizer is
             Yinc := To_Fixed_16_16_Div (DY, DX);
 
             if Xi1 > Xi2 then
-               raise Program_Error;
+               declare
+                  Aux : A0B.Types.Integer_32;
+
+               begin
+                  Aux := Xi1;
+                  Xi1 := Xi2;
+                  Xi2 := Aux;
+
+                  Aux := Yi1;
+                  Yi1 := Yi2;
+                  Yi2 := Aux;
+               end;
             end if;
 
             Y := Shift_Left (Yi1, 10);
@@ -609,25 +630,27 @@ package body GFX.Rasterizer is
       Right  : GFX.Rasteriser.Device_Pixel_Coordinate;
       Bottom : GFX.Rasteriser.Device_Pixel_Coordinate) is
    begin
-      Xmin := GFX.GX_Real'Max (0.0, Left + 0.5) - 1.0;
-      Xmax := GFX.GX_Real'Min (GFX.GX_Real (Device_Width), Right + 0.5);
-      Ymin := GFX.GX_Real'Max (0.0, Top + 0.5) - 1.0;
-      Ymax := GFX.GX_Real'Min (GFX.GX_Real (Device_Height), Bottom + 0.5);
-
-      Xd_Min :=
-        GFX.Rasteriser.Device_Pixel_Index'Max
-          (0, GFX.Rasteriser.Device_Pixel_Index (Left + 0.5));
-      Xd_Max :=
-        GFX.Rasteriser.Device_Pixel_Index'Min
-          (Device_Width - 1, GFX.Rasteriser.Device_Pixel_Index (Right - 0.5));
-      Yd_Min :=
-        GFX.Rasteriser.Device_Pixel_Index'Max
-          (0, GFX.Rasteriser.Device_Pixel_Index (Top + 0.5));
-      Yd_Max :=
-        GFX.Rasteriser.Device_Pixel_Index'Min
-          (Device_Height - 1,
-           GFX.Rasteriser.Device_Pixel_Index (Bottom - 0.5));
+      XCmin := GFX.GX_Real'Max (0.0, Left);
+      XCmax := GFX.GX_Real'Min (GFX.GX_Real (Device_Width - 1), Right);
+      YCmin := GFX.GX_Real'Max (0.0, Top);
+      YCmax := GFX.GX_Real'Min (GFX.GX_Real (Device_Height - 1), Bottom);
    end Set_Clip;
+
+   -----------------------
+   -- Set_Renderer_Clip --
+   -----------------------
+
+   procedure Set_Renderer_Clip
+     (Top    : GFX.Rasteriser.Device_Pixel_Index;
+      Left   : GFX.Rasteriser.Device_Pixel_Index;
+      Right  : GFX.Rasteriser.Device_Pixel_Index;
+      Bottom : GFX.Rasteriser.Device_Pixel_Index) is
+   begin
+      Xd_Min := Left;
+      Xd_Max := Right;
+      Yd_Min := Top;
+      Yd_Max := Bottom;
+   end Set_Renderer_Clip;
 
    ------------------
    -- Set_Settings --

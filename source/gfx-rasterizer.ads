@@ -44,6 +44,12 @@ is
       Right  : GFX.Rasteriser.Device_Pixel_Coordinate;
       Bottom : GFX.Rasteriser.Device_Pixel_Coordinate);
 
+   procedure Set_Renderer_Clip
+     (Top    : GFX.Rasteriser.Device_Pixel_Index;
+      Left   : GFX.Rasteriser.Device_Pixel_Index;
+      Right  : GFX.Rasteriser.Device_Pixel_Index;
+      Bottom : GFX.Rasteriser.Device_Pixel_Index);
+
 private
 
    type Fixed_26_6 is new A0B.Types.Integer_32;

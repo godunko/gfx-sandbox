@@ -437,7 +437,7 @@ package body GFX.ILI9488 is
          A0B.Types.Unsigned_16 (Y + H - 1));
 
       for J in 0 .. (W * H) - 1 loop
-         GFX.From_RGBA8888 (S (J), R, G, B, A);
+         GFX.From_RGBA8888 (S (Interfaces.Unsigned_32 (J)), R, G, B, A);
 
          RAMWR_Data (A0B.Types.Unsigned_32 (J * 3 + 0)) := R;
          RAMWR_Data (A0B.Types.Unsigned_32 (J * 3 + 1)) := G;

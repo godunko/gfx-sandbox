@@ -24,13 +24,13 @@ package body GFX.Application is
      new GFX.Rasterizer
        (Get_Pixel     => GFX.Implementation.Backing_Store.Get_Pixel,
         Set_Pixel     => GFX.Implementation.Backing_Store.Set_Pixel,
-        Device_Width  => Backing_Store_Width,
-        Device_Height => Backing_Store_Height);
+        Device_Width  => Screen_Horizontal_Resolution,
+        Device_Height => Screen_Veritical_Resolution);
 
-   Last_Column : constant Positive :=
+   Last_Column : constant GFX.Rasteriser.Device_Pixel_Count :=
      (Screen_Horizontal_Resolution + Backing_Store_Width - 1)
         / Backing_Store_Width - 1;
-   Last_Row    : constant Positive :=
+   Last_Row    : constant GFX.Rasteriser.Device_Pixel_Count :=
      (Screen_Veritical_Resolution + Backing_Store_Height - 1)
         / Backing_Store_Height - 1;
 
@@ -41,7 +41,6 @@ package body GFX.Application is
    procedure Run is
       use type Interfaces.Unsigned_32;
 
-      T : GFX.Transformers.GX_Transformer;
       W : GFX.Rasteriser.Device_Pixel_Count;
 
    begin
@@ -57,16 +56,20 @@ package body GFX.Application is
               GFX.Rasteriser.Device_Pixel_Count'Min
                 (Backing_Store_Width,
                  Screen_Horizontal_Resolution
-                   - Backing_Store_Width
-                       * GFX.Rasteriser.Device_Pixel_Count (C));
+                   - Backing_Store_Width * C);
 
             GFX.Implementation.Backing_Store.Set_Size
-              (W, Backing_Store_Height);
+              (C * Backing_Store_Width,
+               R * Backing_Store_Height,
+               W,
+               Backing_Store_Height);
             GFX.Implementation.Backing_Store.Clear;
-            T.Set_Identity;
-            T.Translate
-              (GFX.GX_Real (-(C * Backing_Store_Width)),
-               GFX.GX_Real (-(R * Backing_Store_Height)));
+
+            Backing_Store_Rasterizer.Set_Renderer_Clip
+              (Top    => R * Backing_Store_Height,
+               Left   => C * Backing_Store_Width,
+               Right  => C * Backing_Store_Width + W - 1,
+               Bottom => R * Backing_Store_Height + Backing_Store_Height - 1);
 
             for J in 0 .. GFX.Implementation.Snapshots.Length - 1 loop
                case GFX.Implementation.Snapshots.Buffer (J).Kind is
@@ -80,21 +83,18 @@ package body GFX.Application is
 
                   when GFX.Implementation.Snapshots.Clip =>
                      declare
-                        TL : GFX.Points.GF_Point :=
+                        TL : constant GFX.Points.GF_Point :=
                           (GFX.Implementation.Snapshots.Buffer
                              (J).Clip_Region.Left,
                            GFX.Implementation.Snapshots.Buffer
                              (J).Clip_Region.Top);
-                        BR : GFX.Points.GF_Point :=
+                        BR : constant GFX.Points.GF_Point :=
                           (GFX.Implementation.Snapshots.Buffer
                              (J).Clip_Region.Right,
                            GFX.Implementation.Snapshots.Buffer
                              (J).Clip_Region.Bottom);
 
                      begin
-                        TL := T.Map (TL);
-                        BR := T.Map (BR);
-
                         Backing_Store_Rasterizer.Set_Clip
                           (Top    => TL.Y,
                            Left   => TL.X,
@@ -104,15 +104,12 @@ package body GFX.Application is
 
                   when GFX.Implementation.Snapshots.Line =>
                      declare
-                        S : GFX.Points.GF_Point :=
+                        S : constant GFX.Points.GF_Point :=
                           GFX.Implementation.Snapshots.Buffer (J).Start_Point;
-                        E : GFX.Points.GF_Point :=
+                        E : constant GFX.Points.GF_Point :=
                           GFX.Implementation.Snapshots.Buffer (J).End_Point;
 
                      begin
-                        S := T.Map (S);
-                        E := T.Map (E);
-
                         Backing_Store_Rasterizer.Draw_Line (S.X, S.Y, E.X, E.Y);
                      end;
                end case;
