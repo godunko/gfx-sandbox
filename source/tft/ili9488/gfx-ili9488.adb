@@ -140,12 +140,13 @@ package body GFX.ILI9488 is
    procedure CSS_Device_Transformation
      (Transformation : out GFX.Transformers.GX_Transformer)
    is
-      DH : constant GFX.Real :=
-        GFX.Real (Horizontal_Resolution) / Horizontal_Size;
-      DV : constant GFX.Real := GFX.Real (Vertical_Resolution) / Vertical_Size;
+      DH : constant GFX.GX_Real :=
+        GFX.GX_Real (Horizontal_Resolution) / Horizontal_Size;
+      DV : constant GFX.GX_Real :=
+        GFX.GX_Real (Vertical_Resolution) / Vertical_Size;
 
-      SH : constant GFX.Real := DH / CSS_Pixel_Density;
-      SV : constant GFX.Real := DV / CSS_Pixel_Density;
+      SH : constant GFX.GX_Real := DH / CSS_Pixel_Density;
+      SV : constant GFX.GX_Real := DV / CSS_Pixel_Density;
 
    begin
       Transformation.Set_Identity;

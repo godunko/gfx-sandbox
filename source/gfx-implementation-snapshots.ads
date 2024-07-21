@@ -29,7 +29,7 @@ is
 
          when Settings =>
             Color : GFX.RGBA8888;
-            Width : GFX.Real;
+            Width : GFX.GX_Real;
 
          when Clip =>
             Clip_Region : GFX.Clip_Regions.GX_Clip_Region;

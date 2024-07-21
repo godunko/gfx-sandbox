@@ -11,10 +11,10 @@ package GFX.Clip_Regions
 is
 
    type GX_Clip_Region is record
-      Top    : GFX.Real;
-      Left   : GFX.Real;
-      Right  : GFX.Real;
-      Bottom : GFX.Real;
+      Top    : GFX.GX_Real;
+      Left   : GFX.GX_Real;
+      Right  : GFX.GX_Real;
+      Bottom : GFX.GX_Real;
    end record;
 
 end GFX.Clip_Regions;

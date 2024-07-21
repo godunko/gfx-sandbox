@@ -65,8 +65,8 @@ package body GFX.Application is
             GFX.Implementation.Backing_Store.Clear;
             T.Set_Identity;
             T.Translate
-              (GFX.Real (-(C * Backing_Store_Width)),
-               GFX.Real (-(R * Backing_Store_Height)));
+              (GFX.GX_Real (-(C * Backing_Store_Width)),
+               GFX.GX_Real (-(R * Backing_Store_Height)));
 
             for J in 0 .. GFX.Implementation.Snapshots.Length - 1 loop
                case GFX.Implementation.Snapshots.Buffer (J).Kind is

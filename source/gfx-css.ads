@@ -42,7 +42,7 @@ is
       pt_Unit,    --  points
       px_Unit);   --  pixels
 
-   subtype CSS_Pixel_Length is GFX.Real;
+   subtype CSS_Pixel_Length is GFX.GX_Real;
 
    --  content-box
    --  padding-box

@@ -17,7 +17,7 @@ package body GFX.Painters is
 
    procedure Draw_Line
      (Self           : in out Painter'Class;
-      X1, Y1, X2, Y2 : GFX.Real)
+      X1, Y1, X2, Y2 : GFX.GX_Real)
    is
       use type Interfaces.Unsigned_32;
 
@@ -119,7 +119,7 @@ package body GFX.Painters is
    -- Set_Width --
    ---------------
 
-   procedure Set_Width (Self : in out Painter'Class; To : GFX.Real) is
+   procedure Set_Width (Self : in out Painter'Class; To : GFX.GX_Real) is
    begin
       if Self.Width_Value /= To then
          Self.Width_Value     := To;

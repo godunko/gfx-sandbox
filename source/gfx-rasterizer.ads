@@ -29,7 +29,7 @@ is
 
    procedure Set_Settings
      (Color : GFX.RGBA8888;
-      Width : GFX.Real);
+      Width : GFX.GX_Real);
 
    procedure Draw_Line
      (X1    : GFX.Rasteriser.Device_Pixel_Coordinate;
@@ -48,7 +48,7 @@ private
 
    type Fixed_26_6 is new A0B.Types.Integer_32;
 
-   function To_Fixed_26_6 (Item : GFX.Real) return Fixed_26_6;
+   function To_Fixed_26_6 (Item : GFX.GX_Real) return Fixed_26_6;
 
    --  type Fixed_16_16 is new A0B.Types.Integer_32;
 

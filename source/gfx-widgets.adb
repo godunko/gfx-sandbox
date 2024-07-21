@@ -22,10 +22,10 @@ package body GFX.Widgets is
       Width  : A0B.Types.Integer_32;
       Height : A0B.Types.Integer_32)
    is
-      ET : GFX.Real;
-      EL : GFX.Real;
-      ER : GFX.Real;
-      EB : GFX.Real;
+      ET : GFX.GX_Real;
+      EL : GFX.GX_Real;
+      ER : GFX.GX_Real;
+      EB : GFX.GX_Real;
 
    begin
       GFX.Implementation.Snapshots.Root := Self'Unchecked_Access;
@@ -64,8 +64,8 @@ package body GFX.Widgets is
 
       Self.Box.Computed_Content_X      := 0.0 + EL;
       Self.Box.Computed_Content_Y      := 0.0 + ET;
-      Self.Box.Computed_Content_Width  := GFX.Real (Width) - EL - ER;
-      Self.Box.Computed_Content_Height := GFX.Real (Height) - ET - EB;
+      Self.Box.Computed_Content_Width  := GFX.GX_Real (Width) - EL - ER;
+      Self.Box.Computed_Content_Height := GFX.GX_Real (Height) - ET - EB;
    end Initialize;
 
    -----------
@@ -78,8 +78,8 @@ package body GFX.Widgets is
       Painter        : GFX.Painters.Painter;
       Transformation : GFX.Transformers.GX_Transformer;
       Clip_Region    : GFX.Clip_Regions.GX_Clip_Region;
-      X              : GFX.Real;
-      Y              : GFX.Real;
+      X              : GFX.GX_Real;
+      Y              : GFX.GX_Real;
 
    begin
       GFX.CSS.Border_Box (Self.Box, Clip_Region, Transformation);
@@ -89,16 +89,16 @@ package body GFX.Widgets is
       Painter.Set_Color (GFX.To_RGBA (127, 127, 127, 255));
 
       declare
-         W   : constant GFX.Real := Clip_Region.Right - Clip_Region.Left;
-         H   : constant GFX.Real := Clip_Region.Bottom - Clip_Region.Top;
-         BT  : constant GFX.Real := Self.Box.Computed_Border_Top;
-         BL  : constant GFX.Real := Self.Box.Computed_Border_Left;
-         BR  : constant GFX.Real := Self.Box.Computed_Border_Right;
-         BB  : constant GFX.Real := Self.Box.Computed_Border_Bottom;
-         BT2 : constant GFX.Real := BT / 2.0;
-         BL2 : constant GFX.Real := BL / 2.0;
-         BR2 : constant GFX.Real := BR / 2.0;
-         BB2 : constant GFX.Real := BB / 2.0;
+         W   : constant GFX.GX_Real := Clip_Region.Right - Clip_Region.Left;
+         H   : constant GFX.GX_Real := Clip_Region.Bottom - Clip_Region.Top;
+         BT  : constant GFX.GX_Real := Self.Box.Computed_Border_Top;
+         BL  : constant GFX.GX_Real := Self.Box.Computed_Border_Left;
+         BR  : constant GFX.GX_Real := Self.Box.Computed_Border_Right;
+         BB  : constant GFX.GX_Real := Self.Box.Computed_Border_Bottom;
+         BT2 : constant GFX.GX_Real := BT / 2.0;
+         BL2 : constant GFX.GX_Real := BL / 2.0;
+         BR2 : constant GFX.GX_Real := BR / 2.0;
+         BB2 : constant GFX.GX_Real := BB / 2.0;
 
       begin
          Painter.Set_Width (BT);

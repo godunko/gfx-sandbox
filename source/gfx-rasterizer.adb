@@ -43,16 +43,16 @@ package body GFX.Rasterizer is
       Right : A0B.Types.Unsigned_32) return A0B.Types.Integer_32;
 
    function Clip_Line
-     (X1 : in out GFX.Real;
-      Y1 : in out GFX.Real;
-      X2 : in out GFX.Real;
-      Y2 : in out GFX.Real) return Boolean;
+     (X1 : in out GFX.GX_Real;
+      Y1 : in out GFX.GX_Real;
+      X2 : in out GFX.GX_Real;
+      Y2 : in out GFX.GX_Real) return Boolean;
    --  Clip line to the area one pixel wider in all directions than device area.
 
-   Xmin : GFX.Real with Volatile;
-   Xmax : GFX.Real with Volatile;
-   Ymin : GFX.Real with Volatile;
-   Ymax : GFX.Real with Volatile;
+   Xmin : GFX.GX_Real with Volatile;
+   Xmax : GFX.GX_Real with Volatile;
+   Ymin : GFX.GX_Real with Volatile;
+   Ymax : GFX.GX_Real with Volatile;
 
    Xd_Min : GFX.Rasteriser.Device_Pixel_Index with Volatile;
    Xd_Max : GFX.Rasteriser.Device_Pixel_Index with Volatile;
@@ -60,7 +60,7 @@ package body GFX.Rasterizer is
    Yd_Max : GFX.Rasteriser.Device_Pixel_Index with Volatile;
 
    Color : GFX.RGBA8888;
-   Width : GFX.Real;
+   Width : GFX.GX_Real;
 
    procedure Fill_Span
      (X        : GFX.Rasteriser.Device_Pixel_Index;
@@ -119,10 +119,10 @@ package body GFX.Rasterizer is
    ---------------
 
    function Clip_Line
-     (X1 : in out GFX.Real;
-      Y1 : in out GFX.Real;
-      X2 : in out GFX.Real;
-      Y2 : in out GFX.Real) return Boolean is
+     (X1 : in out GFX.GX_Real;
+      Y1 : in out GFX.GX_Real;
+      X2 : in out GFX.GX_Real;
+      Y2 : in out GFX.GX_Real) return Boolean is
    begin
       if X1 < Xmin then
          if X2 <= Xmin then
@@ -263,10 +263,10 @@ package body GFX.Rasterizer is
          end if;
       end Draw_Pixel;
 
-      Xf1 : GFX.Real := X1;
-      Yf1 : GFX.Real := Y1;
-      Xf2 : GFX.Real := X2;
-      Yf2 : GFX.Real := Y2;
+      Xf1 : GFX.GX_Real := X1;
+      Yf1 : GFX.GX_Real := Y1;
+      Xf2 : GFX.GX_Real := X2;
+      Yf2 : GFX.GX_Real := Y2;
 
       --  Digital Differential Analyzer (DDA) algorithm is used to draw
       --  line. Fixed point 16.16 format is used to improve floating point
@@ -483,10 +483,10 @@ package body GFX.Rasterizer is
      (A : GFX.Points.GF_Point;
       B : GFX.Points.GF_Point)
    is
-      AX : GFX.Real := A.X;
-      AY : GFX.Real := A.Y;
-      BX : GFX.Real := B.X;
-      BY : GFX.Real := B.Y;
+      AX : GFX.GX_Real := A.X;
+      AY : GFX.GX_Real := A.Y;
+      BX : GFX.GX_Real := B.X;
+      BY : GFX.GX_Real := B.Y;
 
    begin
       if Clip_Line (AX, AY, BX, BY) then
@@ -609,10 +609,10 @@ package body GFX.Rasterizer is
       Right  : GFX.Rasteriser.Device_Pixel_Coordinate;
       Bottom : GFX.Rasteriser.Device_Pixel_Coordinate) is
    begin
-      Xmin := GFX.Real'Max (0.0, Left + 0.5) - 1.0;
-      Xmax := GFX.Real'Min (GFX.Real (Device_Width), Right + 0.5);
-      Ymin := GFX.Real'Max (0.0, Top + 0.5) - 1.0;
-      Ymax := GFX.Real'Min (GFX.Real (Device_Height), Bottom + 0.5);
+      Xmin := GFX.GX_Real'Max (0.0, Left + 0.5) - 1.0;
+      Xmax := GFX.GX_Real'Min (GFX.GX_Real (Device_Width), Right + 0.5);
+      Ymin := GFX.GX_Real'Max (0.0, Top + 0.5) - 1.0;
+      Ymax := GFX.GX_Real'Min (GFX.GX_Real (Device_Height), Bottom + 0.5);
 
       Xd_Min :=
         GFX.Rasteriser.Device_Pixel_Index'Max
@@ -635,7 +635,7 @@ package body GFX.Rasterizer is
 
    procedure Set_Settings
      (Color : GFX.RGBA8888;
-      Width : GFX.Real) is
+      Width : GFX.GX_Real) is
    begin
       Rasterizer.Color := Color;
       Rasterizer.Width := Width;
@@ -716,7 +716,7 @@ package body GFX.Rasterizer is
    -- To_Fixed_26_6 --
    -------------------
 
-   function To_Fixed_26_6 (Item : GFX.Real) return Fixed_26_6 is
+   function To_Fixed_26_6 (Item : GFX.GX_Real) return Fixed_26_6 is
    begin
       return Fixed_26_6 (Item * 64.0);
    end To_Fixed_26_6;

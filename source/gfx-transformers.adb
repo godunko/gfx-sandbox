@@ -29,8 +29,8 @@ is
 
    procedure Scale
      (Self : in out GX_Transformer'Class;
-      SX   : GFX.Real;
-      SY   : GFX.Real) is
+      SX   : GFX.GX_Real;
+      SY   : GFX.GX_Real) is
    begin
       Self.SX := @ * SX;
       Self.SY := @ * SY;
@@ -54,8 +54,8 @@ is
 
    procedure Translate
      (Self : in out GX_Transformer'Class;
-      DX   : GFX.Real;
-      DY   : GFX.Real) is
+      DX   : GFX.GX_Real;
+      DY   : GFX.GX_Real) is
    begin
       Self.DX := @ + DX;
       Self.DY := @ + DY;

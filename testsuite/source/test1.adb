@@ -9,7 +9,7 @@ with GFX.PPM;
 
 procedure Test1 is
 
-   use type GFX.Real;
+   use type GFX.GX_Real;
 
    package Painter is
      new GFX.Rasterizer

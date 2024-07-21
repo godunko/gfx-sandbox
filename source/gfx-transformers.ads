@@ -19,13 +19,13 @@ is
 
    procedure Translate
      (Self : in out GX_Transformer'Class;
-      DX   : GFX.Real;
-      DY   : GFX.Real);
+      DX   : GFX.GX_Real;
+      DY   : GFX.GX_Real);
 
    procedure Scale
      (Self : in out GX_Transformer'Class;
-      SX   : GFX.Real;
-      SY   : GFX.Real);
+      SX   : GFX.GX_Real;
+      SY   : GFX.GX_Real);
 
    function Map
      (Self : GX_Transformer'Class;
@@ -34,10 +34,10 @@ is
 private
 
    type GX_Transformer is tagged record
-      SX : GFX.Real := 1.0;
-      SY : GFX.Real := 1.0;
-      DX : GFX.Real := 0.0;
-      DY : GFX.Real := 0.0;
+      SX : GFX.GX_Real := 1.0;
+      SY : GFX.GX_Real := 1.0;
+      DX : GFX.GX_Real := 0.0;
+      DY : GFX.GX_Real := 0.0;
    end record;
 
 end GFX.Transformers;
