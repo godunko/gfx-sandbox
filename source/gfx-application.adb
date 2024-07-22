@@ -16,7 +16,7 @@ package body GFX.Application is
    Cycles_Rasterization : Interfaces.Unsigned_32 with Volatile;
 
    Screen_Horizontal_Resolution : constant := 480;
-   Screen_Veritical_Resolution  : constant := 320;
+   Screen_Vertical_Resolution   : constant := 320;
    Backing_Store_Width          : constant := 64;
    Backing_Store_Height         : constant := 64;
 
@@ -25,13 +25,13 @@ package body GFX.Application is
        (Get_Pixel     => GFX.Implementation.Backing_Store.Get_Pixel,
         Set_Pixel     => GFX.Implementation.Backing_Store.Set_Pixel,
         Device_Width  => Screen_Horizontal_Resolution,
-        Device_Height => Screen_Veritical_Resolution);
+        Device_Height => Screen_Vertical_Resolution);
 
    Last_Column : constant GFX.Rasteriser.Device_Pixel_Count :=
      (Screen_Horizontal_Resolution + Backing_Store_Width - 1)
         / Backing_Store_Width - 1;
    Last_Row    : constant GFX.Rasteriser.Device_Pixel_Count :=
-     (Screen_Veritical_Resolution + Backing_Store_Height - 1)
+     (Screen_Vertical_Resolution + Backing_Store_Height - 1)
         / Backing_Store_Height - 1;
 
    ---------
@@ -42,6 +42,7 @@ package body GFX.Application is
       use type Interfaces.Unsigned_32;
 
       W : GFX.Rasteriser.Device_Pixel_Count;
+      H : GFX.Rasteriser.Device_Pixel_Count;
 
    begin
       CSS_Device_Transformation (GFX.Implementation.Snapshots.CSS_To_Device);
@@ -57,19 +58,24 @@ package body GFX.Application is
                 (Backing_Store_Width,
                  Screen_Horizontal_Resolution
                    - Backing_Store_Width * C);
+            H :=
+              GFX.Rasteriser.Device_Pixel_Count'Min
+                (Backing_Store_Height,
+                 Screen_Vertical_Resolution
+                   - Backing_Store_Height * R);
 
             GFX.Implementation.Backing_Store.Set_Size
               (C * Backing_Store_Width,
                R * Backing_Store_Height,
                W,
-               Backing_Store_Height);
+               H);
             GFX.Implementation.Backing_Store.Clear;
 
             Backing_Store_Rasterizer.Set_Renderer_Clip
               (Top    => R * Backing_Store_Height,
                Left   => C * Backing_Store_Width,
                Right  => C * Backing_Store_Width + W - 1,
-               Bottom => R * Backing_Store_Height + Backing_Store_Height - 1);
+               Bottom => R * Backing_Store_Height + H - 1);
 
             for J in 0 .. GFX.Implementation.Snapshots.Length - 1 loop
                case GFX.Implementation.Snapshots.Buffer (J).Kind is
@@ -119,16 +125,12 @@ package body GFX.Application is
               (GFX.Rasteriser.Device_Pixel_Index (C * Backing_Store_Width),
                GFX.Rasteriser.Device_Pixel_Index (R * Backing_Store_Height),
                W,
-               Backing_Store_Height,
+               H,
                GFX.Implementation.Backing_Store.Storage);
          end loop;
       end loop;
 
       Cycles_Rasterization := Cycles;
-
-      loop
-         null;
-      end loop;
    end Run;
 
 end GFX.Application;
