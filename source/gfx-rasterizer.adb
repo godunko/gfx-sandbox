@@ -300,10 +300,10 @@ package body GFX.Rasterizer is
       AE   : A0B.Types.Integer_32;
 
    begin
-      Xmin := GX_Real'Max (XCmin, GX_Real (Xd_Min)) - Width - 0.5;
-      Xmax := GX_Real'Min (XCmax, GX_Real (Xd_Max)) + Width + 0.5;
-      Ymin := GX_Real'Max (YCmin, GX_Real (Yd_Min)) - Width - 0.5;
-      Ymax := GX_Real'Min (YCmax, GX_Real (Yd_Max)) + Width + 0.5;
+      --  Xmin := GX_Real'Max (XCmin, GX_Real (Xd_Min)) - Width - 0.5;
+      --  Xmax := GX_Real'Min (XCmax, GX_Real (Xd_Max)) + Width + 0.5;
+      --  Ymin := GX_Real'Max (YCmin, GX_Real (Yd_Min)) - Width - 0.5;
+      --  Ymax := GX_Real'Min (YCmax, GX_Real (Yd_Max)) + Width + 0.5;
 
       if Width /= 1.0 then
          Draw_Thick_Line ((X1, Y1), (X2, Y2));
@@ -634,6 +634,11 @@ package body GFX.Rasterizer is
       XCmax := GFX.GX_Real'Min (GFX.GX_Real (Device_Width - 1), Right);
       YCmin := GFX.GX_Real'Max (0.0, Top);
       YCmax := GFX.GX_Real'Min (GFX.GX_Real (Device_Height - 1), Bottom);
+
+      Xmin := GX_Real'Max (XCmin, GX_Real (Xd_Min)) - Width - 0.5;
+      Xmax := GX_Real'Min (XCmax, GX_Real (Xd_Max)) + Width + 0.5;
+      Ymin := GX_Real'Max (YCmin, GX_Real (Yd_Min)) - Width - 0.5;
+      Ymax := GX_Real'Min (YCmax, GX_Real (Yd_Max)) + Width + 0.5;
    end Set_Clip;
 
    -----------------------
@@ -650,6 +655,13 @@ package body GFX.Rasterizer is
       Xd_Max := Right;
       Yd_Min := Top;
       Yd_Max := Bottom;
+
+      Xmin := GX_Real'Max (XCmin, GX_Real (Xd_Min)) - Width - 0.5;
+      Xmax := GX_Real'Min (XCmax, GX_Real (Xd_Max)) + Width + 0.5;
+      Ymin := GX_Real'Max (YCmin, GX_Real (Yd_Min)) - Width - 0.5;
+      Ymax := GX_Real'Min (YCmax, GX_Real (Yd_Max)) + Width + 0.5;
+
+      GFX.Rasteriser.Primitives.Set_Rendering_Area (Top, Left, Right, Bottom);
    end Set_Renderer_Clip;
 
    ------------------
@@ -662,6 +674,11 @@ package body GFX.Rasterizer is
    begin
       Rasterizer.Color := Color;
       Rasterizer.Width := Width;
+
+      Xmin := GX_Real'Max (XCmin, GX_Real (Xd_Min)) - Width - 0.5;
+      Xmax := GX_Real'Min (XCmax, GX_Real (Xd_Max)) + Width + 0.5;
+      Ymin := GX_Real'Max (YCmin, GX_Real (Yd_Min)) - Width - 0.5;
+      Ymax := GX_Real'Min (YCmax, GX_Real (Yd_Max)) + Width + 0.5;
    end Set_Settings;
 
    ----------------
